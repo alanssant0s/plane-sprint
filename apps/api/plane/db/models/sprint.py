@@ -57,19 +57,26 @@ class WorkspaceSprint(WorkspaceBaseModel):
 
 
 class WorkspaceSprintAutomation(WorkspaceBaseModel):
-    name = models.CharField(max_length=255, verbose_name="Sprint Group Name")
-    description = models.TextField(verbose_name="Sprint Group Description", blank=True)
+    PRIVATE_ACCESS = 0
+    PUBLIC_ACCESS = 2
+    ACCESS_CHOICES = ((PRIVATE_ACCESS, "Private"), (PUBLIC_ACCESS, "Public"))
+
+    name = models.CharField(max_length=255, verbose_name="Squad Name")
+    description = models.TextField(verbose_name="Squad Description", blank=True)
     enabled = models.BooleanField(default=True)
-    start_date = models.DateTimeField(verbose_name="Automation Start Date")
+    access = models.PositiveSmallIntegerField(choices=ACCESS_CHOICES, default=PUBLIC_ACCESS)
+    start_date = models.DateTimeField(verbose_name="Squad Start Date")
     sprint_duration_days = models.PositiveIntegerField(default=14)
     timezone = models.CharField(max_length=255, default="UTC")
     name_template = models.CharField(max_length=255, default="Sprint {{number}}")
     next_sequence = models.IntegerField(default=1)
     auto_create_next = models.BooleanField(default=True)
+    logo_props = models.JSONField(default=dict)
+    archived_at = models.DateTimeField(null=True)
 
     class Meta:
-        verbose_name = "Workspace Sprint Automation"
-        verbose_name_plural = "Workspace Sprint Automations"
+        verbose_name = "Workspace Sprint Squad"
+        verbose_name_plural = "Workspace Sprint Squads"
         db_table = "workspace_sprint_automations"
         ordering = ("sort_order", "-created_at")
 
@@ -88,6 +95,47 @@ class WorkspaceSprintAutomation(WorkspaceBaseModel):
 
     def __str__(self):
         return f"{self.name} <{self.workspace.name}>"
+
+
+class WorkspaceSprintAutomationMember(WorkspaceBaseModel):
+    automation = models.ForeignKey(
+        WorkspaceSprintAutomation,
+        on_delete=models.CASCADE,
+        related_name="automation_members",
+    )
+    member = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="workspace_sprint_automation_members",
+    )
+
+    class Meta:
+        unique_together = ["automation", "member", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["automation", "member"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="workspace_sprint_automation_member_unique_when_deleted_at_null",
+            )
+        ]
+        verbose_name = "Workspace Sprint Automation Member"
+        verbose_name_plural = "Workspace Sprint Automation Members"
+        db_table = "workspace_sprint_automation_members"
+        ordering = ("-created_at",)
+
+    def save(self, *args, **kwargs):
+        if self.automation_id:
+            self.workspace = self.automation.workspace
+        super(WorkspaceSprintAutomationMember, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.member} <{self.automation}>"
+
+
+# Canonical domain names. Keep the automation aliases for backwards compatibility
+# while the API and frontend migrate to "Squad" terminology.
+WorkspaceSprintSquad = WorkspaceSprintAutomation
+WorkspaceSprintSquadMember = WorkspaceSprintAutomationMember
 
 
 class WorkspaceSprintIssue(WorkspaceBaseModel):

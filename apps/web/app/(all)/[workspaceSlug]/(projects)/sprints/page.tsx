@@ -9,12 +9,12 @@ import { PageHead } from "@/components/core/page-title";
 export default function WorkspaceSprintsPage() {
   return (
     <>
-      <PageHead title="Sprints" />
+      <PageHead title="Squads" />
       <div className="flex h-full w-full items-center justify-center">
         <div className="max-w-md text-center">
-          <h2 className="text-18 font-semibold text-primary">Select a sprint</h2>
+          <h2 className="text-18 font-semibold text-primary">Select a squad</h2>
           <p className="mt-2 text-13 text-tertiary">
-            Create or select a sprint group from the sidebar to manage open and archived sprints.
+            Create or select a squad from the sidebar to manage open and archived sprints.
           </p>
         </div>
       </div>

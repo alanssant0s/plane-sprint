@@ -12,6 +12,7 @@ export * from "./estimate-column";
 export * from "./label-column";
 export * from "./link-column";
 export * from "./priority-column";
+export * from "./project-column";
 export * from "./start-date-column";
 export * from "./state-column";
 export * from "./sprint-column";

@@ -141,6 +141,7 @@ export const ISSUE_ORDER_BY_OPTIONS: {
 ];
 
 export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = [
+  "project",
   "assignee",
   "start_date",
   "due_date",
@@ -176,6 +177,10 @@ export const ISSUE_DISPLAY_PROPERTIES: {
   {
     key: "key",
     titleTranslationKey: "issue.display.properties.id",
+  },
+  {
+    key: "project",
+    titleTranslationKey: "common.project",
   },
   {
     key: "assignee",
@@ -214,6 +219,7 @@ export const ISSUE_DISPLAY_PROPERTIES: {
 ];
 
 export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
+  "project",
   "state",
   "priority",
   "assignee",
@@ -241,6 +247,14 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     icon: string;
   };
 } = {
+  project: {
+    i18n_title: "common.project",
+    ascendingOrderKey: "project__name",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-project__name",
+    descendingOrderTitle: "Z",
+    icon: "ProjectIcon",
+  },
   assignee: {
     i18n_title: "common.assignees",
     ascendingOrderKey: "assignees__first_name",

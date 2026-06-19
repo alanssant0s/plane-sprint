@@ -39,6 +39,7 @@ type Props = {
   enableQuickCreateIssue?: boolean;
   disableIssueCreation?: boolean;
   isWorkspaceLevel?: boolean;
+  showProjectInWorkItemColumn?: boolean;
   isEpic?: boolean;
 };
 
@@ -57,6 +58,7 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
     canLoadMoreIssues,
     loadMoreIssues,
     isWorkspaceLevel = false,
+    showProjectInWorkItemColumn = false,
     isEpic = false,
   } = props;
   // refs
@@ -69,13 +71,16 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
 
   const isEstimateEnabled: boolean = currentProjectDetails?.estimate !== null;
 
-  const spreadsheetColumnsList = isWorkspaceLevel
+  const spreadsheetColumnsListBase = isWorkspaceLevel
     ? SPREADSHEET_PROPERTY_LIST
     : SPREADSHEET_PROPERTY_LIST.filter((property) => {
         if (property === "cycle" && !currentProjectDetails?.cycle_view) return false;
         if (property === "modules" && !currentProjectDetails?.module_view) return false;
         return true;
       });
+  const spreadsheetColumnsList = showProjectInWorkItemColumn
+    ? spreadsheetColumnsListBase.filter((property) => property !== "project")
+    : spreadsheetColumnsListBase;
 
   if (!issueIds || issueIds.length === 0) return <></>;
   return (
@@ -106,6 +111,7 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
                 loadMoreIssues={loadMoreIssues}
                 spreadsheetColumnsList={spreadsheetColumnsList}
                 selectionHelpers={helpers}
+                showProjectInWorkItemColumn={showProjectInWorkItemColumn}
                 isEpic={isEpic}
               />
             </div>

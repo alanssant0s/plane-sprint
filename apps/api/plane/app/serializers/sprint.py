@@ -9,7 +9,8 @@ from django.utils import timezone
 # Module imports
 from .base import BaseSerializer
 from .issue import IssueStateSerializer
-from plane.db.models import WorkspaceSprint, WorkspaceSprintAutomation, WorkspaceSprintIssue
+from .user import UserLiteSerializer
+from plane.db.models import WorkspaceSprint, WorkspaceSprintAutomation, WorkspaceSprintAutomationMember, WorkspaceSprintIssue
 
 
 class WorkspaceSprintWriteSerializer(BaseSerializer):
@@ -103,6 +104,7 @@ class WorkspaceSprintAutomationWriteSerializer(BaseSerializer):
 
 class WorkspaceSprintAutomationSerializer(BaseSerializer):
     active_sprints_count = serializers.SerializerMethodField()
+    member_ids = serializers.SerializerMethodField()
 
     class Meta:
         model = WorkspaceSprintAutomation
@@ -112,13 +114,17 @@ class WorkspaceSprintAutomationSerializer(BaseSerializer):
             "name",
             "description",
             "enabled",
+            "access",
             "start_date",
             "sprint_duration_days",
             "timezone",
             "name_template",
             "next_sequence",
             "auto_create_next",
+            "logo_props",
+            "archived_at",
             "sort_order",
+            "member_ids",
             "active_sprints_count",
             "created_at",
             "updated_at",
@@ -129,6 +135,26 @@ class WorkspaceSprintAutomationSerializer(BaseSerializer):
         if hasattr(obj, "active_sprints_count"):
             return obj.active_sprints_count
         return obj.sprints.filter(archived_at__isnull=True, deleted_at__isnull=True).count()
+
+    def get_member_ids(self, obj):
+        return list(
+            obj.automation_members.filter(deleted_at__isnull=True).values_list("member_id", flat=True)
+        )
+
+
+class WorkspaceSprintAutomationMemberSerializer(BaseSerializer):
+    member_detail = UserLiteSerializer(source="member", read_only=True)
+
+    class Meta:
+        model = WorkspaceSprintAutomationMember
+        fields = ["id", "automation_id", "member", "member_detail", "created_at", "updated_at"]
+        read_only_fields = fields
+
+
+# Canonical squad names with backwards-compatible automation aliases above.
+WorkspaceSprintSquadWriteSerializer = WorkspaceSprintAutomationWriteSerializer
+WorkspaceSprintSquadSerializer = WorkspaceSprintAutomationSerializer
+WorkspaceSprintSquadMemberSerializer = WorkspaceSprintAutomationMemberSerializer
 
 
 class WorkspaceSprintIssueSerializer(BaseSerializer):

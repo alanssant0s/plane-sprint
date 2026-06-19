@@ -9,7 +9,10 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Button } from "@plane/propel/button";
+import { EmojiIconPickerTypes, EmojiPicker, Logo } from "@plane/propel/emoji-icon-picker";
+import { CycleIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TLogoProps } from "@plane/types";
 import { EModalPosition, EModalWidth, Input, ModalCore, TextArea } from "@plane/ui";
 import { useWorkspaceSprint } from "@/hooks/store/use-workspace-sprint";
 
@@ -24,6 +27,18 @@ const toDateTimeLocalValue = (date: Date) => {
   return new Date(date.getTime() - timezoneOffset).toISOString().slice(0, 16);
 };
 
+const formatLogoProps = (value: any): TLogoProps => {
+  let logoValue = {};
+
+  if (value?.type === "emoji") logoValue = { value: value.value };
+  else if (value?.type === "icon") logoValue = value.value;
+
+  return {
+    in_use: value?.type,
+    [value?.type]: logoValue,
+  } as TLogoProps;
+};
+
 export const SprintAutomationModal = observer(function SprintAutomationModal(props: Props) {
   const { isOpen, onClose, onCreated } = props;
   const { workspaceSlug } = useParams();
@@ -34,6 +49,8 @@ export const SprintAutomationModal = observer(function SprintAutomationModal(pro
   const [startDate, setStartDate] = useState(toDateTimeLocalValue(new Date()));
   const [duration, setDuration] = useState(14);
   const [nameTemplate, setNameTemplate] = useState("Sprint {{number}}");
+  const [logoProps, setLogoProps] = useState<TLogoProps | undefined>(undefined);
+  const [isLogoPickerOpen, setIsLogoPickerOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleClose = () => {
@@ -56,11 +73,12 @@ export const SprintAutomationModal = observer(function SprintAutomationModal(pro
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         name_template: nameTemplate,
         auto_create_next: true,
+        logo_props: logoProps,
       });
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Sprint created",
-        message: "The sprint group and its active sprints are ready.",
+        title: "Squad created",
+        message: "The squad and its active sprints are ready.",
       });
       onCreated?.(automation.id);
       onClose();
@@ -69,11 +87,12 @@ export const SprintAutomationModal = observer(function SprintAutomationModal(pro
       setNameTemplate("Sprint {{number}}");
       setStartDate(toDateTimeLocalValue(new Date()));
       setDuration(14);
+      setLogoProps(undefined);
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Could not create sprint",
-        message: "Please check the sprint configuration and try again.",
+        title: "Could not create squad",
+        message: "Please check the squad configuration and try again.",
       });
     } finally {
       setIsSubmitting(false);
@@ -84,17 +103,40 @@ export const SprintAutomationModal = observer(function SprintAutomationModal(pro
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XL}>
       <form onSubmit={handleSubmit} className="space-y-5 p-5">
         <div>
-          <h3 className="text-18 font-medium text-primary">Create sprint</h3>
-          <p className="mt-1 text-13 text-tertiary">Configure the sprint group, duration, and automatic naming.</p>
+          <h3 className="text-18 font-medium text-primary">Create squad</h3>
+          <p className="mt-1 text-13 text-tertiary">Configure the squad, sprint duration, and automatic naming.</p>
         </div>
         <div className="space-y-3">
-          <Input
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder="Sprint name"
-            className="w-full text-14"
-            required
-          />
+          <div className="flex items-center gap-3">
+            <EmojiPicker
+              iconType="material"
+              closeOnSelect={false}
+              isOpen={isLogoPickerOpen}
+              handleToggle={(value: boolean) => setIsLogoPickerOpen(value)}
+              className="flex items-center justify-center"
+              buttonClassName="flex size-9 flex-shrink-0 items-center justify-center rounded-md bg-surface-2"
+              label={
+                logoProps?.in_use ? (
+                  <Logo logo={logoProps} size={18} type="material" />
+                ) : (
+                  <CycleIcon className="size-4" />
+                )
+              }
+              onChange={(value: any) => {
+                setLogoProps(formatLogoProps(value));
+                setIsLogoPickerOpen(false);
+              }}
+              defaultIconColor={logoProps?.in_use === "icon" ? logoProps?.icon?.color : undefined}
+              defaultOpen={logoProps?.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON}
+            />
+            <Input
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="Squad name"
+              className="w-full text-14"
+              required
+            />
+          </div>
           <TextArea
             value={description}
             onChange={(event) => setDescription(event.target.value)}
@@ -146,7 +188,7 @@ export const SprintAutomationModal = observer(function SprintAutomationModal(pro
             Cancel
           </Button>
           <Button type="submit" variant="primary" size="sm" disabled={isSubmitting || !name.trim()}>
-            Create sprint
+            Create squad
           </Button>
         </div>
       </form>
