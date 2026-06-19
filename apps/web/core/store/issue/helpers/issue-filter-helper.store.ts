@@ -68,8 +68,6 @@ export interface IIssueFilterHelperStore {
 }
 
 export class IssueFilterHelperStore implements IIssueFilterHelperStore {
-  constructor() {}
-
   /**
    * @description This method is used to apply the display filters on the issues
    * @param {IIssueFilters} filters
@@ -216,7 +214,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
           filter.viewId === viewId &&
           filter.userId === userId
       );
-      if (!currentFilterIndex && currentFilterIndex.length < 0) return undefined;
+      if (currentFilterIndex < 0) return undefined;
 
       return storageFilters[currentFilterIndex]?.filters || {};
     },

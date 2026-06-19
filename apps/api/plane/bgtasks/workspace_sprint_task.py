@@ -84,6 +84,9 @@ def process_workspace_sprint_automation(automation):
     return created
 
 
+process_workspace_sprint_squad = process_workspace_sprint_automation
+
+
 @shared_task
 def process_workspace_sprint_automations():
     automation_ids = WorkspaceSprintAutomation.objects.filter(enabled=True).values_list("id", flat=True)

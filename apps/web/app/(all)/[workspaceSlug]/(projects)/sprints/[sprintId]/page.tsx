@@ -12,16 +12,16 @@ import { useWorkspaceSprint } from "@/hooks/store/use-workspace-sprint";
 
 function WorkspaceSprintDetailPage() {
   const { sprintId } = useParams();
-  const { getSprintAutomationById } = useWorkspaceSprint();
-  const automationId = sprintId?.toString();
-  const automation = getSprintAutomationById(automationId);
+  const { getSprintSquadById } = useWorkspaceSprint();
+  const squadId = sprintId?.toString();
+  const squad = getSprintSquadById(squadId);
 
-  if (!automationId) return null;
+  if (!squadId) return null;
 
   return (
     <>
-      <PageHead title={automation?.name ?? "Sprints"} />
-      <WorkspaceSprintsList automationId={automationId} />
+      <PageHead title={squad?.name ?? "Squads"} />
+      <WorkspaceSprintsList automationId={squadId} />
     </>
   );
 }
