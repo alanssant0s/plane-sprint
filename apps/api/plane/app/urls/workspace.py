@@ -29,7 +29,12 @@ from plane.app.views import (
     WorkspaceModulesEndpoint,
     WorkspaceCyclesEndpoint,
     WorkspaceSprintArchiveEndpoint,
+    WorkspaceSprintAutomationArchiveEndpoint,
+    WorkspaceSprintAutomationMemberEndpoint,
     WorkspaceSprintAutomationViewSet,
+    WorkspaceSprintSquadArchiveEndpoint,
+    WorkspaceSprintSquadMemberEndpoint,
+    WorkspaceSprintSquadViewSet,
     WorkspaceSprintIssueViewSet,
     WorkspaceSprintViewSet,
     WorkspaceFavoriteEndpoint,
@@ -199,6 +204,11 @@ urlpatterns = [
         name="workspace-sprint-automations",
     ),
     path(
+        "workspaces/<str:slug>/sprint-squads/",
+        WorkspaceSprintSquadViewSet.as_view({"get": "list", "post": "create"}),
+        name="workspace-sprint-squads",
+    ),
+    path(
         "workspaces/<str:slug>/sprint-automations/<uuid:pk>/",
         WorkspaceSprintAutomationViewSet.as_view(
             {
@@ -209,6 +219,38 @@ urlpatterns = [
             }
         ),
         name="workspace-sprint-automations",
+    ),
+    path(
+        "workspaces/<str:slug>/sprint-squads/<uuid:pk>/",
+        WorkspaceSprintSquadViewSet.as_view(
+            {
+                "get": "retrieve",
+                "put": "update",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="workspace-sprint-squads",
+    ),
+    path(
+        "workspaces/<str:slug>/sprint-automations/<uuid:automation_id>/members/",
+        WorkspaceSprintAutomationMemberEndpoint.as_view(),
+        name="workspace-sprint-automation-members",
+    ),
+    path(
+        "workspaces/<str:slug>/sprint-squads/<uuid:automation_id>/members/",
+        WorkspaceSprintSquadMemberEndpoint.as_view(),
+        name="workspace-sprint-squad-members",
+    ),
+    path(
+        "workspaces/<str:slug>/sprint-automations/<uuid:automation_id>/archive/",
+        WorkspaceSprintAutomationArchiveEndpoint.as_view(),
+        name="workspace-sprint-automation-archive",
+    ),
+    path(
+        "workspaces/<str:slug>/sprint-squads/<uuid:automation_id>/archive/",
+        WorkspaceSprintSquadArchiveEndpoint.as_view(),
+        name="workspace-sprint-squad-archive",
     ),
     path(
         "workspaces/<str:slug>/archived-sprints/",

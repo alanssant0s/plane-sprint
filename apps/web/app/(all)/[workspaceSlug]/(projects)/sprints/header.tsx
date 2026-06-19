@@ -7,23 +7,58 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
+import {
+  EIssueFilterType,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
+  type TFiltersLayoutOptions,
+  WORK_ITEM_TRACKER_ELEMENTS,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { CycleIcon, WorkItemsIcon } from "@plane/propel/icons";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssueLayoutTypes, EIssuesStoreType } from "@plane/types";
 import { Breadcrumbs, Header } from "@plane/ui";
+import { getComputedDisplayProperties } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
+import {
+  DisplayFiltersSelection,
+  FiltersDropdown,
+  LayoutSelection,
+  MobileLayoutSelection,
+} from "@/components/issues/issue-layouts/filters";
 import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useWorkspaceSprint } from "@/hooks/store/use-workspace-sprint";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { GlobalViewLayoutSelection } from "@/plane-web/components/views/helper";
 
 const SPRINT_VIEW_ID = "all-issues";
+const SPRINT_LAYOUTS = [
+  EIssueLayoutTypes.LIST,
+  EIssueLayoutTypes.KANBAN,
+  EIssueLayoutTypes.CALENDAR,
+  EIssueLayoutTypes.SPREADSHEET,
+  EIssueLayoutTypes.GANTT,
+];
+const SPRINT_DISPLAY_FILTERS_BY_LAYOUT: TFiltersLayoutOptions = {
+  ...ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions,
+  list: {
+    ...ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions.list,
+    display_filters: {
+      ...ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions.list.display_filters,
+      group_by: ["state_detail.group", "priority", "project", "labels", "assignees", "created_by", null],
+    },
+  },
+  kanban: {
+    ...ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions.kanban,
+    display_filters: {
+      ...ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions.kanban.display_filters,
+      group_by: ["state_detail.group", "priority", "project", "labels", "assignees", "created_by"],
+      sub_group_by: ["state_detail.group", "priority", "project", "labels", "assignees", "created_by", null],
+    },
+  },
+};
 
 const formatSprintWeek = (startDate: string | null, endDate: string | null) => {
   if (!startDate && !endDate) return undefined;
@@ -40,26 +75,72 @@ export const WorkspaceSprintsHeader = observer(function WorkspaceSprintsHeader()
   const { workspaceSlug, workspaceSprintId } = useParams();
   const sprintId = workspaceSprintId?.toString();
   const workspaceSlugValue = workspaceSlug?.toString();
-  const { t } = useTranslation();
-
-  const {
-    issuesFilter: { filters, updateFilters },
-  } = useIssues(EIssuesStoreType.GLOBAL);
-  const { toggleCreateIssueModal } = useCommandPalette();
   const { fetchWorkspaceSprints, getSprintById } = useWorkspaceSprint();
 
   const sprint = getSprintById(sprintId);
-  const issueFilters = filters[SPRINT_VIEW_ID];
-  const activeLayout = issueFilters?.displayFilters?.layout;
   const sprintWeek = sprint ? formatSprintWeek(sprint.start_date, sprint.end_date) : undefined;
 
   useEffect(() => {
     if (workspaceSlugValue) fetchWorkspaceSprints(workspaceSlugValue);
   }, [fetchWorkspaceSprints, workspaceSlugValue]);
 
+  return (
+    <>
+      <Header>
+        <Header.LeftItem>
+          <Breadcrumbs onBack={() => router.back()} className="flex-grow-0">
+            <Breadcrumbs.Item
+              component={
+                <BreadcrumbLink
+                  label="Squads"
+                  href={`/${workspaceSlugValue}/sprints`}
+                  icon={<CycleIcon className="h-4 w-4 text-tertiary" />}
+                />
+              }
+            />
+            <Breadcrumbs.Item
+              component={
+                <BreadcrumbLink
+                  label={sprintId ? (sprint?.name ?? "Sprint") : "Manage squads"}
+                  icon={<WorkItemsIcon className="h-4 w-4 text-tertiary" />}
+                  isLast
+                />
+              }
+              isLast
+            />
+          </Breadcrumbs>
+          {sprintWeek && <span className="text-12 text-tertiary">{sprintWeek}</span>}
+        </Header.LeftItem>
+        <Header.RightItem className="items-center">
+          <WorkspaceSprintsHeaderActions />
+        </Header.RightItem>
+      </Header>
+    </>
+  );
+});
+
+export const WorkspaceSprintsHeaderActions = observer(function WorkspaceSprintsHeaderActions() {
+  const { workspaceSlug, workspaceSprintId } = useParams();
+  const sprintId = workspaceSprintId?.toString();
+  const workspaceSlugValue = workspaceSlug?.toString();
+  const { t } = useTranslation();
+
+  const {
+    issuesFilter: { filters, updateFilters },
+  } = useIssues(EIssuesStoreType.GLOBAL);
+  const { toggleCreateIssueModal } = useCommandPalette();
+
+  const issueFilters = filters[SPRINT_VIEW_ID];
+  const activeLayout = issueFilters?.displayFilters?.layout;
+  const displayProperties = {
+    ...getComputedDisplayProperties(issueFilters?.displayProperties),
+    project: issueFilters?.displayProperties?.project ?? true,
+    sprint: false,
+  };
+
   const currentLayoutFilters = useMemo(() => {
     const layout = activeLayout ?? EIssueLayoutTypes.SPREADSHEET;
-    const layoutFilters = ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.layoutOptions[layout];
+    const layoutFilters = SPRINT_DISPLAY_FILTERS_BY_LAYOUT[layout];
 
     if (!sprintId || !layoutFilters?.display_properties) return layoutFilters;
 
@@ -86,78 +167,82 @@ export const WorkspaceSprintsHeader = observer(function WorkspaceSprintsHeader()
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlugValue) return;
-      updateFilters(workspaceSlugValue, undefined, EIssueFilterType.DISPLAY_PROPERTIES, property, SPRINT_VIEW_ID);
+      const nextDisplayProperties = {
+        ...getComputedDisplayProperties(issueFilters?.displayProperties),
+        project: issueFilters?.displayProperties?.project ?? true,
+        sprint: false,
+        ...property,
+      };
+
+      updateFilters(
+        workspaceSlugValue,
+        undefined,
+        EIssueFilterType.DISPLAY_PROPERTIES,
+        nextDisplayProperties,
+        SPRINT_VIEW_ID
+      );
     },
-    [updateFilters, workspaceSlugValue]
+    [issueFilters?.displayProperties, updateFilters, workspaceSlugValue]
   );
 
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
       if (!workspaceSlugValue) return;
-      updateFilters(workspaceSlugValue, undefined, EIssueFilterType.DISPLAY_FILTERS, { layout }, SPRINT_VIEW_ID);
+      const nextDisplayFilters: Partial<IIssueDisplayFilterOptions> = { layout };
+
+      if (layout === EIssueLayoutTypes.KANBAN && !issueFilters?.displayFilters?.group_by) {
+        nextDisplayFilters.group_by = "state_detail.group";
+      }
+
+      updateFilters(
+        workspaceSlugValue,
+        undefined,
+        EIssueFilterType.DISPLAY_FILTERS,
+        nextDisplayFilters,
+        SPRINT_VIEW_ID
+      );
     },
-    [updateFilters, workspaceSlugValue]
+    [issueFilters?.displayFilters?.group_by, updateFilters, workspaceSlugValue]
   );
+
+  if (!sprintId || !workspaceSlugValue || !issueFilters) return null;
 
   return (
     <>
-      <Header>
-        <Header.LeftItem>
-          <Breadcrumbs onBack={() => router.back()} className="flex-grow-0">
-            <Breadcrumbs.Item
-              component={
-                <BreadcrumbLink
-                  label="Sprints"
-                  href={`/${workspaceSlugValue}/sprints`}
-                  icon={<CycleIcon className="h-4 w-4 text-tertiary" />}
-                />
-              }
-            />
-            <Breadcrumbs.Item
-              component={
-                <BreadcrumbLink
-                  label={sprintId ? (sprint?.name ?? "Sprint") : "Manage sprints"}
-                  icon={<WorkItemsIcon className="h-4 w-4 text-tertiary" />}
-                  isLast
-                />
-              }
-              isLast
-            />
-          </Breadcrumbs>
-          {sprintWeek && <span className="text-12 text-tertiary">{sprintWeek}</span>}
-        </Header.LeftItem>
-        <Header.RightItem className="items-center">
-          {sprintId && workspaceSlugValue && (
-            <>
-              <GlobalViewLayoutSelection
-                onChange={handleLayoutChange}
-                selectedLayout={activeLayout ?? EIssueLayoutTypes.SPREADSHEET}
-                workspaceSlug={workspaceSlugValue}
-              />
-              <WorkItemFiltersToggle entityType={EIssuesStoreType.GLOBAL} entityId={SPRINT_VIEW_ID} />
-              <FiltersDropdown title={t("common.display")} placement="bottom-end">
-                <DisplayFiltersSelection
-                  layoutDisplayFiltersOptions={currentLayoutFilters}
-                  displayFilters={issueFilters?.displayFilters ?? {}}
-                  handleDisplayFiltersUpdate={handleDisplayFilters}
-                  displayProperties={{ ...(issueFilters?.displayProperties ?? {}), sprint: false }}
-                  handleDisplayPropertiesUpdate={handleDisplayProperties}
-                />
-              </FiltersDropdown>
-              <Button
-                variant="primary"
-                size="lg"
-                data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.WORK_ITEMS}
-                onClick={() => {
-                  toggleCreateIssueModal(true);
-                }}
-              >
-                {t("issue.add.label")}
-              </Button>
-            </>
-          )}
-        </Header.RightItem>
-      </Header>
+      <div className="hidden @4xl:flex">
+        <LayoutSelection
+          layouts={SPRINT_LAYOUTS}
+          onChange={handleLayoutChange}
+          selectedLayout={activeLayout ?? EIssueLayoutTypes.SPREADSHEET}
+        />
+      </div>
+      <div className="flex @4xl:hidden">
+        <MobileLayoutSelection
+          layouts={SPRINT_LAYOUTS}
+          onChange={handleLayoutChange}
+          activeLayout={activeLayout ?? EIssueLayoutTypes.SPREADSHEET}
+        />
+      </div>
+      <WorkItemFiltersToggle entityType={EIssuesStoreType.GLOBAL} entityId={SPRINT_VIEW_ID} />
+      <FiltersDropdown title={t("common.display")} placement="bottom-end">
+        <DisplayFiltersSelection
+          layoutDisplayFiltersOptions={currentLayoutFilters}
+          displayFilters={issueFilters?.displayFilters ?? {}}
+          handleDisplayFiltersUpdate={handleDisplayFilters}
+          displayProperties={displayProperties}
+          handleDisplayPropertiesUpdate={handleDisplayProperties}
+        />
+      </FiltersDropdown>
+      <Button
+        variant="primary"
+        size="lg"
+        data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.WORK_ITEMS}
+        onClick={() => {
+          toggleCreateIssueModal(true);
+        }}
+      >
+        {t("issue.add.label")}
+      </Button>
     </>
   );
 });

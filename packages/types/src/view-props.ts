@@ -161,6 +161,7 @@ export interface IIssueDisplayFilterOptions {
   sub_issue?: boolean;
 }
 export interface IIssueDisplayProperties {
+  project?: boolean;
   assignee?: boolean;
   start_date?: boolean;
   due_date?: boolean;
@@ -217,6 +218,8 @@ export interface IProjectUserPropertiesResponse extends IIssueFiltersResponse {
 export interface IWorkspaceUserPropertiesResponse extends IIssueFiltersResponse {
   navigation_project_limit?: number;
   navigation_control_preference?: "ACCORDION" | "TABBED";
+  navigation_sprint_preference?: "ACCORDION" | "TABBED";
+  navigation_squad_limit?: number;
   // Note: show_limited_projects is derived from navigation_project_limit (0 = false, >0 = true)
 }
 

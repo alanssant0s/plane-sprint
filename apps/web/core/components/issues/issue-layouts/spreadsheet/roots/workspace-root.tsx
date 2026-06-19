@@ -10,6 +10,7 @@ import { observer } from "mobx-react";
 import { ALL_ISSUES, EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import type { IIssueDisplayFilterOptions } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
+import { getComputedDisplayProperties } from "@plane/utils";
 // components
 import { AllIssueQuickActions } from "@/components/issues/issue-layouts/quick-action-dropdowns";
 import { SpreadsheetLayoutLoader } from "@/components/ui/loader/layouts/spreadsheet-layout-loader";
@@ -54,7 +55,11 @@ export const WorkspaceSpreadsheetRoot = observer(function WorkspaceSpreadsheetRo
   // Derived values
   const issueFilters = globalViewId ? filters?.[globalViewId.toString()] : undefined;
   const displayProperties = routeFilters.global_sprint_id
-    ? { ...issueFilters?.displayProperties, sprint: false }
+    ? {
+        ...getComputedDisplayProperties(issueFilters?.displayProperties),
+        project: issueFilters?.displayProperties?.project ?? true,
+        sprint: false,
+      }
     : (issueFilters?.displayProperties ?? {});
 
   // Permission checker
@@ -128,6 +133,7 @@ export const WorkspaceSpreadsheetRoot = observer(function WorkspaceSpreadsheetRo
         canLoadMoreIssues={!!nextPageResults}
         loadMoreIssues={fetchNextPages}
         isWorkspaceLevel
+        showProjectInWorkItemColumn={!!routeFilters.global_sprint_id}
       />
     </IssueLayoutHOC>
   );

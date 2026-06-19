@@ -5,8 +5,11 @@
  */
 
 import type { TIssue } from "../issues/issue";
+import type { TLogoProps } from "../common";
+import type { IUserLite } from "../users";
 
 export type TWorkspaceSprintStatus = "archived" | "current" | "draft" | "past" | "upcoming";
+export type TWorkspaceSprintAccess = 0 | 2;
 
 export interface IWorkspaceSprint {
   id: string;
@@ -35,12 +38,14 @@ export type TWorkspaceSprintCreatePayload = Pick<
   "name" | "description" | "start_date" | "end_date" | "logo_props" | "timezone"
 > & { automation_id?: string | null };
 
-export interface IWorkspaceSprintAutomation {
+export interface IWorkspaceSprintSquad {
   id: string;
   workspace_id: string;
   name: string;
   description: string;
+  logo_props: TLogoProps;
   enabled: boolean;
+  access: TWorkspaceSprintAccess;
   start_date: string;
   sprint_duration_days: number;
   timezone: string;
@@ -48,16 +53,20 @@ export interface IWorkspaceSprintAutomation {
   next_sequence: number;
   auto_create_next: boolean;
   sort_order: number;
+  archived_at: string | null;
+  member_ids?: string[];
   active_sprints_count?: number;
   created_at?: string;
   updated_at?: string;
 }
 
-export type TWorkspaceSprintAutomationPayload = Pick<
-  IWorkspaceSprintAutomation,
+export type TWorkspaceSprintSquadPayload = Pick<
+  IWorkspaceSprintSquad,
   | "name"
   | "description"
+  | "logo_props"
   | "enabled"
+  | "access"
   | "start_date"
   | "sprint_duration_days"
   | "timezone"
@@ -65,6 +74,19 @@ export type TWorkspaceSprintAutomationPayload = Pick<
   | "auto_create_next"
   | "sort_order"
 >;
+
+export interface IWorkspaceSprintSquadMember {
+  id: string;
+  automation_id: string;
+  member: string;
+  member_detail: IUserLite;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export type IWorkspaceSprintAutomation = IWorkspaceSprintSquad;
+export type TWorkspaceSprintAutomationPayload = TWorkspaceSprintSquadPayload;
+export type IWorkspaceSprintAutomationMember = IWorkspaceSprintSquadMember;
 
 export interface WorkspaceSprintIssueResponse {
   id: string;

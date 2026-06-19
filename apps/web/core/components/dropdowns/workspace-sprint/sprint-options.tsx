@@ -10,7 +10,9 @@ import { Combobox } from "@headlessui/react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { CheckIcon, CycleIcon, SearchIcon } from "@plane/propel/icons";
+import type { TLogoProps } from "@plane/types";
 import { useWorkspaceSprint } from "@/hooks/store/use-workspace-sprint";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -26,7 +28,8 @@ export const WorkspaceSprintOptions = observer(function WorkspaceSprintOptions(p
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { workspaceSlug } = useParams();
-  const { currentWorkspaceSprintIds, fetchedMap, fetchWorkspaceSprints, getSprintById } = useWorkspaceSprint();
+  const { currentWorkspaceSprintIds, fetchedMap, fetchWorkspaceSprints, getSprintAutomationById, getSprintById } =
+    useWorkspaceSprint();
   const { isMobile } = usePlatformOS();
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
@@ -62,12 +65,13 @@ export const WorkspaceSprintOptions = observer(function WorkspaceSprintOptions(p
     },
     ...sprintIds.map((sprintId: string) => {
       const sprint = getSprintById(sprintId);
+      const automation = getSprintAutomationById(sprint?.automation_id);
       return {
         value: sprintId,
         query: sprint?.name ?? "Sprint",
         content: (
           <div className="flex items-center gap-2">
-            <CycleIcon className="h-3 w-3 flex-shrink-0" />
+            <WorkspaceSprintOptionIcon logoProps={automation?.logo_props} />
             <span className="flex-grow truncate">{sprint?.name ?? "Sprint"}</span>
           </div>
         ),
@@ -130,3 +134,11 @@ export const WorkspaceSprintOptions = observer(function WorkspaceSprintOptions(p
     </Combobox.Options>
   );
 });
+
+function WorkspaceSprintOptionIcon({ logoProps }: { logoProps: TLogoProps | undefined }) {
+  return logoProps?.in_use ? (
+    <Logo logo={logoProps} size={12} type="material" />
+  ) : (
+    <CycleIcon className="h-3 w-3 flex-shrink-0" />
+  );
+}

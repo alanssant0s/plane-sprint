@@ -14,6 +14,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.permissions import WorkspaceEntityPermission, allow_permission, ROLE
 from plane.app.serializers import (
+    WorkspaceSprintAutomationMemberSerializer,
     WorkspaceSprintAutomationSerializer,
     WorkspaceSprintAutomationWriteSerializer,
     WorkspaceSprintIssueSerializer,
@@ -21,8 +22,44 @@ from plane.app.serializers import (
     WorkspaceSprintWriteSerializer,
 )
 from plane.bgtasks.workspace_sprint_task import process_workspace_sprint_automation
-from plane.db.models import Issue, ProjectMember, Workspace, WorkspaceSprint, WorkspaceSprintAutomation, WorkspaceSprintIssue
+from plane.db.models import (
+    Issue,
+    ProjectMember,
+    Workspace,
+    WorkspaceMember,
+    WorkspaceSprint,
+    WorkspaceSprintAutomation,
+    WorkspaceSprintAutomationMember,
+    WorkspaceSprintIssue,
+)
 from plane.app.views.base import BaseAPIView, BaseViewSet
+
+
+def is_workspace_admin(slug, user):
+    return WorkspaceMember.objects.filter(
+        workspace__slug=slug,
+        member=user,
+        role=ROLE.ADMIN.value,
+        is_active=True,
+    ).exists()
+
+
+def accessible_automation_filter(user):
+    return (
+        Q(access=WorkspaceSprintAutomation.PUBLIC_ACCESS)
+        | Q(created_by=user)
+        | Q(automation_members__member=user, automation_members__deleted_at__isnull=True)
+    )
+
+
+SPRINT_AUTOMATION_PROCESS_FIELDS = {
+    "enabled",
+    "start_date",
+    "sprint_duration_days",
+    "timezone",
+    "name_template",
+    "auto_create_next",
+}
 
 
 class WorkspaceSprintViewSet(BaseViewSet):
@@ -36,7 +73,7 @@ class WorkspaceSprintViewSet(BaseViewSet):
     def get_queryset(self):
         queryset = (
             WorkspaceSprint.objects.filter(workspace__slug=self.workspace_slug)
-            .select_related("workspace", "owned_by")
+            .select_related("workspace", "owned_by", "automation")
             .annotate(
                 total_issues=Count(
                     "sprint_issues",
@@ -50,6 +87,14 @@ class WorkspaceSprintViewSet(BaseViewSet):
             )
             .order_by("sort_order", "-created_at")
         )
+        if not is_workspace_admin(self.workspace_slug, self.request.user):
+            queryset = queryset.filter(
+                Q(automation__isnull=True)
+                | Q(automation__access=WorkspaceSprintAutomation.PUBLIC_ACCESS)
+                | Q(automation__created_by=self.request.user)
+                | Q(automation__automation_members__member=self.request.user, automation__automation_members__deleted_at__isnull=True)
+            ).distinct()
+
         archived = self.request.GET.get("archived", "false")
         automation_id = self.request.GET.get("automation_id")
 
@@ -98,9 +143,11 @@ class WorkspaceSprintAutomationViewSet(BaseViewSet):
         )
 
     def get_queryset(self):
-        return (
+        archived = self.request.GET.get("archived", "false")
+        queryset = (
             WorkspaceSprintAutomation.objects.filter(workspace__slug=self.workspace_slug)
             .select_related("workspace", "created_by")
+            .prefetch_related("automation_members")
             .annotate(
                 active_sprints_count=Count(
                     "sprints",
@@ -109,6 +156,14 @@ class WorkspaceSprintAutomationViewSet(BaseViewSet):
             )
             .order_by("sort_order", "-created_at")
         )
+        if archived == "true":
+            queryset = queryset.filter(archived_at__isnull=False)
+        else:
+            queryset = queryset.filter(archived_at__isnull=True)
+
+        if is_workspace_admin(self.workspace_slug, self.request.user):
+            return queryset
+        return queryset.filter(accessible_automation_filter(self.request.user)).distinct()
 
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
@@ -123,7 +178,7 @@ class WorkspaceSprintAutomationViewSet(BaseViewSet):
         serializer = self.get_serializer(automation, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         automation = serializer.save()
-        if set(request.data.keys()) != {"sort_order"}:
+        if set(request.data.keys()) & SPRINT_AUTOMATION_PROCESS_FIELDS:
             process_workspace_sprint_automation(automation)
         return Response(WorkspaceSprintAutomationSerializer(automation).data, status=status.HTTP_200_OK)
 
@@ -136,11 +191,35 @@ class WorkspaceSprintAutomationViewSet(BaseViewSet):
         return Response(WorkspaceSprintAutomationSerializer(automation).data, status=status.HTTP_200_OK)
 
 
+class WorkspaceSprintAutomationArchiveEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
+    def post(self, request, slug, automation_id):
+        automation = WorkspaceSprintAutomation.objects.get(
+            workspace__slug=slug,
+            pk=automation_id,
+            archived_at__isnull=True,
+        )
+        automation.archived_at = timezone.now()
+        automation.save(update_fields=["archived_at", "updated_at"])
+        return Response(WorkspaceSprintAutomationSerializer(automation).data, status=status.HTTP_200_OK)
+
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
+    def delete(self, request, slug, automation_id):
+        automation = WorkspaceSprintAutomation.objects.get(
+            workspace__slug=slug,
+            pk=automation_id,
+            archived_at__isnull=False,
+        )
+        automation.archived_at = None
+        automation.save(update_fields=["archived_at", "updated_at"])
+        return Response(WorkspaceSprintAutomationSerializer(automation).data, status=status.HTTP_200_OK)
+
+
 class WorkspaceSprintArchiveEndpoint(BaseAPIView):
     def get_queryset(self):
-        return (
+        queryset = (
             WorkspaceSprint.objects.filter(workspace__slug=self.workspace_slug, archived_at__isnull=False)
-            .select_related("workspace", "owned_by")
+            .select_related("workspace", "owned_by", "automation")
             .annotate(
                 total_issues=Count(
                     "sprint_issues",
@@ -154,6 +233,14 @@ class WorkspaceSprintArchiveEndpoint(BaseAPIView):
             )
             .order_by("-archived_at")
         )
+        if is_workspace_admin(self.workspace_slug, self.request.user):
+            return queryset
+        return queryset.filter(
+            Q(automation__isnull=True)
+            | Q(automation__access=WorkspaceSprintAutomation.PUBLIC_ACCESS)
+            | Q(automation__created_by=self.request.user)
+            | Q(automation__automation_members__member=self.request.user, automation__automation_members__deleted_at__isnull=True)
+        ).distinct()
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
@@ -189,7 +276,15 @@ class WorkspaceSprintIssueViewSet(BaseViewSet):
         ).select_related("workspace", "project", "sprint", "issue", "issue__state", "issue__project")
 
     def _get_sprint(self, slug, sprint_id):
-        return WorkspaceSprint.objects.get(workspace__slug=slug, pk=sprint_id, archived_at__isnull=True)
+        queryset = WorkspaceSprint.objects.filter(workspace__slug=slug, pk=sprint_id, archived_at__isnull=True)
+        if not is_workspace_admin(slug, self.request.user):
+            queryset = queryset.filter(
+                Q(automation__isnull=True)
+                | Q(automation__access=WorkspaceSprintAutomation.PUBLIC_ACCESS)
+                | Q(automation__created_by=self.request.user)
+                | Q(automation__automation_members__member=self.request.user, automation__automation_members__deleted_at__isnull=True)
+            ).distinct()
+        return queryset.get()
 
     def _get_issue_for_write(self, slug, issue_id, user):
         issue = Issue.issue_objects.select_related("workspace", "project").get(workspace__slug=slug, pk=issue_id)
@@ -237,3 +332,76 @@ class WorkspaceSprintIssueViewSet(BaseViewSet):
 
         sprint_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class WorkspaceSprintAutomationMemberEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    def get(self, request, slug, automation_id):
+        automation = WorkspaceSprintAutomation.objects.get(workspace__slug=slug, pk=automation_id)
+        if (
+            automation.access == WorkspaceSprintAutomation.PRIVATE_ACCESS
+            and not is_workspace_admin(slug, request.user)
+            and automation.created_by_id != request.user.id
+            and not WorkspaceSprintAutomationMember.objects.filter(
+                automation=automation,
+                member=request.user,
+                deleted_at__isnull=True,
+            ).exists()
+        ):
+            return Response({"error": "Sprint group is not accessible"}, status=status.HTTP_403_FORBIDDEN)
+
+        members = WorkspaceSprintAutomationMember.objects.filter(
+            automation=automation,
+            deleted_at__isnull=True,
+        ).select_related("member")
+        return Response(WorkspaceSprintAutomationMemberSerializer(members, many=True).data, status=status.HTTP_200_OK)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    def patch(self, request, slug, automation_id):
+        automation = WorkspaceSprintAutomation.objects.get(workspace__slug=slug, pk=automation_id)
+        if not is_workspace_admin(slug, request.user) and automation.created_by_id != request.user.id:
+            return Response({"error": "You don't have the required permissions."}, status=status.HTTP_403_FORBIDDEN)
+
+        member_ids = request.data.get("member_ids", [])
+        if not isinstance(member_ids, list):
+            return Response({"error": "member_ids must be a list"}, status=status.HTTP_400_BAD_REQUEST)
+
+        valid_member_ids = set(
+            WorkspaceMember.objects.filter(
+                workspace__slug=slug,
+                member_id__in=member_ids,
+                is_active=True,
+            ).values_list("member_id", flat=True)
+        )
+
+        WorkspaceSprintAutomationMember.objects.filter(automation=automation).exclude(member_id__in=valid_member_ids).delete()
+        existing_member_ids = set(
+            WorkspaceSprintAutomationMember.objects.filter(
+                automation=automation,
+                member_id__in=valid_member_ids,
+                deleted_at__isnull=True,
+            ).values_list("member_id", flat=True)
+        )
+        WorkspaceSprintAutomationMember.objects.bulk_create(
+            [
+                WorkspaceSprintAutomationMember(
+                    automation=automation,
+                    workspace=automation.workspace,
+                    member_id=member_id,
+                )
+                for member_id in valid_member_ids - existing_member_ids
+            ],
+            ignore_conflicts=True,
+        )
+
+        members = WorkspaceSprintAutomationMember.objects.filter(
+            automation=automation,
+            deleted_at__isnull=True,
+        ).select_related("member")
+        return Response(WorkspaceSprintAutomationMemberSerializer(members, many=True).data, status=status.HTTP_200_OK)
+
+
+# Canonical squad names with backwards-compatible automation classes above.
+WorkspaceSprintSquadViewSet = WorkspaceSprintAutomationViewSet
+WorkspaceSprintSquadArchiveEndpoint = WorkspaceSprintAutomationArchiveEndpoint
+WorkspaceSprintSquadMemberEndpoint = WorkspaceSprintAutomationMemberEndpoint

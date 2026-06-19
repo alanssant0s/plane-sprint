@@ -6,7 +6,9 @@
 
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ChevronDownIcon, CycleIcon } from "@plane/propel/icons";
+import type { TLogoProps } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useWorkspaceSprint } from "@/hooks/store/use-workspace-sprint";
@@ -25,8 +27,10 @@ export const WorkspaceSprintDropdown = observer(function WorkspaceSprintDropdown
   const [isOpen, setIsOpen] = useState(false);
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-  const { getSprintById } = useWorkspaceSprint();
-  const selectedName = value ? getSprintById(value)?.name : null;
+  const { getSprintAutomationById, getSprintById } = useWorkspaceSprint();
+  const selectedSprint = value ? getSprintById(value) : null;
+  const selectedAutomation = getSprintAutomationById(selectedSprint?.automation_id);
+  const selectedName = selectedSprint?.name ?? null;
   const { handleClose, handleKeyDown, handleOnClick } = useDropdown({
     dropdownRef,
     isOpen,
@@ -60,7 +64,7 @@ export const WorkspaceSprintDropdown = observer(function WorkspaceSprintDropdown
           disabled={disabled}
           title={selectedName ?? "No sprint"}
         >
-          <CycleIcon className="h-3 w-3 flex-shrink-0" />
+          <WorkspaceSprintDropdownIcon logoProps={selectedAutomation?.logo_props} />
           <span className="truncate">{selectedName ?? "No sprint"}</span>
           <ChevronDownIcon className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />
         </button>
@@ -70,3 +74,11 @@ export const WorkspaceSprintDropdown = observer(function WorkspaceSprintDropdown
     </ComboDropDown>
   );
 });
+
+function WorkspaceSprintDropdownIcon({ logoProps }: { logoProps: TLogoProps | undefined }) {
+  return logoProps?.in_use ? (
+    <Logo logo={logoProps} size={12} type="material" />
+  ) : (
+    <CycleIcon className="h-3 w-3 flex-shrink-0" />
+  );
+}

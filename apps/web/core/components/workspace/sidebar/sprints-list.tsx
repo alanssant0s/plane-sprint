@@ -11,10 +11,11 @@ import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { ListChecks, MoreHorizontal, Settings } from "lucide-react";
+import { MoreHorizontal, Settings } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { ChevronRightIcon, CycleIcon, PlusIcon, WorkItemsIcon } from "@plane/propel/icons";
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { ChevronRightIcon, PlusIcon } from "@plane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -24,7 +25,15 @@ import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 import { SprintAutomationModal } from "@/components/workspace/sprints/automation-modal";
 import { useWorkspaceSprint } from "@/hooks/store/use-workspace-sprint";
 import { useUserPermissions } from "@/hooks/store/user";
+import { useSprintNavigationPreferences } from "@/hooks/use-navigation-preferences";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { getSidebarNavigationItemIcon } from "@/plane-web/components/workspace/sidebar/helper";
+import type { TSprintNavigationMode } from "@plane/types";
+
+const SPRINT_SIDEBAR_ICON_KEYS = {
+  squad: "squad",
+  sprint: "sprint",
+} as const;
 
 export const SidebarSprintsList = observer(function SidebarSprintsList() {
   const [isOpen, setIsOpen] = useState(true);
@@ -33,11 +42,12 @@ export const SidebarSprintsList = observer(function SidebarSprintsList() {
   const pathname = usePathname();
   const router = useRouter();
   const { allowPermissions } = useUserPermissions();
+  const { preferences: sprintPreferences } = useSprintNavigationPreferences();
   const {
     automationFetchedMap,
-    currentWorkspaceSprintAutomationIds,
-    fetchWorkspaceSprintAutomations,
-    getSprintAutomationById,
+    currentWorkspaceSprintSquadIds,
+    fetchWorkspaceSprintSquads,
+    getSprintSquadById,
     updateWorkspaceSprintAutomationSortOrder,
   } = useWorkspaceSprint();
 
@@ -49,8 +59,8 @@ export const SidebarSprintsList = observer(function SidebarSprintsList() {
 
   useEffect(() => {
     if (!workspaceSlugValue || automationFetchedMap[workspaceSlugValue]) return;
-    fetchWorkspaceSprintAutomations(workspaceSlugValue);
-  }, [automationFetchedMap, fetchWorkspaceSprintAutomations, workspaceSlugValue]);
+    fetchWorkspaceSprintSquads(workspaceSlugValue);
+  }, [automationFetchedMap, fetchWorkspaceSprintSquads, workspaceSlugValue]);
 
   useEffect(() => {
     if (pathname.includes("/sprints")) setIsOpen(true);
@@ -58,7 +68,12 @@ export const SidebarSprintsList = observer(function SidebarSprintsList() {
 
   if (!workspaceSlugValue) return null;
 
-  const automationIds = currentWorkspaceSprintAutomationIds ?? [];
+  const automationIds = currentWorkspaceSprintSquadIds ?? [];
+  const displayedAutomationIds = sprintPreferences.showLimitedSquads
+    ? automationIds.slice(0, sprintPreferences.limitedSquadsCount)
+    : automationIds;
+  const hasMoreSquads =
+    sprintPreferences.showLimitedSquads && automationIds.length > sprintPreferences.limitedSquadsCount;
 
   const handleOnAutomationDrop = (
     sourceId: string | undefined,
@@ -72,15 +87,15 @@ export const SidebarSprintsList = observer(function SidebarSprintsList() {
     if (destinationIndex < 0) return;
 
     const insertIndex = shouldDropBelow ? destinationIndex + 1 : destinationIndex;
-    const previousAutomation = getSprintAutomationById(sortedIds[insertIndex - 1]);
-    const nextAutomation = getSprintAutomationById(sortedIds[insertIndex]);
+    const previousAutomation = getSprintSquadById(sortedIds[insertIndex - 1]);
+    const nextAutomation = getSprintSquadById(sortedIds[insertIndex]);
 
     let sortOrder: number;
     if (previousAutomation && nextAutomation)
       sortOrder = (previousAutomation.sort_order + nextAutomation.sort_order) / 2;
     else if (previousAutomation) sortOrder = previousAutomation.sort_order + 1000;
     else if (nextAutomation) sortOrder = nextAutomation.sort_order - 1000;
-    else sortOrder = getSprintAutomationById(sourceId)?.sort_order ?? 1000;
+    else sortOrder = getSprintSquadById(sourceId)?.sort_order ?? 1000;
 
     updateWorkspaceSprintAutomationSortOrder(workspaceSlugValue, sourceId, sortOrder).catch(() => {
       setToast({
@@ -107,18 +122,18 @@ export const SidebarSprintsList = observer(function SidebarSprintsList() {
             onClick={() => setIsOpen(!isOpen)}
             aria-label={isOpen ? "Close sprints menu" : "Open sprints menu"}
           >
-            <span className="text-13 font-semibold">Sprints</span>
+            <span className="text-13 font-semibold">Squads</span>
           </Disclosure.Button>
           <div className="flex items-center gap-1">
             {canCreateSprint && (
-              <Tooltip tooltipHeading="Create sprint" tooltipContent="">
+              <Tooltip tooltipHeading="Create squad" tooltipContent="">
                 <IconButton
                   variant="ghost"
                   size="sm"
                   icon={PlusIcon}
                   onClick={() => setIsCreateModalOpen(true)}
                   className="hidden text-placeholder group-hover:inline-flex"
-                  aria-label="Create sprint"
+                  aria-label="Create squad"
                 />
               </Tooltip>
             )}
@@ -147,16 +162,32 @@ export const SidebarSprintsList = observer(function SidebarSprintsList() {
           {isOpen && (
             <Disclosure.Panel as="div" className="flex flex-col gap-0.5" static>
               {automationIds.length > 0 ? (
-                automationIds.map((automationId: string, index) => (
-                  <SidebarSprintGroupItem
-                    key={automationId}
-                    automationId={automationId}
-                    workspaceSlug={workspaceSlugValue}
-                    canReorder={canCreateSprint}
-                    isLastChild={index === automationIds.length - 1}
-                    handleOnAutomationDrop={handleOnAutomationDrop}
-                  />
-                ))
+                <>
+                  {displayedAutomationIds.map((automationId: string, index) => (
+                    <SidebarSprintGroupItem
+                      key={automationId}
+                      automationId={automationId}
+                      workspaceSlug={workspaceSlugValue}
+                      canReorder={canCreateSprint}
+                      navigationMode={sprintPreferences.navigationMode}
+                      isLastChild={index === displayedAutomationIds.length - 1}
+                      handleOnAutomationDrop={handleOnAutomationDrop}
+                    />
+                  ))}
+                  {hasMoreSquads && (
+                    <SidebarNavItem>
+                      <button
+                        type="button"
+                        onClick={() => router.push(`/${workspaceSlugValue}/squads`)}
+                        className="flex flex-grow items-center gap-1.5 text-13 font-medium text-tertiary"
+                        aria-label="View all squads"
+                      >
+                        <MoreHorizontal className="size-4 flex-shrink-0" />
+                        <span>More</span>
+                      </button>
+                    </SidebarNavItem>
+                  )}
+                </>
               ) : (
                 <div className="px-2 py-1.5 text-12 text-tertiary">No sprints yet</div>
               )}
@@ -177,11 +208,12 @@ type SprintGroupItemProps = {
     shouldDropBelow: boolean
   ) => void;
   isLastChild: boolean;
+  navigationMode: TSprintNavigationMode;
   workspaceSlug: string;
 };
 
 const SidebarSprintGroupItem = observer(function SidebarSprintGroupItem(props: SprintGroupItemProps) {
-  const { automationId, canReorder, handleOnAutomationDrop, isLastChild, workspaceSlug } = props;
+  const { automationId, canReorder, handleOnAutomationDrop, isLastChild, navigationMode, workspaceSlug } = props;
   const [isOpen, setIsOpen] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
   const [instruction, setInstruction] = useState<"DRAG_OVER" | "DRAG_BELOW" | undefined>(undefined);
@@ -190,23 +222,25 @@ const SidebarSprintGroupItem = observer(function SidebarSprintGroupItem(props: S
   const pathname = usePathname();
   const router = useRouter();
   const { isMobile } = usePlatformOS();
-  const { fetchWorkspaceSprints, getSprintAutomationById, getSprintById, getSprintsByAutomationId } =
-    useWorkspaceSprint();
+  const { fetchWorkspaceSprints, getSprintSquadById, getSprintById, getSprintsBySquadId } = useWorkspaceSprint();
 
-  const automation = getSprintAutomationById(automationId);
-  const sprintIds = getSprintsByAutomationId(automationId);
+  const automation = getSprintSquadById(automationId);
+  const sprintIds = getSprintsBySquadId(automationId);
   const detailsHref = `/${workspaceSlug}/sprints/${automationId}`;
+  const firstSprintHref = sprintIds[0] ? `/${workspaceSlug}/sprints/work-items/${sprintIds[0]}` : detailsHref;
   const { workspaceSprintId } = useParams();
   const selectedSprintId = workspaceSprintId?.toString();
   const hasSelectedSprint = selectedSprintId ? sprintIds.includes(selectedSprintId) : false;
+  const isAccordionMode = navigationMode === "ACCORDION";
+  const isActive = !isAccordionMode && (pathname.includes(`/sprints/${automationId}`) || hasSelectedSprint);
 
   useEffect(() => {
     fetchWorkspaceSprints(workspaceSlug, automationId);
   }, [automationId, fetchWorkspaceSprints, workspaceSlug]);
 
   useEffect(() => {
-    if (pathname.includes(`/sprints/${automationId}`) || hasSelectedSprint) setIsOpen(true);
-  }, [automationId, hasSelectedSprint, pathname]);
+    if (isAccordionMode && (pathname.includes(`/sprints/${automationId}`) || hasSelectedSprint)) setIsOpen(true);
+  }, [automationId, hasSelectedSprint, isAccordionMode, pathname]);
 
   useEffect(() => {
     const itemElement = itemRef.current;
@@ -272,6 +306,14 @@ const SidebarSprintGroupItem = observer(function SidebarSprintGroupItem(props: S
 
   if (!automation) return null;
 
+  const handleItemClick = () => {
+    if (isAccordionMode) {
+      setIsOpen(!isOpen);
+    } else {
+      router.push(firstSprintHref);
+    }
+  };
+
   return (
     <Disclosure as="div" className="flex flex-col" defaultOpen>
       <div
@@ -281,7 +323,14 @@ const SidebarSprintGroupItem = observer(function SidebarSprintGroupItem(props: S
         })}
       >
         <DropIndicator classNames="absolute top-0" isVisible={instruction === "DRAG_OVER"} />
-        <div className="group/sprint-item relative flex w-full items-center justify-between rounded-md px-2 py-1 text-secondary hover:bg-layer-transparent-hover">
+        <div
+          className={cn(
+            "group/sprint-item relative flex w-full items-center justify-between rounded-md px-2 py-1 text-secondary hover:bg-layer-transparent-hover",
+            {
+              "bg-layer-transparent-active": isActive,
+            }
+          )}
+        >
           {canReorder && (
             <Tooltip isMobile={isMobile} tooltipContent="Drag to rearrange" position="top-end" disabled={isDragging}>
               <button
@@ -300,11 +349,15 @@ const SidebarSprintGroupItem = observer(function SidebarSprintGroupItem(props: S
           )}
           <button
             type="button"
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={handleItemClick}
             className="flex min-w-0 flex-grow items-center gap-1.5 text-left"
             aria-label={isOpen ? "Close sprint menu" : "Open sprint menu"}
           >
-            <CycleIcon className="size-4 flex-shrink-0" />
+            {automation.logo_props?.in_use ? (
+              <Logo logo={automation.logo_props} size={16} type="material" />
+            ) : (
+              getSidebarNavigationItemIcon(SPRINT_SIDEBAR_ICON_KEYS.squad)
+            )}
             <span className="truncate text-13 font-medium">{automation.name}</span>
           </button>
           <div className="flex items-center gap-1">
@@ -319,70 +372,68 @@ const SidebarSprintGroupItem = observer(function SidebarSprintGroupItem(props: S
               }
               customButtonClassName="grid place-items-center"
               placement="bottom-start"
-              ariaLabel="Sprint actions"
+              ariaLabel="Squad actions"
               closeOnSelect
             >
-              <CustomMenu.MenuItem onClick={() => router.push(detailsHref)}>
-                <span className="flex items-center justify-start gap-2">
-                  <ListChecks className="h-3.5 w-3.5 stroke-[1.5]" />
-                  <span>View details</span>
-                </span>
-              </CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={() => router.push(detailsHref)}>
+              <CustomMenu.MenuItem onClick={() => router.push(`${detailsHref}?view=settings`)}>
                 <span className="flex items-center justify-start gap-2">
                   <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
                   <span>Settings</span>
                 </span>
               </CustomMenu.MenuItem>
             </CustomMenu>
-            <IconButton
-              variant="ghost"
-              size="sm"
-              icon={ChevronRightIcon}
-              onClick={() => setIsOpen(!isOpen)}
-              className="hidden text-placeholder group-hover/sprint-item:inline-flex"
-              iconClassName={cn("transition-transform", {
-                "rotate-90": isOpen,
-              })}
-              aria-label={isOpen ? "Close sprint menu" : "Open sprint menu"}
-            />
+            {isAccordionMode && (
+              <IconButton
+                variant="ghost"
+                size="sm"
+                icon={ChevronRightIcon}
+                onClick={() => setIsOpen(!isOpen)}
+                className="hidden text-placeholder group-hover/sprint-item:inline-flex"
+                iconClassName={cn("transition-transform", {
+                  "rotate-90": isOpen,
+                })}
+                aria-label={isOpen ? "Close sprint menu" : "Open sprint menu"}
+              />
+            )}
           </div>
         </div>
       </div>
       <DropIndicator classNames="relative" isVisible={instruction === "DRAG_BELOW"} />
-      <Transition
-        show={isOpen}
-        enter="transition duration-100 ease-out"
-        enterFrom="transform scale-95 opacity-0"
-        enterTo="transform scale-100 opacity-100"
-        leave="transition duration-75 ease-out"
-        leaveFrom="transform scale-100 opacity-100"
-        leaveTo="transform scale-95 opacity-0"
-      >
-        {isOpen && (
-          <Disclosure.Panel as="div" className="flex flex-col gap-0.5" static>
-            {sprintIds.length > 0 ? (
-              sprintIds.map((sprintId: string) => {
-                const sprint = getSprintById(sprintId);
-                if (!sprint) return null;
-                const href = `/${workspaceSlug}/sprints/work-items/${sprint.id}`;
-                return (
-                  <Link key={sprint.id} href={href}>
-                    <SidebarNavItem isActive={selectedSprintId === sprint.id} className="ml-6">
-                      <div className="flex w-full items-center gap-1.5 py-[1px]">
-                        <WorkItemsIcon className="size-4 flex-shrink-0 stroke-[1.5]" />
-                        <span className="truncate text-11 font-medium">{sprint.name}</span>
-                      </div>
-                    </SidebarNavItem>
-                  </Link>
-                );
-              })
-            ) : (
-              <div className="px-8 py-1 text-11 text-tertiary">No open sprints</div>
-            )}
-          </Disclosure.Panel>
-        )}
-      </Transition>
+      {isAccordionMode && (
+        <Transition
+          show={isOpen}
+          enter="transition duration-100 ease-out"
+          enterFrom="transform scale-95 opacity-0"
+          enterTo="transform scale-100 opacity-100"
+          leave="transition duration-75 ease-out"
+          leaveFrom="transform scale-100 opacity-100"
+          leaveTo="transform scale-95 opacity-0"
+        >
+          {isOpen && (
+            <Disclosure.Panel as="div" className="flex flex-col gap-0.5" static>
+              {sprintIds.length > 0 ? (
+                sprintIds.map((sprintId: string) => {
+                  const sprint = getSprintById(sprintId);
+                  if (!sprint) return null;
+                  const href = `/${workspaceSlug}/sprints/work-items/${sprint.id}`;
+                  return (
+                    <Link key={sprint.id} href={href}>
+                      <SidebarNavItem isActive={selectedSprintId === sprint.id} className="ml-6">
+                        <div className="flex w-full items-center gap-1.5 py-[1px]">
+                          {getSidebarNavigationItemIcon(SPRINT_SIDEBAR_ICON_KEYS.sprint, "stroke-[1.5]")}
+                          <span className="truncate text-11 font-medium">{sprint.name}</span>
+                        </div>
+                      </SidebarNavItem>
+                    </Link>
+                  );
+                })
+              ) : (
+                <div className="px-8 py-1 text-11 text-tertiary">No open sprints</div>
+              )}
+            </Disclosure.Panel>
+          )}
+        </Transition>
+      )}
     </Disclosure>
   );
 });

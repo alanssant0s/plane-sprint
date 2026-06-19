@@ -124,6 +124,11 @@ export const coreRoutes: RouteConfigEntry[] = [
           route(":workspaceSlug/sprints/:sprintId", "./(all)/[workspaceSlug]/(projects)/sprints/[sprintId]/page.tsx"),
         ]),
 
+        // Workspace Squads
+        layout("./(all)/[workspaceSlug]/(projects)/squads/layout.tsx", [
+          route(":workspaceSlug/squads", "./(all)/[workspaceSlug]/(projects)/squads/page.tsx"),
+        ]),
+
         // Archived Projects
         layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/archives/layout.tsx", [
           route(

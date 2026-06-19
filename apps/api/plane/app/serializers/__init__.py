@@ -54,7 +54,11 @@ from .cycle import (
 from .sprint import (
     WorkspaceSprintSerializer,
     WorkspaceSprintAutomationSerializer,
+    WorkspaceSprintAutomationMemberSerializer,
     WorkspaceSprintAutomationWriteSerializer,
+    WorkspaceSprintSquadSerializer,
+    WorkspaceSprintSquadMemberSerializer,
+    WorkspaceSprintSquadWriteSerializer,
     WorkspaceSprintIssueSerializer,
     WorkspaceSprintWriteSerializer,
 )

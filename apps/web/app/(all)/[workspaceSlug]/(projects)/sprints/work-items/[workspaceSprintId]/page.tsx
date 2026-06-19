@@ -15,14 +15,15 @@ import type { Route } from "./+types/page";
 function WorkspaceSprintWorkItemsPage({ params }: Route.ComponentProps) {
   const { workspaceSlug, workspaceSprintId } = params;
   const [isLoading, setIsLoading] = useState(false);
-  const { fetchWorkspaceSprints, getSprintById } = useWorkspaceSprint();
+  const { fetchArchivedWorkspaceSprints, fetchWorkspaceSprints, getSprintById } = useWorkspaceSprint();
 
   const sprint = getSprintById(workspaceSprintId);
   const defaultView = DEFAULT_GLOBAL_VIEWS_LIST.find((view) => view.key === "all-issues");
 
   useEffect(() => {
     fetchWorkspaceSprints(workspaceSlug);
-  }, [fetchWorkspaceSprints, workspaceSlug]);
+    fetchArchivedWorkspaceSprints(workspaceSlug);
+  }, [fetchArchivedWorkspaceSprints, fetchWorkspaceSprints, workspaceSlug]);
 
   return (
     <>

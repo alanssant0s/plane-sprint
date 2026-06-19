@@ -332,6 +332,12 @@ class WorkspaceUserProperties(BaseModel):
         choices=NavigationControlPreference.choices,
         default=NavigationControlPreference.ACCORDION,
     )
+    navigation_sprint_preference = models.CharField(
+        max_length=25,
+        choices=NavigationControlPreference.choices,
+        default=NavigationControlPreference.ACCORDION,
+    )
+    navigation_squad_limit = models.IntegerField(default=10)
 
     class Meta:
         unique_together = ["workspace", "user", "deleted_at"]
