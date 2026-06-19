@@ -9,6 +9,7 @@ on:
         type: string
   push:
     branches:
+      - development
       - main
       - master
       - preview
@@ -25,6 +26,7 @@ concurrency:
 jobs:
   build-and-push:
     name: Build ${{ matrix.image }}
+    if: github.ref_name != 'main'
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -96,3 +98,51 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  promote-main:
+    name: Promote ${{ matrix.image }} to main
+    if: github.ref_name == 'main'
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - plane-frontend
+          - plane-space
+          - plane-admin
+          - plane-live
+          - plane-backend
+          - plane-proxy
+
+    steps:
+      - name: Prepare image variables
+        id: vars
+        shell: bash
+        run: |
+          image_namespace="${GITHUB_REPOSITORY,,}"
+          image="ghcr.io/${image_namespace}/${{ matrix.image }}"
+
+          echo "source_image=${image}:development" >> "$GITHUB_OUTPUT"
+          echo "main_image=${image}:main" >> "$GITHUB_OUTPUT"
+          echo "latest_image=${image}:latest" >> "$GITHUB_OUTPUT"
+          echo "sha_image=${image}:sha-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Promote development image
+        shell: bash
+        run: |
+          docker buildx imagetools inspect "${{ steps.vars.outputs.source_image }}"
+          docker buildx imagetools create \
+            -t "${{ steps.vars.outputs.main_image }}" \
+            -t "${{ steps.vars.outputs.latest_image }}" \
+            -t "${{ steps.vars.outputs.sha_image }}" \
+            "${{ steps.vars.outputs.source_image }}"
