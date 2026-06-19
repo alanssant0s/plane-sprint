@@ -133,6 +133,7 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
       });
       this.clear(!isExistingPaginationOptions);
       if (routeFilters) this.routeFilters = routeFilters;
+      this.issueFilterStore.setRouteFilters(this.routeFilters);
 
       // get params from pagination options
       const params = this.getParamsWithRouteFilters(
@@ -170,6 +171,7 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
     try {
       // set Loader
       this.setLoader("pagination", groupId, subGroupId);
+      this.issueFilterStore.setRouteFilters(this.routeFilters);
 
       // get params from stored pagination options
       const params = this.getParamsWithRouteFilters(

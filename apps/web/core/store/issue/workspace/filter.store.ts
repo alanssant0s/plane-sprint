@@ -35,8 +35,10 @@ type TWorkspaceFilters = TStaticViewTypes;
 export type TBaseFilterStore = IBaseIssueFilterStore & IIssueFilterHelperStore;
 
 export interface IWorkspaceIssuesFilter extends TBaseFilterStore {
+  routeFilters: Partial<Record<string, string>>;
   // fetch action
   fetchFilters: (workspaceSlug: string, viewId: string) => Promise<void>;
+  setRouteFilters: (routeFilters?: Partial<Record<string, string>>) => void;
   updateFilterExpression: (workspaceSlug: string, viewId: string, filters: TWorkItemFilterExpression) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
@@ -60,6 +62,7 @@ export interface IWorkspaceIssuesFilter extends TBaseFilterStore {
 export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWorkspaceIssuesFilter {
   // observables
   filters: { [viewId: string]: IIssueFilters } = {};
+  routeFilters: Partial<Record<string, string>> = {};
   // root store
   rootIssueStore;
   // services
@@ -75,6 +78,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       appliedFilters: computed,
       // fetch actions
       fetchFilters: action,
+      setRouteFilters: action,
       updateFilters: action,
     });
     // root store
@@ -94,13 +98,21 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     return _filters;
   };
 
+  setRouteFilters = (routeFilters?: Partial<Record<string, string>>) => {
+    this.routeFilters = routeFilters ?? {};
+  };
+
   getAppliedFilters = (viewId: string | undefined) => {
     if (!viewId) return undefined;
 
     const userFilters = this.getIssueFilters(viewId);
     if (!userFilters) return undefined;
 
-    const filteredParams = handleIssueQueryParamsByLayout(EIssueLayoutTypes.SPREADSHEET, "my_issues");
+    const isSprintRoute = !!this.routeFilters.global_sprint_id;
+    const filteredParams = handleIssueQueryParamsByLayout(
+      isSprintRoute ? userFilters?.displayFilters?.layout : EIssueLayoutTypes.SPREADSHEET,
+      isSprintRoute ? "issues" : "my_issues"
+    );
     if (!filteredParams) return undefined;
 
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
@@ -171,13 +183,13 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
 
     // Get the view details if the view is not a static view
     if (STATIC_VIEW_TYPES.includes(viewId) === false) {
-      const _filters = await this.issueFilterService.getViewDetails(workspaceSlug, viewId);
-      richFilters = _filters?.rich_filters;
-      displayFilters = this.computedDisplayFilters(_filters?.display_filters, {
+      const viewFilters = await this.issueFilterService.getViewDetails(workspaceSlug, viewId);
+      richFilters = viewFilters?.rich_filters;
+      displayFilters = this.computedDisplayFilters(viewFilters?.display_filters, {
         layout: EIssueLayoutTypes.SPREADSHEET,
         order_by: "-created_at",
       });
-      displayProperties = this.computedDisplayProperties(_filters?.display_properties);
+      displayProperties = this.computedDisplayProperties(viewFilters?.display_properties);
     }
 
     // override existing order by if ordered by manual sort_order
