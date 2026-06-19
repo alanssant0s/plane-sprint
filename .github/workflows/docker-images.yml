@@ -19,6 +19,9 @@ permissions:
   contents: read
   packages: write
 
+env:
+  PRODUCTION_APP_BASE_URL: ${{ vars.PRODUCTION_APP_BASE_URL || 'https://plane.agncflamingo.com.br' }}
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -98,6 +101,12 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VITE_API_BASE_URL=${{ env.PRODUCTION_APP_BASE_URL }}
+            VITE_ADMIN_BASE_URL=${{ env.PRODUCTION_APP_BASE_URL }}
+            VITE_SPACE_BASE_URL=${{ env.PRODUCTION_APP_BASE_URL }}
+            VITE_LIVE_BASE_URL=${{ env.PRODUCTION_APP_BASE_URL }}
+            VITE_WEB_BASE_URL=${{ env.PRODUCTION_APP_BASE_URL }}
 
   promote-main:
     name: Promote ${{ matrix.image }} to main
@@ -146,3 +155,21 @@ jobs:
             -t "${{ steps.vars.outputs.latest_image }}" \
             -t "${{ steps.vars.outputs.sha_image }}" \
             "${{ steps.vars.outputs.source_image }}"
+
+  deploy-dokploy:
+    name: Deploy Dokploy compose
+    if: github.ref_name == 'main'
+    needs: promote-main
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Trigger Dokploy deployment
+        env:
+          DOKPLOY_URL: ${{ secrets.DOKPLOY_URL }}
+          DOKPLOY_API_KEY: ${{ secrets.DOKPLOY_API_KEY }}
+          DOKPLOY_COMPOSE_ID: ${{ secrets.DOKPLOY_COMPOSE_ID }}
+        shell: bash
+        run: |
+          curl --fail-with-body --request POST "${DOKPLOY_URL}/api/compose.deploy" \
+            --header "Content-Type: application/json" \
+            --header "x-api-key: ${DOKPLOY_API_KEY}" \
+            --data "{\"composeId\":\"${DOKPLOY_COMPOSE_ID}\"}"

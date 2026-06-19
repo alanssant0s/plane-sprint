@@ -35,6 +35,19 @@ PLANE_BACKEND_IMAGE=ghcr.io/<owner>/<repo>/plane-backend
 PLANE_PROXY_IMAGE=ghcr.io/<owner>/<repo>/plane-proxy
 ```
 
+Configure também as URLs públicas absolutas, sempre com `https://`, para que o backend monte os redirects de autenticação corretamente:
+
+```dotenv
+APP_BASE_URL=https://plane.agncflamingo.com.br
+WEB_URL=https://plane.agncflamingo.com.br
+ADMIN_BASE_URL=https://plane.agncflamingo.com.br
+SPACE_BASE_URL=https://plane.agncflamingo.com.br
+LIVE_BASE_URL=https://plane.agncflamingo.com.br
+CORS_ALLOWED_ORIGINS=https://plane.agncflamingo.com.br,http://127.0.0.1
+```
+
+As imagens de frontend embutem as variáveis públicas `VITE_*` durante o build. O workflow `Build Production Docker Images` usa `vars.PRODUCTION_APP_BASE_URL` para preencher essas variáveis; se a variável não existir, usa `https://plane.agncflamingo.com.br`.
+
 Se o pacote GHCR estiver privado, faça login no servidor antes do pull:
 
 ```sh
