@@ -14,6 +14,7 @@ import { SidebarFavoritesMenu } from "@/components/workspace/sidebar/favorites/f
 import { SidebarProjectsList } from "@/components/workspace/sidebar/projects-list";
 import { SidebarQuickActions } from "@/components/workspace/sidebar/quick-actions";
 import { SidebarMenuItems } from "@/components/workspace/sidebar/sidebar-menu-items";
+import { SidebarSprintsList } from "@/components/workspace/sidebar/sprints-list";
 // hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -42,6 +43,8 @@ export const AppSidebar = observer(function AppSidebar() {
       <SidebarTeamsList />
       {/* Projects List */}
       <SidebarProjectsList />
+      {/* Sprints List */}
+      <SidebarSprintsList />
     </SidebarWrapper>
   );
 });

@@ -105,6 +105,7 @@ export const WORK_ITEM_FILTER_PROPERTY_KEYS = [
   "label_id",
   "state_id",
   "cycle_id",
+  "global_sprint_id",
   "module_id",
   "project_id",
   "created_at",
@@ -135,6 +136,7 @@ export interface IIssueFilterOptions {
   labels?: string[] | null;
   priority?: string[] | null;
   cycle?: string[] | null;
+  global_sprint_id?: string[] | null;
   module?: string[] | null;
   project?: string[] | null;
   team_project?: string[] | null;
@@ -174,6 +176,7 @@ export interface IIssueDisplayProperties {
   updated_on?: boolean;
   modules?: boolean;
   cycle?: boolean;
+  sprint?: boolean;
   issue_type?: boolean;
 }
 

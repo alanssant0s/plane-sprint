@@ -33,6 +33,7 @@ export enum EIssueGroupByToServerOptions {
   "cycle" = "cycle_id",
   "module" = "issue_module__module_id",
   "target_date" = "target_date",
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   "project" = "project_id",
   "created_by" = "created_by",
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
@@ -155,6 +156,7 @@ export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = 
   "updated_on",
   "modules",
   "cycle",
+  "sprint",
   "issue_type",
 ];
 
@@ -208,6 +210,7 @@ export const ISSUE_DISPLAY_PROPERTIES: {
   },
   { key: "modules", titleTranslationKey: "common.module" },
   { key: "cycle", titleTranslationKey: "common.cycle" },
+  { key: "sprint", titleTranslationKey: "Sprint" },
 ];
 
 export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
@@ -217,6 +220,7 @@ export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
   "labels",
   "modules",
   "cycle",
+  "sprint",
   "start_date",
   "due_date",
   "estimate",
@@ -290,6 +294,14 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderKey: "issue_cycle__cycle__name",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-issue_cycle__cycle__name",
+    descendingOrderTitle: "Z",
+    icon: "ContrastIcon",
+  },
+  sprint: {
+    i18n_title: "Sprint",
+    ascendingOrderKey: "sort_order",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "sort_order",
     descendingOrderTitle: "Z",
     icon: "ContrastIcon",
   },

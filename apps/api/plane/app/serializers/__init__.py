@@ -51,6 +51,13 @@ from .cycle import (
     CycleWriteSerializer,
     CycleUserPropertiesSerializer,
 )
+from .sprint import (
+    WorkspaceSprintSerializer,
+    WorkspaceSprintAutomationSerializer,
+    WorkspaceSprintAutomationWriteSerializer,
+    WorkspaceSprintIssueSerializer,
+    WorkspaceSprintWriteSerializer,
+)
 from .asset import FileAssetSerializer
 from .issue import (
     IssueCreateSerializer,

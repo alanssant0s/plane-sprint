@@ -27,18 +27,20 @@ import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 
 type Props = {
+  globalViewIdOverride?: string;
   isDefaultView: boolean;
   isLoading?: boolean;
+  routeFiltersOverride?: { [key: string]: string };
   toggleLoading: (value: boolean) => void;
 };
 
 export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Props) {
-  const { isDefaultView, isLoading = false, toggleLoading } = props;
+  const { globalViewIdOverride, isDefaultView, isLoading = false, routeFiltersOverride, toggleLoading } = props;
   // router
   const router = useAppRouter();
   const { workspaceSlug: routerWorkspaceSlug, globalViewId: routerGlobalViewId } = useParams();
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
-  const globalViewId = routerGlobalViewId ? routerGlobalViewId.toString() : undefined;
+  const globalViewId = globalViewIdOverride ?? (routerGlobalViewId ? routerGlobalViewId.toString() : undefined);
   // search params
   const searchParams = useSearchParams();
   // store hooks
@@ -76,6 +78,10 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
   searchParams.forEach((value: string, key: string) => {
     routeFilters[key] = value;
   });
+  if (routeFiltersOverride) {
+    Object.assign(routeFilters, routeFiltersOverride);
+  }
+  const routeFilterKey = JSON.stringify(routeFilters);
 
   // Fetch next pages callback
   const fetchNextPages = useCallback(() => {
@@ -95,16 +101,24 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
 
   // Fetch issues
   const { isLoading: issuesLoading } = useSWR(
-    workspaceSlug && globalViewId ? `WORKSPACE_GLOBAL_VIEW_ISSUES_${workspaceSlug}_${globalViewId}` : null,
+    workspaceSlug && globalViewId
+      ? `WORKSPACE_GLOBAL_VIEW_ISSUES_${workspaceSlug}_${globalViewId}_${routeFilterKey}`
+      : null,
     async () => {
       if (workspaceSlug && globalViewId) {
         clear();
         toggleLoading(true);
         await fetchFilters(workspaceSlug, globalViewId);
-        await fetchIssues(workspaceSlug, globalViewId, groupedIssueIds ? "mutation" : "init-loader", {
-          canGroup: false,
-          perPageCount: 100,
-        });
+        await fetchIssues(
+          workspaceSlug,
+          globalViewId,
+          groupedIssueIds ? "mutation" : "init-loader",
+          {
+            canGroup: false,
+            perPageCount: 100,
+          },
+          routeFilters
+        );
         toggleLoading(false);
       }
     },
