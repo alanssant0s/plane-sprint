@@ -114,6 +114,16 @@ export const coreRoutes: RouteConfigEntry[] = [
           ),
         ]),
 
+        // Workspace Sprints
+        layout("./(all)/[workspaceSlug]/(projects)/sprints/layout.tsx", [
+          route(":workspaceSlug/sprints", "./(all)/[workspaceSlug]/(projects)/sprints/page.tsx"),
+          route(
+            ":workspaceSlug/sprints/work-items/:workspaceSprintId",
+            "./(all)/[workspaceSlug]/(projects)/sprints/work-items/[workspaceSprintId]/page.tsx"
+          ),
+          route(":workspaceSlug/sprints/:sprintId", "./(all)/[workspaceSlug]/(projects)/sprints/[sprintId]/page.tsx"),
+        ]),
+
         // Archived Projects
         layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/archives/layout.tsx", [
           route(

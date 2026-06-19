@@ -39,6 +39,7 @@ from plane.db.models import (
     IssueAssignee,
     IssueLabel,
     ModuleIssue,
+    WorkspaceSprintIssue,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
@@ -166,6 +167,20 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             issues.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
+                )
+            )
+            .annotate(
+                global_sprint_id=Subquery(
+                    WorkspaceSprintIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values(
+                        "sprint_id"
+                    )[:1]
+                )
+            )
+            .annotate(
+                global_sprint_name=Subquery(
+                    WorkspaceSprintIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values(
+                        "sprint__name"
+                    )[:1]
                 )
             )
             .annotate(
