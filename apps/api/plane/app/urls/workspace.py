@@ -28,6 +28,10 @@ from plane.app.views import (
     ExportWorkspaceUserActivityEndpoint,
     WorkspaceModulesEndpoint,
     WorkspaceCyclesEndpoint,
+    WorkspaceSprintArchiveEndpoint,
+    WorkspaceSprintAutomationViewSet,
+    WorkspaceSprintIssueViewSet,
+    WorkspaceSprintViewSet,
     WorkspaceFavoriteEndpoint,
     WorkspaceFavoriteGroupEndpoint,
     WorkspaceDraftIssueViewSet,
@@ -183,6 +187,60 @@ urlpatterns = [
         "workspaces/<str:slug>/cycles/",
         WorkspaceCyclesEndpoint.as_view(),
         name="workspace-cycles",
+    ),
+    path(
+        "workspaces/<str:slug>/sprints/",
+        WorkspaceSprintViewSet.as_view({"get": "list", "post": "create"}),
+        name="workspace-sprints",
+    ),
+    path(
+        "workspaces/<str:slug>/sprint-automations/",
+        WorkspaceSprintAutomationViewSet.as_view({"get": "list", "post": "create"}),
+        name="workspace-sprint-automations",
+    ),
+    path(
+        "workspaces/<str:slug>/sprint-automations/<uuid:pk>/",
+        WorkspaceSprintAutomationViewSet.as_view(
+            {
+                "get": "retrieve",
+                "put": "update",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="workspace-sprint-automations",
+    ),
+    path(
+        "workspaces/<str:slug>/archived-sprints/",
+        WorkspaceSprintArchiveEndpoint.as_view(),
+        name="workspace-archived-sprints",
+    ),
+    path(
+        "workspaces/<str:slug>/sprints/<uuid:pk>/",
+        WorkspaceSprintViewSet.as_view(
+            {
+                "get": "retrieve",
+                "put": "update",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="workspace-sprints",
+    ),
+    path(
+        "workspaces/<str:slug>/sprints/<uuid:sprint_id>/archive/",
+        WorkspaceSprintArchiveEndpoint.as_view(),
+        name="workspace-sprint-archive",
+    ),
+    path(
+        "workspaces/<str:slug>/sprints/<uuid:sprint_id>/issues/",
+        WorkspaceSprintIssueViewSet.as_view({"get": "list", "post": "create"}),
+        name="workspace-sprint-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/sprints/<uuid:sprint_id>/issues/<uuid:issue_id>/",
+        WorkspaceSprintIssueViewSet.as_view({"delete": "destroy"}),
+        name="workspace-sprint-issues",
     ),
     path(
         "workspaces/<str:slug>/user-favorites/",
