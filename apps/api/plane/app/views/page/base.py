@@ -185,6 +185,11 @@ class PageViewSet(BaseViewSet):
             serializer = PageDetailSerializer(page, data=request.data, partial=True)
             page_description = page.description_html
             if serializer.is_valid():
+                # API-only HTML updates should reset Yjs state so Live rehydrates from HTML
+                # instead of merging stale binary (which duplicates content in the editor).
+                if "description_html" in request.data and "description_binary" not in request.data:
+                    page.description_binary = None
+                    page.description_json = None
                 serializer.save()
                 # capture the page transaction
                 if request.data.get("description_html"):
@@ -245,6 +250,46 @@ class PageViewSet(BaseViewSet):
                     project_id=project_id,
                 )
             return Response(data, status=status.HTTP_200_OK)
+
+    def _serialize_linked_pages(self, page_ids, slug, project_id):
+        if not page_ids:
+            return []
+
+        accessible_pages = (
+            Page.objects.filter(
+                pk__in=page_ids,
+                workspace__slug=slug,
+                projects__id=project_id,
+                project_pages__deleted_at__isnull=True,
+                deleted_at__isnull=True,
+                archived_at__isnull=True,
+            )
+            .filter(Q(owned_by=self.request.user) | Q(access=0))
+            .distinct()
+        )
+
+        return [{"id": str(page.id), "name": page.name, "logo_props": page.logo_props} for page in accessible_pages]
+
+    def links(self, request, slug, project_id, page_id):
+        page = self.get_queryset().filter(pk=page_id).first()
+
+        if page is None:
+            return Response({"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        outgoing_ids = PageLog.objects.filter(page_id=page_id, entity_name="forward_link").values_list(
+            "entity_identifier", flat=True
+        )
+        incoming_ids = PageLog.objects.filter(page_id=page_id, entity_name="back_link").values_list(
+            "entity_identifier", flat=True
+        )
+
+        return Response(
+            {
+                "outgoing": self._serialize_linked_pages(outgoing_ids, slug, project_id),
+                "incoming": self._serialize_linked_pages(incoming_ids, slug, project_id),
+            },
+            status=status.HTTP_200_OK,
+        )
 
     def lock(self, request, slug, project_id, page_id):
         page = Page.objects.get(
@@ -500,6 +545,7 @@ class PageFavoriteViewSet(BaseViewSet):
 
 class PagesDescriptionViewSet(BaseViewSet):
     permission_classes = [ProjectPagePermission]
+    authentication_classes = [BaseSessionAuthentication, APIKeyAuthentication]
 
     def retrieve(self, request, slug, project_id, page_id):
         page = Page.objects.get(

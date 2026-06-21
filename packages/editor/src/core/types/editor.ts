@@ -180,7 +180,7 @@ export type IEditorProps = {
   showPlaceholderOnEmpty?: boolean;
   tabIndex?: number;
   value?: string | null;
-  extendedEditorProps: IEditorPropsExtended;
+  extendedEditorProps?: Partial<IEditorPropsExtended>;
   workItemIdentifier?: string | null;
 };
 

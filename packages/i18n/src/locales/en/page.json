@@ -34,6 +34,16 @@
           "description": "Add images to see them here."
         }
       },
+      "links": {
+        "label": "Links",
+        "loading": "Loading links...",
+        "outgoing": "Linked pages",
+        "incoming": "Backlinks",
+        "empty_state": {
+          "outgoing": "No linked pages yet.",
+          "incoming": "No pages link here yet."
+        }
+      },
       "comments": {
         "label": "Comments",
         "empty_state": {

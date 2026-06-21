@@ -12,7 +12,7 @@ export type DocumentEditorSideEffectsProps = {
   editor: Editor;
   id: string;
   updatePageProperties?: unknown;
-  extendedEditorProps?: IEditorPropsExtended;
+  extendedEditorProps?: Partial<IEditorPropsExtended>;
 };
 
 export const DocumentEditorSideEffects = (_props: DocumentEditorSideEffectsProps): ReactElement | null => null;

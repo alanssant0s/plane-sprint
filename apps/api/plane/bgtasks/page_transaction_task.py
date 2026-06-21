@@ -15,6 +15,7 @@ from bs4 import BeautifulSoup
 from celery import shared_task
 from plane.db.models import Page, PageLog
 from plane.utils.exception_logger import log_exception
+from plane.utils.page_links import extract_internal_page_links
 
 logger = logging.getLogger("plane.worker")
 
@@ -81,6 +82,62 @@ def get_entity_details(component: str, mention: dict):
     return config["extract"](mention)
 
 
+def sync_internal_page_links(new_description_html, page_id):
+    """
+    Sync forward/back page link logs based on internal <a href> tags in page content.
+    """
+    page = Page.objects.get(pk=page_id)
+    new_links = extract_internal_page_links(new_description_html, page_id)
+    new_transactions = {link["transaction_id"]: link["target_page_id"] for link in new_links}
+
+    existing_forward_links = PageLog.objects.filter(page_id=page_id, entity_name="forward_link").values_list(
+        "transaction", "entity_identifier"
+    )
+    existing_transactions = {transaction: target_page_id for transaction, target_page_id in existing_forward_links}
+
+    removed_transactions = set(existing_transactions.keys()) - set(new_transactions.keys())
+    added_transactions = set(new_transactions.keys()) - set(existing_transactions.keys())
+
+    if removed_transactions:
+        PageLog.objects.filter(transaction__in=removed_transactions).delete()
+
+    if not added_transactions:
+        return
+
+    current_time = timezone.now()
+    new_logs = []
+
+    for transaction_id in added_transactions:
+        target_page_id = new_transactions[transaction_id]
+
+        new_logs.append(
+            PageLog(
+                transaction=transaction_id,
+                page_id=page_id,
+                entity_identifier=target_page_id,
+                entity_name="forward_link",
+                entity_type=None,
+                workspace_id=page.workspace_id,
+                created_at=current_time,
+                updated_at=current_time,
+            )
+        )
+        new_logs.append(
+            PageLog(
+                transaction=transaction_id,
+                page_id=target_page_id,
+                entity_identifier=page_id,
+                entity_name="back_link",
+                entity_type=None,
+                workspace_id=page.workspace_id,
+                created_at=current_time,
+                updated_at=current_time,
+            )
+        )
+
+    PageLog.objects.bulk_create(new_logs, batch_size=50, ignore_conflicts=True)
+
+
 @shared_task
 def page_transaction(new_description_html, old_description_html, page_id):
     """
@@ -134,6 +191,8 @@ def page_transaction(new_description_html, old_description_html, page_id):
 
         if deleted_transaction_ids:
             PageLog.objects.filter(transaction__in=deleted_transaction_ids).delete()
+
+        sync_internal_page_links(new_description_html, page_id)
 
     except Page.DoesNotExist:
         return

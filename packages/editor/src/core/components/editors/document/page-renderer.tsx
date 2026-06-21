@@ -31,7 +31,7 @@ type Props = {
   titleEditor?: Editor;
   editorContainerClassName: string;
   extendedDocumentEditorProps?: ICollaborativeDocumentEditorPropsExtended;
-  extendedEditorProps: IEditorPropsExtended;
+  extendedEditorProps?: Partial<IEditorPropsExtended>;
   flaggedExtensions: IEditorProps["flaggedExtensions"];
   id: string;
   isLoading?: boolean;

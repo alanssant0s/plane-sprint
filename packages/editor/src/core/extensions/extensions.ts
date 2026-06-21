@@ -7,8 +7,8 @@
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Extensions } from "@tiptap/core";
 import { CharacterCount } from "@tiptap/extension-character-count";
-import TaskItem from "@tiptap/extension-task-item";
-import TaskList from "@tiptap/extension-task-list";
+import TaskItemExtension from "@tiptap/extension-task-item";
+import TaskListExtension from "@tiptap/extension-task-list";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { Underline } from "@tiptap/extension-underline";
 import { Markdown } from "tiptap-markdown";
@@ -36,7 +36,7 @@ import {
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
-import type { IEditorProps } from "@/types";
+import type { IEditorProps, IEditorPropsExtended } from "@/types";
 // local imports
 import { CustomImageExtension } from "./custom-image/extension";
 import { EmojiExtension } from "./emoji/extension";
@@ -79,6 +79,8 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     provider,
   } = args;
 
+  const linkExtendedProps = (extendedEditorProps ?? {}) as IEditorPropsExtended;
+
   const extensions = [
     CustomStarterKitExtension({
       enableHistory,
@@ -88,16 +90,19 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomHorizontalRule,
     CustomKeymap,
     ListKeymap({ tabIndex }),
-    CustomLinkExtension,
+    CustomLinkExtension.configure({
+      onLinkClick: linkExtendedProps?.onLinkClick,
+      isInternalPageLink: linkExtendedProps?.isInternalPageLink,
+    }),
     CustomTypographyExtension,
     Underline,
     TextStyle,
-    TaskList.configure({
+    TaskListExtension.configure({
       HTMLAttributes: {
         class: "not-prose pl-2 space-y-2",
       },
     }),
-    TaskItem.configure({
+    TaskItemExtension.configure({
       HTMLAttributes: {
         class: "relative",
       },

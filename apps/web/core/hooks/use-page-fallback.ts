@@ -45,6 +45,20 @@ export const usePageFallback = (args: TArgs) => {
     try {
       setIsFetchingFallbackBinary(true);
 
+      const { binary: localBinary, html: localHtml, json: localJson } = editor.getDocument();
+      const hasMeaningfulLocalContent = Boolean(localHtml?.replace(/<p><\/p>/g, "").trim());
+
+      // When Live disconnects, avoid merging server binary into an editor that already
+      // has content — setProviderDocument uses Y.applyUpdate and duplicates blocks.
+      if (hasMeaningfulLocalContent && localBinary && localJson) {
+        await updatePageDescription({
+          description_binary: convertBinaryDataToBase64String(localBinary),
+          description_html: localHtml,
+          description_json: localJson,
+        });
+        return;
+      }
+
       const latestEncodedDescription = await fetchPageDescription();
       let latestDecodedDescription: Uint8Array;
       if (latestEncodedDescription && latestEncodedDescription.byteLength > 0) {

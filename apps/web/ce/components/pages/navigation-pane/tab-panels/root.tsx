@@ -8,12 +8,19 @@
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import type { TPageNavigationPaneTab } from "..";
+import { PageNavigationPaneLinksTabPanel } from "./links";
 
 export type TPageNavigationPaneAdditionalTabPanelsRootProps = {
   activeTab: TPageNavigationPaneTab;
   page: TPageInstance;
 };
 
-export function PageNavigationPaneAdditionalTabPanelsRoot(_props: TPageNavigationPaneAdditionalTabPanelsRootProps) {
+export function PageNavigationPaneAdditionalTabPanelsRoot(props: TPageNavigationPaneAdditionalTabPanelsRootProps) {
+  const { activeTab, page } = props;
+
+  if (activeTab === "links") {
+    return <PageNavigationPaneLinksTabPanel page={page} />;
+  }
+
   return null;
 }

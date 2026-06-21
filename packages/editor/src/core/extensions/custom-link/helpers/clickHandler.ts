@@ -10,6 +10,7 @@ import { Plugin, PluginKey } from "@tiptap/pm/state";
 
 type ClickHandlerOptions = {
   type: MarkType;
+  onLinkClick?: (href: string, event: MouseEvent) => boolean | void;
 };
 
 export function clickHandler(options: ClickHandlerOptions): Plugin {
@@ -40,6 +41,16 @@ export function clickHandler(options: ClickHandlerOptions): Plugin {
         const target = link?.target ?? attrs.target;
 
         if (link && href) {
+          const handled = options.onLinkClick?.(href, event);
+          if (handled) {
+            return true;
+          }
+
+          if (event.metaKey || event.ctrlKey) {
+            window.open(href, target || "_blank");
+            return true;
+          }
+
           window.open(href, target);
 
           return true;

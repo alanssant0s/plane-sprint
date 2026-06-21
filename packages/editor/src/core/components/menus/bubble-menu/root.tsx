@@ -68,12 +68,12 @@ export type EditorStateType = {
 type Props = {
   disabledExtensions: TExtensions[];
   editor: Editor;
-  extendedEditorProps: IEditorPropsExtended;
+  extendedEditorProps?: Partial<IEditorPropsExtended>;
   flaggedExtensions: TExtensions[];
 };
 
 export function EditorBubbleMenu(props: Props) {
-  const { editor } = props;
+  const { editor, extendedEditorProps } = props;
   // states
   const [isSelecting, setIsSelecting] = useState(false);
   // refs
@@ -92,7 +92,7 @@ export function EditorBubbleMenu(props: Props) {
 
   const editorState: EditorStateType = useEditorState({
     editor,
-    selector: ({ editor }) => ({
+    selector: ({ editor: currentEditor }) => ({
       code: formattingItems.code.isActive(),
       bold: formattingItems.bold.isActive(),
       italic: formattingItems.italic.isActive(),
@@ -101,8 +101,8 @@ export function EditorBubbleMenu(props: Props) {
       left: formattingItems["text-align"].isActive({ alignment: "left" }),
       right: formattingItems["text-align"].isActive({ alignment: "right" }),
       center: formattingItems["text-align"].isActive({ alignment: "center" }),
-      color: COLORS_LIST.find((c) => TextColorItem(editor).isActive({ color: c.key })),
-      backgroundColor: COLORS_LIST.find((c) => BackgroundColorItem(editor).isActive({ color: c.key })),
+      color: COLORS_LIST.find((c) => TextColorItem(currentEditor).isActive({ color: c.key })),
+      backgroundColor: COLORS_LIST.find((c) => BackgroundColorItem(currentEditor).isActive({ color: c.key })),
     }),
   });
 
@@ -112,7 +112,7 @@ export function EditorBubbleMenu(props: Props) {
 
   const bubbleMenuProps: EditorBubbleMenuProps = {
     editor,
-    shouldShow: ({ state, editor }) => {
+    shouldShow: ({ state, editor: _editor }) => {
       const { selection } = state;
       const { empty } = selection;
 
@@ -198,7 +198,7 @@ export function EditorBubbleMenu(props: Props) {
           </div>
           {!editorState.code && (
             <div className="px-2">
-              <BubbleMenuLinkSelector editor={editor} />
+              <BubbleMenuLinkSelector editor={editor} extendedEditorProps={extendedEditorProps} />
             </div>
           )}
           {!editorState.code && (

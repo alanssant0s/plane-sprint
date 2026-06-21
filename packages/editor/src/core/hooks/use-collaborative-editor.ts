@@ -6,7 +6,7 @@
 
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Extensions } from "@tiptap/core";
-import Collaboration from "@tiptap/extension-collaboration";
+import CollaborationExtension from "@tiptap/extension-collaboration";
 // react
 import type React from "react";
 import { useEffect, useMemo } from "react";
@@ -77,7 +77,7 @@ export const useCollaborativeEditor = (props: UseCollaborativeEditorArgs) => {
         dragDropEnabled,
       }),
       HeadingListExtension,
-      Collaboration.configure({
+      CollaborationExtension.configure({
         document: provider.document,
         field: "default",
       }),
@@ -164,7 +164,7 @@ export const useCollaborativeEditor = (props: UseCollaborativeEditorArgs) => {
 
   const titleExtensions = useMemo(
     () => [
-      Collaboration.configure({
+      CollaborationExtension.configure({
         document: provider.document,
         field: "title",
       }),
@@ -180,7 +180,7 @@ export const useCollaborativeEditor = (props: UseCollaborativeEditorArgs) => {
     titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
     updatePageProperties?: ICollaborativeDocumentEditorProps["updatePageProperties"];
     extensions: Extensions;
-    extendedEditorProps?: IEditorPropsExtended;
+    extendedEditorProps?: Partial<IEditorPropsExtended>;
     getEditorMetaData?: IEditorProps["getEditorMetaData"];
   }>(
     () => ({

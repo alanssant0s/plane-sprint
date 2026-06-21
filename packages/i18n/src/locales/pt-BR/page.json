@@ -34,6 +34,16 @@
           "description": "Adicione imagens para vê-las aqui."
         }
       },
+      "links": {
+        "label": "Links",
+        "loading": "Carregando links...",
+        "outgoing": "Páginas vinculadas",
+        "incoming": "Backlinks",
+        "empty_state": {
+          "outgoing": "Nenhuma página vinculada ainda.",
+          "incoming": "Nenhuma página referencia esta ainda."
+        }
+      },
       "comments": {
         "label": "Comentários",
         "empty_state": {
