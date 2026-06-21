@@ -5,9 +5,10 @@
  */
 
 import { useRef, useState } from "react";
+import { FastForward } from "lucide-react";
 import { observer } from "mobx-react";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { ChevronDownIcon, CycleIcon } from "@plane/propel/icons";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import type { TLogoProps } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -80,6 +81,6 @@ function WorkspaceSprintDropdownIcon({ logoProps }: { logoProps: TLogoProps | un
   return logoProps?.in_use ? (
     <Logo logo={logoProps} size={12} type="material" />
   ) : (
-    <CycleIcon className="h-3 w-3 flex-shrink-0" />
+    <FastForward className="h-3 w-3 flex-shrink-0 stroke-[1.5] text-placeholder" />
   );
 }

@@ -159,6 +159,7 @@ export interface IIssueDisplayFilterOptions {
   order_by?: TIssueOrderByOptions;
   show_empty_groups?: boolean;
   sub_issue?: boolean;
+  assigned_to_me?: boolean;
 }
 export interface IIssueDisplayProperties {
   project?: boolean;

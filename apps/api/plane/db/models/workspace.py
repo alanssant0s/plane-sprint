@@ -40,6 +40,7 @@ def get_default_props():
             "show_empty_groups": True,
             "layout": "list",
             "calendar_date_range": "",
+            "assigned_to_me": False,
         },
         "display_properties": {
             "assignee": True,
@@ -83,6 +84,7 @@ def get_default_display_filters():
             "show_empty_groups": True,
             "layout": "list",
             "calendar_date_range": "",
+            "assigned_to_me": False,
         }
     }
 

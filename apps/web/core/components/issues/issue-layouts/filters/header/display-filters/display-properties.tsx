@@ -24,6 +24,21 @@ type Props = {
   isEpic?: boolean;
 };
 
+const TIMESTAMP_DISPLAY_PROPERTIES: {
+  key: keyof IIssueDisplayProperties;
+  titleTranslationKey: string;
+}[] = [
+  { key: "created_on", titleTranslationKey: "common.sort.created_on" },
+  { key: "updated_on", titleTranslationKey: "common.sort.updated_on" },
+];
+
+const DISPLAY_PROPERTIES_OPTIONS = [
+  ...ISSUE_DISPLAY_PROPERTIES,
+  ...TIMESTAMP_DISPLAY_PROPERTIES.filter(
+    (timestampProperty) => !ISSUE_DISPLAY_PROPERTIES.some((property) => property.key === timestampProperty.key)
+  ),
+];
+
 export const FilterDisplayProperties = observer(function FilterDisplayProperties(props: Props) {
   const {
     displayProperties,
@@ -40,7 +55,7 @@ export const FilterDisplayProperties = observer(function FilterDisplayProperties
 
   // Filter out "cycle" and "module" keys if cycleViewDisabled or moduleViewDisabled is true
   // Also filter out display properties that should not be rendered
-  const filteredDisplayProperties = ISSUE_DISPLAY_PROPERTIES.filter((property) => {
+  const filteredDisplayProperties = DISPLAY_PROPERTIES_OPTIONS.filter((property) => {
     if (!displayPropertiesToRender.includes(property.key)) return false;
     switch (property.key) {
       case "cycle":

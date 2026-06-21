@@ -27,6 +27,7 @@ import {
   LayoutSelection,
   MobileLayoutSelection,
 } from "@/components/issues/issue-layouts/filters";
+import { WorkItemsMeModeToggle } from "@/components/issues/me-mode-toggle";
 import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -224,6 +225,10 @@ export const WorkspaceSprintsHeaderActions = observer(function WorkspaceSprintsH
         />
       </div>
       <WorkItemFiltersToggle entityType={EIssuesStoreType.GLOBAL} entityId={SPRINT_VIEW_ID} />
+      <WorkItemsMeModeToggle
+        displayFilters={issueFilters?.displayFilters}
+        handleDisplayFiltersUpdate={handleDisplayFilters}
+      />
       <FiltersDropdown title={t("common.display")} placement="bottom-end">
         <DisplayFiltersSelection
           layoutDisplayFiltersOptions={currentLayoutFilters}

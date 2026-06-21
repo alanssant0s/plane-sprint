@@ -285,6 +285,7 @@ export const getComputedDisplayFilters = (
     sub_group_by: filters?.sub_group_by || null,
     sub_issue: filters?.sub_issue || false,
     show_empty_groups: filters?.show_empty_groups || false,
+    assigned_to_me: filters?.assigned_to_me ?? false,
   };
 };
 
