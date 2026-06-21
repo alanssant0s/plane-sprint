@@ -4,15 +4,19 @@
  * See the LICENSE file for details.
  */
 
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { GLOBAL_VIEW_TRACKER_ELEMENTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import {
+  EIssueGroupByToServerOptions,
+  GLOBAL_VIEW_TRACKER_ELEMENTS,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
+} from "@plane/constants";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import type { EIssueLayoutTypes } from "@plane/types";
-import { EIssuesStoreType, STATIC_VIEW_TYPES } from "@plane/types";
+import type { IIssueDisplayFilterOptions, IssuePaginationOptions } from "@plane/types";
+import { EIssueLayoutTypes, EIssuesStoreType, STATIC_VIEW_TYPES } from "@plane/types";
 // assets
 // components
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
@@ -34,6 +38,28 @@ type Props = {
   toggleLoading: (value: boolean) => void;
 };
 
+const getInitialIssueFetchOptions = (
+  layout: EIssueLayoutTypes | undefined,
+  displayFilters: IIssueDisplayFilterOptions | undefined
+): IssuePaginationOptions => {
+  switch (layout) {
+    case EIssueLayoutTypes.LIST:
+      return { canGroup: true, perPageCount: displayFilters?.group_by ? 50 : 100 };
+    case EIssueLayoutTypes.KANBAN:
+      return { canGroup: true, perPageCount: displayFilters?.sub_group_by ? 10 : 30 };
+    case EIssueLayoutTypes.CALENDAR:
+      return {
+        canGroup: true,
+        perPageCount: 30,
+        groupedBy: EIssueGroupByToServerOptions.target_date,
+      };
+    case EIssueLayoutTypes.GANTT:
+    case EIssueLayoutTypes.SPREADSHEET:
+    default:
+      return { canGroup: false, perPageCount: 100 };
+  }
+};
+
 export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Props) {
   const { globalViewIdOverride, isDefaultView, isLoading = false, routeFiltersOverride, toggleLoading } = props;
   // router
@@ -45,9 +71,10 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
   const searchParams = useSearchParams();
   // store hooks
   const {
-    issuesFilter: { filters, fetchFilters, updateFilterExpression },
+    issuesFilter,
     issues: { clear, groupedIssueIds, fetchIssues, fetchNextIssues },
   } = useIssues(EIssuesStoreType.GLOBAL);
+  const { filters, fetchFilters, updateFilterExpression } = issuesFilter;
   const { fetchAllGlobalViews, getViewDetailsById } = useGlobalView();
   // Derived values
   const viewDetails = globalViewId ? getViewDetailsById(globalViewId) : undefined;
@@ -83,6 +110,12 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
   }
   const routeFilterKey = JSON.stringify(routeFilters);
 
+  useEffect(() => {
+    issuesFilter.setRouteFilters(routeFilters);
+    // routeFilterKey captures all route filter values without keeping the object reference unstable.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [issuesFilter, routeFilterKey]);
+
   // Fetch next pages callback
   const fetchNextPages = useCallback(() => {
     if (workspaceSlug && globalViewId) fetchNextIssues(workspaceSlug, globalViewId);
@@ -106,17 +139,20 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
       : null,
     async () => {
       if (workspaceSlug && globalViewId) {
-        clear();
         toggleLoading(true);
         await fetchFilters(workspaceSlug, globalViewId);
+        const fetchedWorkItemFilters = issuesFilter.getIssueFilters(globalViewId);
+        const fetchOptions = getInitialIssueFetchOptions(
+          fetchedWorkItemFilters?.displayFilters?.layout ?? EIssueLayoutTypes.SPREADSHEET,
+          fetchedWorkItemFilters?.displayFilters
+        );
+
+        clear();
         await fetchIssues(
           workspaceSlug,
           globalViewId,
           groupedIssueIds ? "mutation" : "init-loader",
-          {
-            canGroup: false,
-            perPageCount: 100,
-          },
+          fetchOptions,
           routeFilters
         );
         toggleLoading(false);

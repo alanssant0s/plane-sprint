@@ -38,6 +38,7 @@ export const SpreadsheetSprintColumn = observer(function SpreadsheetSprintColumn
         onChange={handleSprint}
         disabled={disabled}
         className="h-7 w-full max-w-full border-0 bg-transparent px-0 hover:bg-transparent"
+        fallbackName={issue.global_sprint_name}
       />
     </div>
   );
