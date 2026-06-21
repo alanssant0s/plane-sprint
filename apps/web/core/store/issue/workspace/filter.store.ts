@@ -31,6 +31,7 @@ import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 import type { IIssueRootStore } from "../root.store";
 
 type TWorkspaceFilters = TStaticViewTypes;
+const SPRINT_WORK_ITEMS_VIEW_ID: TWorkspaceFilters = "all-issues";
 
 export type TBaseFilterStore = IBaseIssueFilterStore & IIssueFilterHelperStore;
 
@@ -118,19 +119,22 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
       userFilters?.richFilters,
       userFilters?.displayFilters,
-      filteredParams
+      filteredParams,
+      this.rootIssueStore.currentUserId
     );
 
     return filteredRouteParams;
   };
 
   get issueFilters() {
-    const viewId = this.rootIssueStore.globalViewId;
+    const viewId =
+      this.rootIssueStore.globalViewId ?? (this.routeFilters.global_sprint_id ? SPRINT_WORK_ITEMS_VIEW_ID : undefined);
     return this.getIssueFilters(viewId);
   }
 
   get appliedFilters() {
-    const viewId = this.rootIssueStore.globalViewId;
+    const viewId =
+      this.rootIssueStore.globalViewId ?? (this.routeFilters.global_sprint_id ? SPRINT_WORK_ITEMS_VIEW_ID : undefined);
     return this.getAppliedFilters(viewId);
   }
 

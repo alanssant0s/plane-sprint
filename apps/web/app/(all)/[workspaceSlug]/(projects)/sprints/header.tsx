@@ -4,9 +4,10 @@
  * See the LICENSE file for details.
  */
 
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { ChartNoAxesColumn } from "lucide-react";
 import {
   EIssueFilterType,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
@@ -16,22 +17,27 @@ import {
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { CycleIcon, WorkItemsIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssueLayoutTypes, EIssuesStoreType } from "@plane/types";
 import { Breadcrumbs, Header } from "@plane/ui";
 import { getComputedDisplayProperties } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { CountChip } from "@/components/common/count-chip";
+import { WorkItemsModal } from "@/components/analytics/work-items/modal";
 import {
   DisplayFiltersSelection,
   FiltersDropdown,
   LayoutSelection,
   MobileLayoutSelection,
 } from "@/components/issues/issue-layouts/filters";
+import { WorkItemsMeModeToggle } from "@/components/issues/me-mode-toggle";
 import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useWorkspaceSprint } from "@/hooks/store/use-workspace-sprint";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 const SPRINT_VIEW_ID = "all-issues";
 const SPRINT_LAYOUTS = [
@@ -86,9 +92,9 @@ export const WorkspaceSprintsHeader = observer(function WorkspaceSprintsHeader()
 
   return (
     <>
-      <Header>
-        <Header.LeftItem>
-          <Breadcrumbs onBack={() => router.back()} className="flex-grow-0">
+      <Header className="h-full overflow-hidden">
+        <Header.LeftItem className="h-full max-w-full flex-nowrap gap-3 overflow-hidden">
+          <Breadcrumbs onBack={() => router.back()} className="min-w-0 flex-grow-0">
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
@@ -109,9 +115,9 @@ export const WorkspaceSprintsHeader = observer(function WorkspaceSprintsHeader()
               isLast
             />
           </Breadcrumbs>
-          {sprintWeek && <span className="text-12 text-tertiary">{sprintWeek}</span>}
+          {sprintWeek && <span className="shrink-0 text-11 text-tertiary">{sprintWeek}</span>}
         </Header.LeftItem>
-        <Header.RightItem className="items-center">
+        <Header.RightItem className="shrink-0 items-center">
           <WorkspaceSprintsHeaderActions />
         </Header.RightItem>
       </Header>
@@ -124,14 +130,20 @@ export const WorkspaceSprintsHeaderActions = observer(function WorkspaceSprintsH
   const sprintId = workspaceSprintId?.toString();
   const workspaceSlugValue = workspaceSlug?.toString();
   const { t } = useTranslation();
+  const [analyticsModal, setAnalyticsModal] = useState(false);
+  const { isMobile } = usePlatformOS();
 
   const {
     issuesFilter: { filters, updateFilters },
+    issues: { getGroupIssueCount },
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { toggleCreateIssueModal } = useCommandPalette();
+  const { getSprintById } = useWorkspaceSprint();
 
   const issueFilters = filters[SPRINT_VIEW_ID];
+  const sprint = sprintId ? getSprintById(sprintId) : undefined;
   const activeLayout = issueFilters?.displayFilters?.layout;
+  const workItemsCount = getGroupIssueCount(undefined, undefined, false);
   const displayProperties = {
     ...getComputedDisplayProperties(issueFilters?.displayProperties),
     project: issueFilters?.displayProperties?.project ?? true,
@@ -209,6 +221,22 @@ export const WorkspaceSprintsHeaderActions = observer(function WorkspaceSprintsH
 
   return (
     <>
+      <WorkItemsModal
+        isOpen={analyticsModal}
+        onClose={() => setAnalyticsModal(false)}
+        workspaceSprintDetails={sprint}
+      />
+      {workItemsCount && workItemsCount > 0 ? (
+        <Tooltip
+          isMobile={isMobile}
+          tooltipContent={`There are ${workItemsCount} ${
+            workItemsCount > 1 ? "work items" : "work item"
+          } in this sprint`}
+          position="bottom"
+        >
+          <CountChip count={workItemsCount} />
+        </Tooltip>
+      ) : null}
       <div className="hidden @4xl:flex">
         <LayoutSelection
           layouts={SPRINT_LAYOUTS}
@@ -224,6 +252,10 @@ export const WorkspaceSprintsHeaderActions = observer(function WorkspaceSprintsH
         />
       </div>
       <WorkItemFiltersToggle entityType={EIssuesStoreType.GLOBAL} entityId={SPRINT_VIEW_ID} />
+      <WorkItemsMeModeToggle
+        displayFilters={issueFilters?.displayFilters}
+        handleDisplayFiltersUpdate={handleDisplayFilters}
+      />
       <FiltersDropdown title={t("common.display")} placement="bottom-end">
         <DisplayFiltersSelection
           layoutDisplayFiltersOptions={currentLayoutFilters}
@@ -233,6 +265,12 @@ export const WorkspaceSprintsHeaderActions = observer(function WorkspaceSprintsH
           handleDisplayPropertiesUpdate={handleDisplayProperties}
         />
       </FiltersDropdown>
+      <Button onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
+        <span className="hidden @4xl:flex">{t("common.analytics")}</span>
+        <span className="@4xl:hidden">
+          <ChartNoAxesColumn className="size-3.5" />
+        </span>
+      </Button>
       <Button
         variant="primary"
         size="lg"

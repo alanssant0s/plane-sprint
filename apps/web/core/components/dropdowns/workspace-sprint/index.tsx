@@ -5,9 +5,10 @@
  */
 
 import { useRef, useState } from "react";
+import { FastForward } from "lucide-react";
 import { observer } from "mobx-react";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { ChevronDownIcon, CycleIcon } from "@plane/propel/icons";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import type { TLogoProps } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -20,17 +21,18 @@ type Props = {
   onChange: (sprintId: string | null) => void;
   disabled?: boolean;
   className?: string;
+  fallbackName?: string | null;
 };
 
 export const WorkspaceSprintDropdown = observer(function WorkspaceSprintDropdown(props: Props) {
-  const { value, onChange, disabled = false, className } = props;
+  const { value, onChange, disabled = false, className, fallbackName } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const { getSprintAutomationById, getSprintById } = useWorkspaceSprint();
   const selectedSprint = value ? getSprintById(value) : null;
   const selectedAutomation = getSprintAutomationById(selectedSprint?.automation_id);
-  const selectedName = selectedSprint?.name ?? null;
+  const selectedName = selectedSprint?.name ?? fallbackName ?? null;
   const { handleClose, handleKeyDown, handleOnClick } = useDropdown({
     dropdownRef,
     isOpen,
@@ -79,6 +81,6 @@ function WorkspaceSprintDropdownIcon({ logoProps }: { logoProps: TLogoProps | un
   return logoProps?.in_use ? (
     <Logo logo={logoProps} size={12} type="material" />
   ) : (
-    <CycleIcon className="h-3 w-3 flex-shrink-0" />
+    <FastForward className="h-3 w-3 flex-shrink-0 stroke-[1.5] text-placeholder" />
   );
 }

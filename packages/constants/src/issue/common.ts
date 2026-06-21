@@ -213,6 +213,14 @@ export const ISSUE_DISPLAY_PROPERTIES: {
     key: "estimate",
     titleTranslationKey: "common.estimate",
   },
+  {
+    key: "created_on",
+    titleTranslationKey: "common.sort.created_on",
+  },
+  {
+    key: "updated_on",
+    titleTranslationKey: "common.sort.updated_on",
+  },
   { key: "modules", titleTranslationKey: "common.module" },
   { key: "cycle", titleTranslationKey: "common.cycle" },
   { key: "sprint", titleTranslationKey: "Sprint" },
