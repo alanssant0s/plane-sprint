@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { EUserPermissions, EUserPermissionsLevel, CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useEntityListLabel, useTerminologyT } from "@/hooks/use-workspace-type";
 import { Button } from "@plane/propel/button";
 import { CycleIcon } from "@plane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
@@ -32,7 +32,8 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
   const { toggleCreateCycleModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   const { currentProjectDetails, loader } = useProject();
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
+  const cyclesLabel = useEntityListLabel("cycle");
 
   const canUserCreateCycle = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -47,7 +48,7 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
-                label="Cycles"
+                label={cyclesLabel}
                 href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/cycles/`}
                 icon={<CycleIcon className="h-4 w-4 text-tertiary" />}
                 isLast

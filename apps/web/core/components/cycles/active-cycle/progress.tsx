@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
 import { PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT, useEntityTermPair } from "@/hooks/use-workspace-type";
 import type { TWorkItemFilterCondition } from "@plane/shared-state";
 import type { ICycle } from "@plane/types";
 import { LinearProgressIndicator, Loader } from "@plane/ui";
@@ -30,7 +30,8 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
   // theme hook
   const { resolvedTheme } = useTheme();
   // plane hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
+  const workItemTerms = useEntityTermPair("work_item");
   // derived values
   const progressIndicatorData = PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
@@ -56,7 +57,7 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
           {cycle.total_issues > 0 && (
             <span className="flex gap-1 rounded-xs px-3 py-1 text-13 font-medium whitespace-nowrap text-placeholder">
               {`${cycle.completed_issues + cycle.cancelled_issues}/${cycle.total_issues - cycle.cancelled_issues} ${
-                cycle.completed_issues + cycle.cancelled_issues > 1 ? "Work items" : "Work item"
+                cycle.completed_issues + cycle.cancelled_issues > 1 ? workItemTerms.plural : workItemTerms.singular
               } closed`}
             </span>
           )}
@@ -69,9 +70,10 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
           {Object.keys(groupedIssues).map((group, index) => (
             <>
               {groupedIssues[group] > 0 && (
-                <div key={index}>
-                  <div
-                    className="flex cursor-pointer items-center justify-between gap-2 text-13"
+                <div key={group}>
+                  <button
+                    type="button"
+                    className="flex w-full cursor-pointer items-center justify-between gap-2 text-13"
                     onClick={() => {
                       handleFiltersUpdate([{ property: "state_group", operator: "in", value: [group] }]);
                     }}
@@ -86,9 +88,9 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
                       <span className="w-16 font-medium text-tertiary capitalize">{group}</span>
                     </div>
                     <span className="text-tertiary">{`${groupedIssues[group]} ${
-                      groupedIssues[group] > 1 ? "Work items" : "Work item"
+                      groupedIssues[group] > 1 ? workItemTerms.plural : workItemTerms.singular
                     }`}</span>
-                  </div>
+                  </button>
                 </div>
               )}
             </>

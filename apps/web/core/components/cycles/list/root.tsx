@@ -8,7 +8,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { Disclosure } from "@headlessui/react";
 // components
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { ContentWrapper, ERowVariant } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
 import { ActiveCycleRoot } from "@/plane-web/components/cycles";
@@ -28,7 +28,7 @@ export interface ICyclesList {
 
 export const CyclesList = observer(function CyclesList(props: ICyclesList) {
   const { completedCycleIds, upcomingCycleIds, cycleIds, workspaceSlug, projectId, isArchived = false } = props;
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   return (
     <ContentWrapper variant={ERowVariant.HUGGING} className="flex-row">

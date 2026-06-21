@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import type { TModuleFilters } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 import { calculateTotalFilters } from "@plane/utils";
@@ -34,7 +34,7 @@ function ProjectModulesPage({ params }: Route.ComponentProps) {
   // theme hook
   const { resolvedTheme } = useTheme();
   // plane hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // store
   const { getProjectById, currentProjectDetails } = useProject();
   const {

@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { useParams, useRouter } from "next/navigation";
 import { EUserPermissionsLevel, EPageAccess } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TPage, TPageNavigationTabs } from "@plane/types";
@@ -30,7 +30,7 @@ type Props = {
 export const PagesListMainContent = observer(function PagesListMainContent(props: Props) {
   const { children, pageType, storeType } = props;
   // plane hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // store hooks
   const { currentProjectDetails } = useProject();
   const { isAnyPageAvailable, getCurrentProjectFilteredPageIdsByTab, getCurrentProjectPageIdsByTab, loader } =
@@ -61,7 +61,7 @@ export const PagesListMainContent = observer(function PagesListMainContent(props
     await createPage(payload)
       .then((res) => {
         const pageId = `/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/${res?.id}`;
-        router.push(pageId);
+        return router.push(pageId);
       })
       .catch((err) => {
         setToast({

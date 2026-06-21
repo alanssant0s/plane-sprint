@@ -5,7 +5,7 @@
  */
 
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { substringMatch } from "@plane/utils";
 // components
 import type { TPowerKCommandConfig, TPowerKCommandGroup } from "@/components/power-k/core/types";
@@ -23,7 +23,7 @@ type Props = {
 export function ShortcutRenderer(props: Props) {
   const { searchQuery, commands } = props;
   // translation
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   // Apply search filter
   const filteredCommands = commands.filter((command) => substringMatch(t(command.i18n_title), searchQuery));
@@ -102,12 +102,7 @@ export function ShortcutRenderer(props: Props) {
         ))
       ) : (
         <p className="flex justify-center text-center text-13 text-secondary">
-          No shortcuts found for{" "}
-          <span className="font-semibold italic">
-            {`"`}
-            {searchQuery}
-            {`"`}
-          </span>
+          {t("power_k.shortcuts_modal.no_results", { query: searchQuery })}
         </p>
       )}
     </div>

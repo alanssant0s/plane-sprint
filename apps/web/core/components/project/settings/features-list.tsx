@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useEntityTerm, useTerminologyT } from "@/hooks/use-workspace-type";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject } from "@plane/types";
@@ -31,7 +31,6 @@ const PROJECT_FEATURES_LIST = {
   cycles: {
     key: "cycles",
     property: "cycle_view",
-    title: "Cycles",
     description: "Timebox work as you see fit per project and change frequency from one period to the next.",
     icon: <CycleIcon className="h-5 w-5 flex-shrink-0 rotate-180 text-tertiary" />,
     isPro: false,
@@ -40,7 +39,6 @@ const PROJECT_FEATURES_LIST = {
   modules: {
     key: "modules",
     property: "module_view",
-    title: "Modules",
     description: "Group work into sub-project-like set-ups with their own leads and assignees.",
     icon: <ModuleIcon width={20} height={20} className="flex-shrink-0 text-tertiary" />,
     isPro: false,
@@ -49,7 +47,6 @@ const PROJECT_FEATURES_LIST = {
   views: {
     key: "views",
     property: "issue_views_view",
-    title: "Views",
     description: "Save sorts, filters, and display options for later or share them.",
     icon: <ViewsIcon className="h-5 w-5 flex-shrink-0 text-tertiary" />,
     isPro: false,
@@ -58,7 +55,6 @@ const PROJECT_FEATURES_LIST = {
   pages: {
     key: "pages",
     property: "page_view",
-    title: "Pages",
     description: "Write anything like you write anything.",
     icon: <PageIcon className="h-5 w-5 flex-shrink-0 text-tertiary" />,
     isPro: false,
@@ -67,7 +63,6 @@ const PROJECT_FEATURES_LIST = {
   inbox: {
     key: "intake",
     property: "inbox_view",
-    title: "Intake",
     description: "Consider and discuss work items before you add them to your project.",
     icon: <IntakeIcon className="h-5 w-5 flex-shrink-0 text-tertiary" />,
     isPro: false,
@@ -77,11 +72,27 @@ const PROJECT_FEATURES_LIST = {
 
 export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: Props) {
   const { workspaceSlug, projectId, isAdmin } = props;
-  // store hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
+  const cycleTerm = useEntityTerm("cycle", { plural: true });
+  const moduleTerm = useEntityTerm("module", { plural: true });
+  const pageTerm = useEntityTerm("page", { plural: true });
   const { getProjectById, updateProject } = useProject();
-  // derived values
   const currentProjectDetails = getProjectById(projectId);
+
+  const featureTitle = (key: string) => {
+    switch (key) {
+      case "cycles":
+        return cycleTerm;
+      case "modules":
+        return moduleTerm;
+      case "pages":
+        return pageTerm;
+      case "intake":
+        return t(key);
+      default:
+        return t(key);
+    }
+  };
 
   const handleSubmit = (_featureKey: string, featureProperty: string) => {
     if (!workspaceSlug || !projectId || !currentProjectDetails) return;
@@ -118,7 +129,7 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
               <SettingsBoxedControlItem
                 title={
                   <span className="flex items-center gap-2">
-                    {t(featureItem.key)}
+                    {featureTitle(featureItem.key)}
                     {featureItem.isPro && (
                       <Tooltip tooltipContent="Pro feature" position="top">
                         <UpgradeBadge className="rounded-sm" />

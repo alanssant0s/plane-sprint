@@ -8,6 +8,7 @@ import { Tooltip } from "@plane/propel/tooltip";
 import { generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useEntityTerm, useTerminologyT } from "@/hooks/use-workspace-type";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TIssueLink = {
@@ -21,6 +22,8 @@ export function IssueLink(props: TIssueLink) {
     activity: { getActivityById },
   } = useIssueDetail();
   const { isMobile } = usePlatformOS();
+  const { t } = useTerminologyT();
+  const workItemTermPlural = useEntityTerm("work_item", { plural: true });
   const activity = getActivityById(activityId);
 
   if (!activity) return <></>;
@@ -34,7 +37,7 @@ export function IssueLink(props: TIssueLink) {
   });
   return (
     <Tooltip
-      tooltipContent={activity.issue_detail ? activity.issue_detail.name : "This work item has been deleted"}
+      tooltipContent={activity.issue_detail ? activity.issue_detail.name : t("issue.empty_state.issue_detail.title")}
       isMobile={isMobile}
     >
       <a
@@ -46,7 +49,7 @@ export function IssueLink(props: TIssueLink) {
       >
         {activity.issue_detail
           ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`
-          : "Work items"}{" "}
+          : workItemTermPlural}{" "}
         <span className="font-regular">{activity.issue_detail?.name}</span>
       </a>
     </Tooltip>

@@ -56,8 +56,6 @@ export const WorkItemsModal = observer(function WorkItemsModal(props: Props) {
           handleClose={handleClose}
           setFullScreen={setFullScreen}
           title={projectDetails?.name ?? workspaceSprintDetails?.name ?? ""}
-          cycle={cycleDetails}
-          module={moduleDetails}
         />
         <WorkItemsModalMainContent
           fullScreen={fullScreen}

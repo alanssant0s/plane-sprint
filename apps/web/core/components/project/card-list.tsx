@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { ContentWrapper } from "@plane/ui";
 // components
@@ -29,7 +29,7 @@ type TProjectCardListProps = {
 export const ProjectCardList = observer(function ProjectCardList(props: TProjectCardListProps) {
   const { totalProjectIds: totalProjectIdsProps, filteredProjectIds: filteredProjectIdsProps } = props;
   // plane hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const {

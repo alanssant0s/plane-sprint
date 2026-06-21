@@ -10,6 +10,7 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
 import type { EUserProjectRoles, IPartialProject } from "@plane/types";
 import type { TNavigationItem } from "@/components/navigation/tab-navigation-root";
+import { useEntityTerm } from "@/hooks/use-workspace-type";
 
 type UseNavigationItemsProps = {
   workspaceSlug: string;
@@ -29,14 +30,19 @@ export const useNavigationItems = ({
   project,
   allowPermissions,
 }: UseNavigationItemsProps): TNavigationItem[] => {
+  const workItemsTerm = useEntityTerm("work_item", { plural: true });
+  const cyclesTerm = useEntityTerm("cycle", { plural: true });
+  const modulesTerm = useEntityTerm("module", { plural: true });
+  const pagesTerm = useEntityTerm("page", { plural: true });
+
   // Base navigation items
   const baseNavigation = useCallback(
-    (workspaceSlug: string, projectId: string): TNavigationItem[] => [
+    (wsSlug: string, projId: string): TNavigationItem[] => [
       {
         i18n_key: "sidebar.work_items",
         key: "work_items",
-        name: "Work items",
-        href: `/${workspaceSlug}/projects/${projectId}/issues`,
+        name: workItemsTerm,
+        href: `/${wsSlug}/projects/${projId}/issues`,
         icon: WorkItemsIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: true,
@@ -45,8 +51,8 @@ export const useNavigationItems = ({
       {
         i18n_key: "sidebar.cycles",
         key: "cycles",
-        name: "Cycles",
-        href: `/${workspaceSlug}/projects/${projectId}/cycles`,
+        name: cyclesTerm,
+        href: `/${wsSlug}/projects/${projId}/cycles`,
         icon: CycleIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
         shouldRender: !!project?.cycle_view,
@@ -55,8 +61,8 @@ export const useNavigationItems = ({
       {
         i18n_key: "sidebar.modules",
         key: "modules",
-        name: "Modules",
-        href: `/${workspaceSlug}/projects/${projectId}/modules`,
+        name: modulesTerm,
+        href: `/${wsSlug}/projects/${projId}/modules`,
         icon: ModuleIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
         shouldRender: !!project?.module_view,
@@ -66,7 +72,7 @@ export const useNavigationItems = ({
         i18n_key: "sidebar.views",
         key: "views",
         name: "Views",
-        href: `/${workspaceSlug}/projects/${projectId}/views`,
+        href: `/${wsSlug}/projects/${projId}/views`,
         icon: ViewsIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: !!project?.issue_views_view,
@@ -75,8 +81,8 @@ export const useNavigationItems = ({
       {
         i18n_key: "sidebar.pages",
         key: "pages",
-        name: "Pages",
-        href: `/${workspaceSlug}/projects/${projectId}/pages`,
+        name: pagesTerm,
+        href: `/${wsSlug}/projects/${projId}/pages`,
         icon: PageIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: !!project?.page_view,
@@ -86,14 +92,14 @@ export const useNavigationItems = ({
         i18n_key: "sidebar.intake",
         key: "intake",
         name: "Intake",
-        href: `/${workspaceSlug}/projects/${projectId}/intake`,
+        href: `/${wsSlug}/projects/${projId}/intake`,
         icon: IntakeIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: !!project?.inbox_view,
         sortOrder: 6,
       },
     ],
-    [project]
+    [project, workItemsTerm, cyclesTerm, modulesTerm, pagesTerm]
   );
 
   // Combine, filter, and sort navigation items
@@ -108,7 +114,7 @@ export const useNavigationItems = ({
     });
 
     // Sort by sortOrder
-    return filteredItems.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+    return filteredItems.toSorted((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
   }, [workspaceSlug, projectId, baseNavigation, allowPermissions, project?.id]);
 
   return navigationItems;

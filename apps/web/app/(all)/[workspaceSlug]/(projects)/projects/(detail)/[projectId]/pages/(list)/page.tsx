@@ -9,7 +9,7 @@ import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import type { TPageNavigationTabs } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // assets
@@ -43,7 +43,7 @@ function ProjectPagesPage({ params }: Route.ComponentProps) {
   // theme hook
   const { resolvedTheme } = useTheme();
   // plane hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // store hooks
   const { getProjectById, currentProjectDetails } = useProject();
   const { allowPermissions } = useUserPermissions();

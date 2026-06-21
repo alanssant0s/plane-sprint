@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { CompactAssetType } from "@plane/propel/empty-state";
 
@@ -34,7 +34,7 @@ const getDisplayContent = (type: string): { assetKey: CompactAssetType; text: st
 };
 
 export function RecentsEmptyState({ type }: { type: string }) {
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   const { assetKey, text } = getDisplayContent(type);
 

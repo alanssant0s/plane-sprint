@@ -11,6 +11,7 @@ import { useParams } from "next/navigation";
 import { PlaneNewIcon } from "@plane/propel/icons";
 import type { AppSidebarItemData } from "@/components/sidebar/sidebar-item";
 import { useWorkspacePaths } from "@/hooks/use-workspace-paths";
+import { useEntityTerm } from "@/hooks/use-workspace-type";
 
 type WithDockItemsProps = {
   dockItems: (AppSidebarItemData & { shouldRender: boolean })[];
@@ -20,10 +21,11 @@ export function withDockItems<P extends WithDockItemsProps>(WrappedComponent: Re
   const ComponentWithDockItems = observer(function ComponentWithDockItems(props: Omit<P, keyof WithDockItemsProps>) {
     const { workspaceSlug } = useParams();
     const { isProjectsPath, isNotificationsPath } = useWorkspacePaths();
+    const projectTerm = useEntityTerm("project", { plural: true });
 
     const dockItems: (AppSidebarItemData & { shouldRender: boolean })[] = [
       {
-        label: "Projects",
+        label: projectTerm,
         icon: <PlaneNewIcon className="size-5" />,
         href: `/${workspaceSlug}/`,
         isActive: isProjectsPath && !isNotificationsPath,

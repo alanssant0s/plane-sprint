@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { ChevronDownIcon } from "@plane/propel/icons";
 import type { TRecentActivityFilterKeys } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
@@ -20,7 +20,7 @@ export type TFiltersDropdown = {
 
 export const FiltersDropdown = observer(function FiltersDropdown(props: TFiltersDropdown) {
   const { className, activeFilter, setActiveFilter, filters } = props;
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   function DropdownOptions() {
     return filters?.map((filter) => (

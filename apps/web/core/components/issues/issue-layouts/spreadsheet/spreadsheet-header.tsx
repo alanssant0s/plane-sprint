@@ -14,6 +14,7 @@ import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane
 import { cn } from "@plane/utils";
 import { MultipleSelectGroupAction } from "@/components/core/multiple-select";
 // hooks
+import { useEntityTerm } from "@/hooks/use-workspace-type";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { SpreadsheetHeaderColumn } from "./spreadsheet-header-column";
 
@@ -41,6 +42,7 @@ export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Prop
   } = props;
   // router
   const { projectId } = useParams();
+  const entityLabel = useEntityTerm(isEpic ? "epic" : "work_item", { plural: true });
   // derived values
   const isGroupSelectionEmpty = selectionHelpers.isGroupSelected(SPREADSHEET_SELECT_GROUP) === "empty";
   // auth
@@ -71,7 +73,7 @@ export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Prop
                   />
                 </div>
               )}
-              <span className="text-13 font-medium">{`${isEpic ? "Epics" : "Work items"}`}</span>
+              <span className="text-13 font-medium">{entityLabel}</span>
             </div>
           </div>
         </th>

@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT, useEntityTerm } from "@/hooks/use-workspace-type";
 import { ChevronUpIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { ICycle, TCyclePlotType, TProgressSnapshot } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
@@ -33,10 +33,17 @@ type Options = {
   label: string;
 };
 
-export const cycleEstimateOptions: Options[] = [
-  { value: "issues", label: "Work items" },
-  { value: "points", label: "Estimates" },
-];
+export function useCycleEstimateOptions(): Options[] {
+  const workItemsTerm = useEntityTerm("work_item", { plural: true });
+  return useMemo(
+    () => [
+      { value: "issues", label: workItemsTerm },
+      { value: "points", label: "Estimates" },
+    ],
+    [workItemsTerm]
+  );
+}
+
 export const cycleChartOptions: Options[] = [
   { value: "burndown", label: "Burn-down" },
   { value: "burnup", label: "Burn-up" },
@@ -64,7 +71,7 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
   const searchParams = useSearchParams();
   const peekCycle = searchParams.get("peekCycle") || undefined;
   // plane hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // store hooks
   const { getPlotTypeByCycleId, getEstimateTypeByCycleId, getCycleById } = useCycle();
   const { getFilter, updateFilterValueFromSidebar } = useWorkItemFilters();

@@ -22,7 +22,7 @@ from rest_framework.response import Response
 from .. import BaseViewSet
 from plane.app.serializers import CycleIssueSerializer
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.db.models import Cycle, CycleIssue, Issue, FileAsset, IssueLink
+from plane.db.models import Cycle, CycleIssue, Issue, FileAsset, IssueLink, WorkspaceSprintIssue
 from plane.utils.grouper import (
     issue_group_values,
     issue_on_results,
@@ -79,6 +79,20 @@ class CycleIssueViewSet(BaseViewSet):
             issues.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
+                )
+            )
+            .annotate(
+                global_sprint_id=Subquery(
+                    WorkspaceSprintIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values(
+                        "sprint_id"
+                    )[:1]
+                )
+            )
+            .annotate(
+                global_sprint_name=Subquery(
+                    WorkspaceSprintIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values(
+                        "sprint__name"
+                    )[:1]
                 )
             )
             .annotate(

@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 // components
 import { EUserPermissionsLevel, MODULE_TRACKER_ELEMENTS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EUserProjectRoles } from "@plane/types";
 import { ContentWrapper, Row, ERowVariant } from "@plane/ui";
@@ -30,7 +30,7 @@ export const ModulesListView = observer(function ModulesListView() {
   const searchParams = useSearchParams();
   const peekModule = searchParams.get("peekModule");
   // plane hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // store hooks
   const { toggleCreateModuleModal } = useCommandPalette();
   const { getProjectModuleIds, getFilteredModuleIds, loader } = useModule();

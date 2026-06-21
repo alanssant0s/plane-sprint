@@ -6,14 +6,14 @@
 
 import { observer } from "mobx-react";
 
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { PlusIcon } from "@plane/propel/icons";
 import { Row } from "@plane/ui";
 import type { TQuickAddIssueButton } from "../root";
 
 export const GanttQuickAddIssueButton = observer(function GanttQuickAddIssueButton(props: TQuickAddIssueButton) {
   const { onClick, isEpic = false } = props;
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   return (
     <button
       type="button"

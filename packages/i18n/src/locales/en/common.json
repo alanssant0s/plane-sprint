@@ -5,6 +5,12 @@
     "otherwise_try_refreshing_the_page_occasionally_or_visit_our": "Otherwise, try refreshing the page occasionally or visit our",
     "status_page": "Status page"
   },
+  "terminology": {
+    "add_entity": "Add {entity}",
+    "adding_entity": "Adding {entity}",
+    "archived_entity_plural": "Archived {entity_plural}",
+    "no_entity_found": "No {entity_plural} found"
+  },
   "submit": "Submit",
   "cancel": "Cancel",
   "loading": "Loading",

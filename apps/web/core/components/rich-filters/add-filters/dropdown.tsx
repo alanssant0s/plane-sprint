@@ -12,6 +12,8 @@ import type { IFilterInstance } from "@plane/shared-state";
 import type { TExternalFilter, TFilterProperty, TSupportedOperators } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 import { getOperatorForPayload } from "@plane/utils";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
+import { resolveRichFilterLabel } from "@/utils/rich-filter-label";
 
 export type TAddFilterDropdownProps<P extends TFilterProperty, E extends TExternalFilter> = {
   customButton: React.ReactNode;
@@ -30,23 +32,28 @@ export const AddFilterDropdown = observer(function AddFilterDropdown<
 >(props: TAddFilterDropdownProps<P, E>) {
   const { filter, customButton, buttonConfig } = props;
   const { className, defaultOpen = false, isDisabled = false } = buttonConfig || {};
+  const { t } = useTerminologyT();
 
   // Transform available filter configs to CustomSearchSelect options format
-  const filterOptions = filter.configManager.allAvailableConfigs.map((config) => ({
-    value: config.id,
-    content: (
-      <div className="flex items-center justify-between gap-2 text-secondary transition-all duration-200 ease-in-out">
-        <div className="flex items-center gap-2">
-          {config.icon && (
-            <config.icon className="size-4 text-tertiary transition-transform duration-200 ease-in-out" />
-          )}
-          <span>{config.label}</span>
+  const filterOptions = filter.configManager.allAvailableConfigs.map((config) => {
+    const label = resolveRichFilterLabel(config.label, t);
+
+    return {
+      value: config.id,
+      content: (
+        <div className="flex items-center justify-between gap-2 text-secondary transition-all duration-200 ease-in-out">
+          <div className="flex items-center gap-2">
+            {config.icon && (
+              <config.icon className="size-4 text-tertiary transition-transform duration-200 ease-in-out" />
+            )}
+            <span>{label}</span>
+          </div>
+          {config.rightContent}
         </div>
-        {config.rightContent}
-      </div>
-    ),
-    query: config.label.toLowerCase(),
-  }));
+      ),
+      query: label.toLowerCase(),
+    };
+  });
 
   // If all filters are applied, show disabled options
   const allFiltersApplied = filterOptions.length === 0;

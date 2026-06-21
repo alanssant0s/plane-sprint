@@ -13,7 +13,6 @@ import { Ellipsis } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
 import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -29,6 +28,7 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 // plane web imports
 import type { TProject } from "@plane/types";
 // local imports
@@ -42,7 +42,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
   // refs
   const containerRef = useRef<HTMLDivElement | null>(null);
   // store hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   const { toggleCreateProjectModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   const { preferences: projectPreferences } = useProjectNavigationPreferences();
@@ -75,6 +75,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
         title: t("link_copied"),
         message: t("project_link_copied_to_clipboard"),
       });
+      return undefined;
     });
   };
 
@@ -229,8 +230,8 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
             >
               {loader === "init-loader" && (
                 <Loader className="w-full space-y-1.5">
-                  {Array.from({ length: 4 }).map((_, index) => (
-                    <Loader.Item key={index} height="28px" />
+                  {(["loader-1", "loader-2", "loader-3", "loader-4"] as const).map((key) => (
+                    <Loader.Item key={key} height="28px" />
                   ))}
                 </Loader>
               )}

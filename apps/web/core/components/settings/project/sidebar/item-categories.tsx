@@ -14,7 +14,7 @@ import {
   PROJECT_SETTINGS_CATEGORIES,
   PROJECT_SETTINGS_CATEGORY_LABELS,
 } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 // components
 import { SettingsSidebarItem } from "@/components/settings/sidebar/item";
 // hooks
@@ -36,7 +36,7 @@ export const ProjectSettingsSidebarItemCategories = observer(function ProjectSet
   // store hooks
   const { allowPermissions } = useUserPermissions();
   // translation
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   return (
     <div className="mt-3 flex flex-col divide-y divide-subtle px-3">

@@ -6,7 +6,7 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import type { IIssueDisplayFilterOptions, TIssueGroupByOptions } from "@plane/types";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
@@ -22,7 +22,7 @@ type Props = {
 export const FilterGroupBy = observer(function FilterGroupBy(props: Props) {
   const { displayFilters, groupByOptions, handleUpdate, ignoreGroupedFilters } = props;
   // hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
   const selectedGroupBy = displayFilters?.group_by ?? null;
@@ -51,7 +51,7 @@ export const FilterGroupBy = observer(function FilterGroupBy(props: Props) {
             return (
               <FilterOption
                 key={groupBy?.key}
-                isChecked={selectedGroupBy === groupBy?.key ? true : false}
+                isChecked={selectedGroupBy === groupBy?.key}
                 onClick={() => handleUpdate(groupBy.key)}
                 title={t(groupBy.titleTranslationKey)}
                 multiple={false}

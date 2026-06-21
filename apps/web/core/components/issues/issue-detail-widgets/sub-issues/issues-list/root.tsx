@@ -16,6 +16,7 @@ import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 import { SectionEmptyState } from "@/components/empty-state/section-empty-state-root";
 import { getGroupByColumns, isWorkspaceLevel } from "@/components/issues/issue-layouts/utils";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useAllIssuesGroupLabel } from "@/hooks/use-workspace-type";
 
 import { SubIssuesListGroup } from "./list-group";
 type Props = {
@@ -62,6 +63,7 @@ export const SubIssuesListRoot = observer(function SubIssuesListRoot(props: Prop
   const isRootLevel = useMemo(() => rootIssueId === parentIssueId, [rootIssueId, parentIssueId]);
   const group_by = isRootLevel ? (filters?.displayFilters?.group_by ?? null) : null;
   const filteredSubWorkItemsCount = (getFilteredSubWorkItems(rootIssueId, filters.filters ?? {}) ?? []).length;
+  const allGroupLabel = useAllIssuesGroupLabel(issueServiceType === EIssueServiceType.EPICS);
 
   const groups = getGroupByColumns({
     groupBy: group_by as GroupByColumnTypes,
@@ -69,6 +71,7 @@ export const SubIssuesListRoot = observer(function SubIssuesListRoot(props: Prop
     isWorkspaceLevel: isWorkspaceLevel(storeType),
     isEpic: issueServiceType === EIssueServiceType.EPICS,
     projectId,
+    allGroupLabel,
   });
 
   const getWorkItemIds = useCallback(

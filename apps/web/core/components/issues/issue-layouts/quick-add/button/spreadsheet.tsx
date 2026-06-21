@@ -6,13 +6,13 @@
 
 import { observer } from "mobx-react";
 
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { PlusIcon } from "@plane/propel/icons";
 import type { TQuickAddIssueButton } from "../root";
 
 export const SpreadsheetAddIssueButton = observer(function SpreadsheetAddIssueButton(props: TQuickAddIssueButton) {
   const { onClick, isEpic = false } = props;
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   return (
     <div className="flex items-center">
       <button

@@ -12,7 +12,7 @@ import { CalendarCheck } from "lucide-react";
 // headless ui
 import { Tab } from "@headlessui/react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TWorkItemFilterCondition } from "@plane/shared-state";
@@ -28,6 +28,19 @@ import darkLabelAsset from "@/app/assets/empty-state/active-cycle/label-dark.web
 import lightLabelAsset from "@/app/assets/empty-state/active-cycle/label-light.webp?url";
 import darkPriorityAsset from "@/app/assets/empty-state/active-cycle/priority-dark.webp?url";
 import lightPriorityAsset from "@/app/assets/empty-state/active-cycle/priority-light.webp?url";
+
+const getActiveCycleTabIndex = (tab: string | null) => {
+  switch (tab) {
+    case "Priority-Issues":
+      return 0;
+    case "Assignees":
+      return 1;
+    case "Labels":
+      return 2;
+    default:
+      return 0;
+  }
+};
 import userImage from "@/app/assets/user.png?url";
 // components
 import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
@@ -63,24 +76,12 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
   // theme hook
   const { resolvedTheme } = useTheme();
   // plane hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // derived values
   const priorityResolvedPath = resolvedTheme === "light" ? lightPriorityAsset : darkPriorityAsset;
   const assigneesResolvedPath = resolvedTheme === "light" ? lightAssigneeAsset : darkAssigneeAsset;
   const labelsResolvedPath = resolvedTheme === "light" ? lightLabelAsset : darkLabelAsset;
 
-  const currentValue = (tab: string | null) => {
-    switch (tab) {
-      case "Priority-Issues":
-        return 0;
-      case "Assignees":
-        return 1;
-      case "Labels":
-        return 2;
-      default:
-        return 0;
-    }
-  };
   const {
     issues: { fetchNextActiveCycleIssues },
   } = useIssues(EIssuesStoreType.CYCLE);
@@ -108,7 +109,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
     <div className="col-span-1 flex min-h-[17rem] flex-col gap-4 overflow-hidden rounded-lg border border-subtle bg-surface-1 p-4 lg:col-span-2 xl:col-span-1">
       <Tab.Group
         as={Fragment}
-        defaultIndex={currentValue(tab)}
+        defaultIndex={getActiveCycleTabIndex(tab)}
         onChange={(i) => {
           switch (i) {
             case 0:
@@ -189,9 +190,10 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                       if (!issue) return null;
 
                       return (
-                        <div
+                        <button
+                          type="button"
                           key={issue.id}
-                          className="group flex cursor-pointer items-center justify-between gap-2 rounded-md p-1 hover:bg-surface-2"
+                          className="group flex w-full cursor-pointer items-center justify-between gap-2 rounded-md p-1 text-left hover:bg-surface-2"
                           onClick={() => {
                             if (issue.id) {
                               setPeekIssue({
@@ -237,7 +239,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                               </Tooltip>
                             )}
                           </div>
-                        </div>
+                        </button>
                       );
                     })}
                     {(cycleIssueDetails.nextPageResults === undefined || cycleIssueDetails.nextPageResults) && (
@@ -269,7 +271,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
           >
             {cycle && !isEmpty(cycle.distribution) ? (
               cycle?.distribution?.assignees && cycle.distribution.assignees.length > 0 ? (
-                cycle.distribution?.assignees?.map((assignee, index) => {
+                cycle.distribution?.assignees?.map((assignee) => {
                   if (assignee.assignee_id)
                     return (
                       <SingleProgressStats
@@ -298,7 +300,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                   else
                     return (
                       <SingleProgressStats
-                        key={`unassigned-${index}`}
+                        key="unassigned"
                         title={
                           <div className="flex items-center gap-2">
                             <div className="h-5 w-5 rounded-full border-2 border-subtle bg-layer-1">
@@ -331,9 +333,9 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
           >
             {cycle && !isEmpty(cycle.distribution) ? (
               cycle?.distribution?.labels && cycle.distribution.labels.length > 0 ? (
-                cycle.distribution.labels?.map((label, index) => (
+                cycle.distribution.labels?.map((label) => (
                   <SingleProgressStats
-                    key={label.label_id ?? `no-label-${index}`}
+                    key={label.label_id ?? label.label_name ?? "no-label"}
                     title={
                       <div className="flex items-center gap-2 truncate">
                         <span

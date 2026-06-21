@@ -6,7 +6,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { TInboxIssueCurrentTab } from "@plane/types";
 import { EInboxIssueCurrentTab } from "@plane/types";
@@ -51,7 +51,7 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
   const containerRef = useRef<HTMLDivElement>(null);
   const [elementRef, setElementRef] = useState<HTMLDivElement | null>(null);
   // plane hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // store
   const { currentProjectDetails } = useProject();
   const {
@@ -87,7 +87,8 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
       <div className="relative flex h-full w-full flex-col overflow-hidden">
         <Header variant={EHeaderVariant.SECONDARY}>
           {tabNavigationOptions.map((option) => (
-            <div
+            <button
+              type="button"
               key={option?.key}
               className={cn(
                 `relative flex h-full cursor-pointer items-center gap-1 px-3 text-13 font-medium transition-all`,
@@ -112,7 +113,7 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
                   currentTab === option?.key ? `border-accent-strong` : `border-transparent`
                 )}
               />
-            </div>
+            </button>
           ))}
           <div className="m-auto mr-0">
             <FiltersRoot />

@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { UserRound } from "lucide-react";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon } from "@plane/propel/icons";
 // plane package imports
@@ -43,7 +43,7 @@ const WorkItemsInsightTable = observer(function WorkItemsInsightTable() {
   // router
   const params = useParams();
   const workspaceSlug = params.workspaceSlug.toString();
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // store hooks
   const { getProjectById } = useProject();
   const {

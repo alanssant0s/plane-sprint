@@ -7,7 +7,8 @@
 import { Link } from "react-router";
 import { PinOff } from "lucide-react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+// plane imports
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { ContextMenu } from "@plane/propel/context-menu";
 import { SetAsDefaultIcon } from "@plane/propel/icons";
 import { TabNavigationItem } from "@plane/propel/tab-navigation";
@@ -36,7 +37,7 @@ export function TabNavigationVisibleItem({
   onHide,
   itemRef,
 }: TTabNavigationVisibleItemProps) {
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   const isDefault = item.key === tabPreferences.defaultTab;
 
   return (

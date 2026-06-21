@@ -8,10 +8,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 // plane package imports
-import { useTranslation } from "@plane/i18n";
 import type { IAnalyticsParams } from "@plane/types";
 import { ChartXAxisProperty, ChartYAxisMetric } from "@plane/types";
 import { cn } from "@plane/utils";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 // plane web components
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
 import { AnalyticsSelectParams } from "../select/analytics-params";
@@ -24,7 +24,7 @@ const CustomizedInsights = observer(function CustomizedInsights({
   peekView?: boolean;
   isEpic?: boolean;
 }) {
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   const { workspaceSlug } = useParams();
   const { control, watch, setValue } = useForm<IAnalyticsParams>({
     defaultValues: {

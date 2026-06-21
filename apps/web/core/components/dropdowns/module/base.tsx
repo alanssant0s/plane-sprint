@@ -8,7 +8,7 @@ import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import type { IModule } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -74,7 +74,7 @@ export const ModuleDropdownBase = observer(function ModuleDropdownBase(props: TM
     value,
   } = props;
   // i18n
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // states
   const [isOpen, setIsOpen] = useState(false);
   // refs
@@ -176,6 +176,7 @@ export const ModuleDropdownBase = observer(function ModuleDropdownBase(props: TM
   );
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <ComboDropDown
       as="div"
       ref={dropdownRef}

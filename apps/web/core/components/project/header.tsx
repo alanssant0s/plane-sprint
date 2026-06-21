@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // i18n
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 // ui
 import { Button } from "@plane/propel/button";
 import { ProjectIcon } from "@plane/propel/icons";
@@ -25,7 +25,7 @@ import { ProjectSearch } from "./search-projects";
 
 export const ProjectsBaseHeader = observer(function ProjectsBaseHeader() {
   // i18n
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
@@ -50,7 +50,9 @@ export const ProjectsBaseHeader = observer(function ProjectsBaseHeader() {
               />
             }
           />
-          {isArchived && <Breadcrumbs.Item component={<BreadcrumbLink label="Archived" />} />}
+          {isArchived && (
+            <Breadcrumbs.Item component={<BreadcrumbLink label={t("workspace_projects.scope.archived_projects")} />} />
+          )}
         </Breadcrumbs>
       </Header.LeftItem>
       <Header.RightItem>

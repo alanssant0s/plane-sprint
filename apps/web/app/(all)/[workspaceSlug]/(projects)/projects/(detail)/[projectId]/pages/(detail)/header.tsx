@@ -20,6 +20,7 @@ import { PageSyncingBadge } from "@/components/pages/header/syncing-badge";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useEntityListLabel } from "@/hooks/use-workspace-type";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
@@ -44,6 +45,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
   });
   // derived values
   const projectPageIds = getCurrentProjectPageIds(projectId?.toString());
+  const pagesLabel = useEntityListLabel("page");
 
   const switcherOptions = projectPageIds
     .map((id) => {
@@ -73,7 +75,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
-                  label="Pages"
+                  label={pagesLabel}
                   href={`/${workspaceSlug}/projects/${projectId}/pages/`}
                   icon={<PageIcon className="h-4 w-4 text-tertiary" />}
                 />

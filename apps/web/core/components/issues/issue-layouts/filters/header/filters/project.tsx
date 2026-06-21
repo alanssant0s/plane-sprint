@@ -14,6 +14,7 @@ import { Loader } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
+import { useEntityTerm } from "@/hooks/use-workspace-type";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -28,6 +29,7 @@ export const FilterProjects = observer(function FilterProjects(props: Props) {
   const [previewEnabled, setPreviewEnabled] = useState(true);
   // store
   const { getProjectById, joinedProjectIds } = useProject();
+  const projectTerm = useEntityTerm("project");
   // derived values
   const projects = joinedProjectIds?.map((projectId) => getProjectById(projectId)!) ?? null;
   const appliedFiltersCount = appliedFilters?.length ?? 0;
@@ -53,7 +55,7 @@ export const FilterProjects = observer(function FilterProjects(props: Props) {
   return (
     <>
       <FilterHeader
-        title={`Project${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${projectTerm}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -65,7 +67,7 @@ export const FilterProjects = observer(function FilterProjects(props: Props) {
                 {sortedOptions.slice(0, itemsToRender).map((project) => (
                   <FilterOption
                     key={`project-${project.id}`}
-                    isChecked={appliedFilters?.includes(project.id) ? true : false}
+                    isChecked={!!appliedFilters?.includes(project.id)}
                     onClick={() => handleUpdate(project.id)}
                     icon={
                       <span className="grid h-4 w-4 flex-shrink-0 place-items-center">

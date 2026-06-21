@@ -19,6 +19,7 @@ import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceNavigationPreferences } from "@/hooks/use-navigation-preferences";
+import { useEntityTerm } from "@/hooks/use-workspace-type";
 // plane web imports
 import { getSidebarNavigationItemIcon } from "@/plane-web/components/workspace/sidebar/helper";
 
@@ -39,6 +40,7 @@ export const SidebarItemBase = observer(function SidebarItemBase({
   const { allowPermissions } = useUserPermissions();
   const { isWorkspaceItemPinned } = useWorkspaceNavigationPreferences();
   const { data } = useUser();
+  const projectTerm = useEntityTerm("project", { plural: true });
 
   const { toggleSidebar, isExtendedSidebarOpened, toggleExtendedSidebar } = useAppTheme();
 
@@ -66,7 +68,7 @@ export const SidebarItemBase = observer(function SidebarItemBase({
   const itemHref =
     item.key === "your_work" && data?.id ? joinUrlPath(slug, item.href, data?.id) : joinUrlPath(slug, item.href);
   const icon = getSidebarNavigationItemIcon(item.key);
-  const label = item.key === "squads" ? "Squads" : t(item.labelTranslationKey);
+  const label = item.key === "squads" ? "Squads" : item.key === "projects" ? projectTerm : t(item.labelTranslationKey);
 
   return (
     <Link href={itemHref} onClick={handleLinkClick}>

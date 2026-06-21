@@ -43,6 +43,7 @@ import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useEntityAddLabel, useEntityListLabel } from "@/hooks/use-workspace-type";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -71,10 +72,12 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
   const { toggleCreateIssueModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   const { currentProjectDetails, loader } = useProject();
+  const modulesLabel = useEntityListLabel("module");
+  const addWorkItemLabel = useEntityAddLabel("work_item");
   // local storage
   const { setValue, storedValue } = useLocalStorage("module_sidebar_collapsed", "false");
   // derived values
-  const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
+  const isSidebarCollapsed = storedValue ? storedValue === "true" : false;
   const activeLayout = issueFilters?.displayFilters?.layout;
   const moduleDetails = moduleId ? getModuleById(moduleId) : undefined;
   const canUserCreateIssue = allowPermissions(
@@ -139,7 +142,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
               <Breadcrumbs.Item
                 component={
                   <BreadcrumbLink
-                    label="Modules"
+                    label={modulesLabel}
                     href={`/${workspaceSlug}/projects/${projectId}/modules/`}
                     icon={<ModuleIcon className="h-4 w-4 text-tertiary" />}
                     isLast
@@ -243,7 +246,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                 }}
                 data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.MODULE}
               >
-                Add work item
+                {addWorkItemLabel}
               </Button>
             </>
           ) : (

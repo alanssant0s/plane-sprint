@@ -5,12 +5,12 @@
  */
 
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import type { TQuickAddIssueForm } from "../root";
 
 export const ListQuickAddIssueForm = observer(function ListQuickAddIssueForm(props: TQuickAddIssueForm) {
   const { ref, projectDetail, register, onSubmit, isEpic } = props;
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   return (
     <div className="shadow-raised-200">
       <form

@@ -9,7 +9,7 @@ import { useNavigate } from "react-router";
 import { LogOut, MoreHorizontal, Settings, Share2, ArchiveIcon } from "lucide-react";
 // plane imports
 import { MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { LinkIcon } from "@plane/propel/icons";
 import { CustomMenu } from "@plane/ui";
 
@@ -37,22 +37,23 @@ export function ProjectActionsMenu({
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
   // translation
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // refs
-  const actionSectionRef = useRef<HTMLDivElement | null>(null);
+  const actionSectionRef = useRef<HTMLButtonElement | null>(null);
   // router
   const navigate = useNavigate();
 
   return (
     <CustomMenu
       customButton={
-        <span
+        <button
+          type="button"
           ref={actionSectionRef}
           className="grid place-items-center rounded-sm p-0.5 text-placeholder hover:bg-layer-1"
           onClick={() => setIsMenuActive(!isMenuActive)}
         >
           <MoreHorizontal className="size-4" />
-        </span>
+        </button>
       }
       className="flex-shrink-0"
       customButtonClassName="grid place-items-center"

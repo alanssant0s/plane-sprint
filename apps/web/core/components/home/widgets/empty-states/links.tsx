@@ -4,11 +4,11 @@
  * See the LICENSE file for details.
  */
 
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 
 export function LinksEmptyState() {
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   return (
     <div className="flex w-full items-center justify-center rounded-lg bg-layer-1 py-10">
       <EmptyStateCompact

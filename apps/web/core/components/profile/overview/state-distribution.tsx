@@ -6,7 +6,7 @@
 
 // plane imports
 import { STATE_GROUPS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { PieChart } from "@plane/propel/charts/pie-chart";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { IUserProfileData, IUserStateDistribution } from "@plane/types";
@@ -19,7 +19,7 @@ type Props = {
 };
 
 export function ProfileStateDistribution({ stateDistribution, userProfile }: Props) {
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   if (!userProfile) return null;
 
   return (
@@ -81,7 +81,7 @@ export function ProfileStateDistribution({ stateDistribution, userProfile }: Pro
           <EmptyStateCompact
             assetKey="priority"
             assetClassName="size-20"
-            title={t("workspace_empty_state.your_work_by_priority.title")}
+            title={t("workspace_empty_state.your_work_by_state.title")}
           />
         )}
       </Card>

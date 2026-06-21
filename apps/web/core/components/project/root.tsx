@@ -8,7 +8,7 @@ import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import type { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
 import { calculateTotalFilters } from "@plane/utils";
 // components
@@ -25,7 +25,7 @@ export const ProjectRoot = observer(function ProjectRoot() {
   const { currentWorkspace } = useWorkspace();
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // store
   const { totalProjectIds, filteredProjectIds } = useProject();
   const {
@@ -72,11 +72,11 @@ export const ProjectRoot = observer(function ProjectRoot() {
     clearAllFilters(workspaceSlug.toString());
     clearAllAppliedDisplayFilters(workspaceSlug.toString());
     if (isArchived) updateDisplayFilters(workspaceSlug.toString(), { archived_projects: true });
-  }, [clearAllFilters, clearAllAppliedDisplayFilters, workspaceSlug]);
+  }, [clearAllFilters, clearAllAppliedDisplayFilters, workspaceSlug, isArchived, updateDisplayFilters]);
 
   useEffect(() => {
     updateDisplayFilters(workspaceSlug.toString(), { archived_projects: isArchived });
-  }, [pathname]);
+  }, [pathname, isArchived, workspaceSlug, updateDisplayFilters]);
 
   return (
     <>

@@ -11,6 +11,7 @@ import { observer } from "mobx-react";
 import { Avatar, Loader } from "@plane/ui";
 // components
 import { getFileURL } from "@plane/utils";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // helpers
 // hooks
@@ -33,6 +34,7 @@ export const FilterLead = observer(function FilterLead(props: Props) {
   const { getUserDetails } = useMember();
   const { data: currentUser } = useUser();
 
+  const { t } = useTerminologyT();
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
   const sortedOptions = useMemo(() => {
@@ -58,7 +60,7 @@ export const FilterLead = observer(function FilterLead(props: Props) {
   return (
     <>
       <FilterHeader
-        title={`Lead${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("lead")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -74,7 +76,7 @@ export const FilterLead = observer(function FilterLead(props: Props) {
                   return (
                     <FilterOption
                       key={`lead-${member.id}`}
-                      isChecked={appliedFilters?.includes(member.id) ? true : false}
+                      isChecked={!!appliedFilters?.includes(member.id)}
                       onClick={() => handleUpdate(member.id)}
                       icon={
                         <Avatar
@@ -84,7 +86,7 @@ export const FilterLead = observer(function FilterLead(props: Props) {
                           size="md"
                         />
                       }
-                      title={currentUser?.id === member.id ? "You" : member?.display_name}
+                      title={currentUser?.id === member.id ? t("you") : member?.display_name}
                     />
                   );
                 })}

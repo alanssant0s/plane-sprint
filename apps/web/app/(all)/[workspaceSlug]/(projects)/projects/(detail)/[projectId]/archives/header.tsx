@@ -18,6 +18,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useEntityTerm, useTerminologyT } from "@/hooks/use-workspace-type";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
@@ -27,30 +28,47 @@ type TProps = {
 
 const PROJECT_ARCHIVES_BREADCRUMB_LIST: {
   [key: string]: {
-    label: string;
+    entity: "work_item" | "cycle" | "module";
     href: string;
     icon: React.FC<React.SVGAttributes<SVGElement> & { className?: string }>;
   };
 } = {
   issues: {
-    label: "Work items",
+    entity: "work_item",
     href: "/issues",
     icon: WorkItemsIcon,
   },
   cycles: {
-    label: "Cycles",
+    entity: "cycle",
     href: "/cycles",
     icon: CycleIcon,
   },
   modules: {
-    label: "Modules",
+    entity: "module",
     href: "/modules",
     icon: ModuleIcon,
   },
 };
 
+function ProjectArchiveTabLabel({ entity }: { entity: "work_item" | "cycle" | "module" }) {
+  const workItemTerm = useEntityTerm("work_item", { plural: true });
+  const cycleTerm = useEntityTerm("cycle", { plural: true });
+  const moduleTerm = useEntityTerm("module", { plural: true });
+
+  const labelByEntity = {
+    work_item: workItemTerm,
+    cycle: cycleTerm,
+    module: moduleTerm,
+  };
+
+  return labelByEntity[entity];
+}
+
 export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(props: TProps) {
   const { activeTab } = props;
+  const { t } = useTerminologyT();
+  const workItemTerm = useEntityTerm("work_item");
+  const workItemsTerm = useEntityTerm("work_item", { plural: true });
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
@@ -77,7 +95,7 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
               component={
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
-                  label="Archives"
+                  label={t("workspace_archives.page_title")}
                   icon={<ArchiveIcon className="h-4 w-4 text-tertiary" />}
                 />
               }
@@ -86,7 +104,7 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
               <Breadcrumbs.Item
                 component={
                   <BreadcrumbLink
-                    label={activeTabBreadcrumbDetail.label}
+                    label={<ProjectArchiveTabLabel entity={activeTabBreadcrumbDetail.entity} />}
                     icon={<activeTabBreadcrumbDetail.icon className="h-4 w-4 text-tertiary" />}
                   />
                 }
@@ -96,7 +114,7 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
           {activeTab === "issues" && issueCount && issueCount > 0 ? (
             <Tooltip
               isMobile={isMobile}
-              tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "work items" : "work item"} in project's archived`}
+              tooltipContent={`There are ${issueCount} ${issueCount > 1 ? workItemsTerm : workItemTerm} in project's archived`}
               position="bottom"
             >
               <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2.5 py-0.5 text-center text-11 font-semibold text-accent-primary">

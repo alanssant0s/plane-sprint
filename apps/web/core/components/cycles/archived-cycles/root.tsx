@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { TCycleFilters } from "@plane/types";
 import { calculateTotalFilters } from "@plane/utils";
@@ -26,7 +26,7 @@ export const ArchivedCycleLayoutRoot = observer(function ArchivedCycleLayoutRoot
   // router
   const { workspaceSlug, projectId } = useParams();
   // plane hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // hooks
   const { fetchArchivedCycles, currentProjectArchivedCycleIds, loader } = useCycle();
   // cycle filters hook

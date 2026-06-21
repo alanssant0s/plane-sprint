@@ -7,7 +7,7 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { ISSUE_ORDER_BY_OPTIONS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import type { TIssueOrderByOptions } from "@plane/types";
 
 // components
@@ -22,7 +22,7 @@ type Props = {
 export const FilterOrderBy = observer(function FilterOrderBy(props: Props) {
   const { selectedOrderBy, handleUpdate, orderByOptions } = props;
   // hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
@@ -40,7 +40,7 @@ export const FilterOrderBy = observer(function FilterOrderBy(props: Props) {
           {ISSUE_ORDER_BY_OPTIONS.filter((option) => orderByOptions.includes(option.key)).map((orderBy) => (
             <FilterOption
               key={orderBy?.key}
-              isChecked={activeOrderBy === orderBy?.key ? true : false}
+              isChecked={activeOrderBy === orderBy?.key}
               onClick={() => handleUpdate(orderBy.key)}
               title={t(orderBy.titleTranslationKey)}
               multiple={false}

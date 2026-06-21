@@ -19,7 +19,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { LinkIcon, ArchiveIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
@@ -71,7 +71,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
     renderInExtendedSidebar = false,
   } = props;
   // store hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   const { getPartialProjectById } = useProject();
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
@@ -177,13 +177,13 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
         element,
         canDrop: ({ source }) =>
           !disableDrop && source?.data?.id !== projectId && source?.data?.dragInstanceId === "PROJECTS",
-        getData: ({ input, element }) => {
+        getData: ({ input, element: dropElement }) => {
           const data = { id: projectId };
 
           // attach instruction for last in list
           return attachInstruction(data, {
             input,
-            element,
+            element: dropElement,
             currentLevel: 0,
             indentPerLevel: 0,
             mode: isLastChild ? "last-in-group" : "standard",
@@ -222,7 +222,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
         },
       })
     );
-  }, [projectId, isLastChild, projectListType, handleOnProjectDrop]);
+  }, [projectId, isLastChild, projectListType, handleOnProjectDrop, disableDrop, disableDrag, project]);
 
   useEffect(() => {
     if (isMenuActive) toggleAnySidebarDropdown(true);

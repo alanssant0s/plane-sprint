@@ -8,7 +8,7 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams, useLocation, Link, useNavigate } from "react-router";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { TabNavigationList, TabNavigationItem } from "@plane/propel/tab-navigation";
 import type { EUserProjectRoles } from "@plane/types";
 // hooks
@@ -53,7 +53,7 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
   const location = useLocation();
   const pathname = location.pathname;
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   // Store hooks
   const { getPartialProjectById } = useProject();
@@ -109,7 +109,7 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
   // Filter and sort navigation items
   const allNavigationItems = navigationItems
     .filter((item) => item.shouldRender)
-    .sort((a, b) => a.sortOrder - b.sortOrder);
+    .toSorted((a, b) => a.sortOrder - b.sortOrder);
 
   // Split items into two categories:
   // 1. visibleNavigationItems: Items NOT user-hidden (may still overflow due to space)

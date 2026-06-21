@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { Button } from "@plane/propel/button";
 import type { IModule } from "@plane/types";
 // ui
@@ -63,7 +63,7 @@ export function ModuleForm(props: Props) {
 
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_MODULE, isMobile);
 
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   const handleCreateUpdateModule = async (formData: Partial<IModule>) => {
     await handleFormSubmit(formData, dirtyFields);
@@ -100,7 +100,7 @@ export function ModuleForm(props: Props) {
                     }}
                     multiple={false}
                     buttonVariant="border-with-text"
-                    renderCondition={(projectId) => !!projectsWithCreatePermissions?.[projectId]}
+                    renderCondition={(pid) => !!projectsWithCreatePermissions?.[pid]}
                     tabIndex={getIndex("cover_image")}
                   />
                 </div>
@@ -134,7 +134,6 @@ export function ModuleForm(props: Props) {
                   placeholder={t("title")}
                   className="w-full text-14"
                   tabIndex={getIndex("name")}
-                  autoFocus
                 />
               )}
             />

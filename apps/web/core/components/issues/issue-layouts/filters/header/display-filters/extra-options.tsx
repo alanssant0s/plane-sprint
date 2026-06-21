@@ -6,7 +6,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import type { IIssueDisplayFilterOptions, TIssueExtraOptions } from "@plane/types";
 // components
 import { FilterOption } from "@/components/issues/issue-layouts/filters";
@@ -38,7 +38,7 @@ type Props = {
 export const FilterExtraOptions = observer(function FilterExtraOptions(props: Props) {
   const { selectedExtraOptions, handleUpdate, enabledExtraOptions } = props;
   // hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   const isExtraOptionEnabled = (option: TIssueExtraOptions) => enabledExtraOptions.includes(option);
 
   return (
@@ -49,7 +49,7 @@ export const FilterExtraOptions = observer(function FilterExtraOptions(props: Pr
         return (
           <FilterOption
             key={option.key}
-            isChecked={selectedExtraOptions?.[option.key] ? true : false}
+            isChecked={!!selectedExtraOptions?.[option.key]}
             onClick={() => handleUpdate(option.key, !selectedExtraOptions?.[option.key])}
             title={t(option.titleTranslationKey)}
           />

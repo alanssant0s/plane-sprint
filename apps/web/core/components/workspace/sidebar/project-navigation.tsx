@@ -11,7 +11,8 @@ import { useParams, usePathname } from "next/navigation";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
-import type { EUserProjectRoles } from "@plane/types";
+import type { EUserProjectRoles, TTerminologyEntity } from "@plane/types";
+import { useEntityTerm } from "@/hooks/use-workspace-type";
 // plane ui
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
@@ -32,6 +33,33 @@ export type TNavigationItem = {
   key: string;
 };
 
+const NAV_ENTITY_MAP: Partial<Record<string, TTerminologyEntity>> = {
+  work_items: "work_item",
+  cycles: "cycle",
+  modules: "module",
+  pages: "page",
+};
+
+function NavigationItemLabel({ item }: { item: TNavigationItem }) {
+  const { t } = useTranslation();
+  const entity = NAV_ENTITY_MAP[item.key];
+  const workItemTerm = useEntityTerm("work_item");
+  const cycleTerm = useEntityTerm("cycle");
+  const moduleTerm = useEntityTerm("module");
+  const pageTerm = useEntityTerm("page");
+
+  if (!entity) return t(item.i18n_key);
+
+  const labelByEntity: Record<string, string> = {
+    work_item: workItemTerm,
+    cycle: cycleTerm,
+    module: moduleTerm,
+    page: pageTerm,
+  };
+
+  return labelByEntity[entity] ?? t(item.i18n_key);
+}
+
 type TProjectItemsProps = {
   workspaceSlug: string;
   projectId: string;
@@ -42,10 +70,13 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
   const { workspaceSlug, projectId, additionalNavigationItems } = props;
   const { workItem: workItemIdentifierFromRoute } = useParams();
   // store hooks
-  const { t } = useTranslation();
   const { isExtendedProjectSidebarOpened, toggleExtendedProjectSidebar, toggleSidebar } = useAppTheme();
   const { getPartialProjectById } = useProject();
   const { allowPermissions } = useUserPermissions();
+  const workItemsTerm = useEntityTerm("work_item", { plural: true });
+  const cyclesTerm = useEntityTerm("cycle", { plural: true });
+  const modulesTerm = useEntityTerm("module", { plural: true });
+  const pagesTerm = useEntityTerm("page", { plural: true });
   const {
     issue: { getIssueIdByIdentifier, getIssueById },
   } = useIssueDetail();
@@ -69,12 +100,12 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
   };
 
   const baseNavigation = useCallback(
-    (workspaceSlug: string, projectId: string): TNavigationItem[] => [
+    (wsSlug: string, projId: string): TNavigationItem[] => [
       {
         i18n_key: "sidebar.work_items",
         key: "work_items",
-        name: "Work items",
-        href: `/${workspaceSlug}/projects/${projectId}/issues`,
+        name: workItemsTerm,
+        href: `/${wsSlug}/projects/${projId}/issues`,
         icon: WorkItemsIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: true,
@@ -83,8 +114,8 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
       {
         i18n_key: "sidebar.cycles",
         key: "cycles",
-        name: "Cycles",
-        href: `/${workspaceSlug}/projects/${projectId}/cycles`,
+        name: cyclesTerm,
+        href: `/${wsSlug}/projects/${projId}/cycles`,
         icon: CycleIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
         shouldRender: project?.cycle_view ?? false,
@@ -93,8 +124,8 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
       {
         i18n_key: "sidebar.modules",
         key: "modules",
-        name: "Modules",
-        href: `/${workspaceSlug}/projects/${projectId}/modules`,
+        name: modulesTerm,
+        href: `/${wsSlug}/projects/${projId}/modules`,
         icon: ModuleIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
         shouldRender: project?.module_view ?? false,
@@ -104,7 +135,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
         i18n_key: "sidebar.views",
         key: "views",
         name: "Views",
-        href: `/${workspaceSlug}/projects/${projectId}/views`,
+        href: `/${wsSlug}/projects/${projId}/views`,
         icon: ViewsIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: project?.issue_views_view ?? false,
@@ -113,8 +144,8 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
       {
         i18n_key: "sidebar.pages",
         key: "pages",
-        name: "Pages",
-        href: `/${workspaceSlug}/projects/${projectId}/pages`,
+        name: pagesTerm,
+        href: `/${wsSlug}/projects/${projId}/pages`,
         icon: PageIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: project?.page_view ?? false,
@@ -124,30 +155,30 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
         i18n_key: "sidebar.intake",
         key: "intake",
         name: "Intake",
-        href: `/${workspaceSlug}/projects/${projectId}/intake`,
+        href: `/${wsSlug}/projects/${projId}/intake`,
         icon: IntakeIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: project?.inbox_view ?? false,
         sortOrder: 6,
       },
     ],
-    [project]
+    [project, workItemsTerm, cyclesTerm, modulesTerm, pagesTerm]
   );
 
   // memoized navigation items and adding additional navigation items
   const navigationItemsMemo = useMemo(() => {
-    const navigationItems = (workspaceSlug: string, projectId: string): TNavigationItem[] => {
-      const navItems = baseNavigation(workspaceSlug, projectId);
+    const navigationItems = (wsSlug: string, projId: string): TNavigationItem[] => {
+      const navItems = baseNavigation(wsSlug, projId);
 
       if (additionalNavigationItems) {
-        navItems.push(...additionalNavigationItems(workspaceSlug, projectId));
+        navItems.push(...additionalNavigationItems(wsSlug, projId));
       }
 
       return navItems;
     };
 
     // sort navigation items by sortOrder
-    const sortedNavigationItems = navigationItems(workspaceSlug, projectId).sort(
+    const sortedNavigationItems = navigationItems(workspaceSlug, projectId).toSorted(
       (a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)
     );
 
@@ -189,9 +220,11 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
               <div className="flex w-full items-center justify-between gap-1.5 py-[1px]">
                 <div className="flex items-center gap-1.5">
                   <item.icon
-                    className={`size-4 flex-shrink-0 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`}
+                    className={`size-4 flex-shrink-0 ${item.key === "intake" ? "stroke-1" : "stroke-[1.5]"}`}
                   />
-                  <span className="text-11 font-medium">{t(item.i18n_key)}</span>
+                  <span className="text-11 font-medium">
+                    <NavigationItemLabel item={item} />
+                  </span>
                 </div>
                 {shouldShowCount && <span className="text-11 font-medium text-tertiary">{project.intake_count}</span>}
               </div>

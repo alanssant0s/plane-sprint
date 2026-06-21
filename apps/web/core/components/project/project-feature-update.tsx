@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 // ui
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
@@ -26,7 +26,7 @@ type Props = {
 export const ProjectFeatureUpdate = observer(function ProjectFeatureUpdate(props: Props) {
   const { workspaceSlug, projectId, onClose } = props;
   // store hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   const { getProjectById } = useProject();
 
   if (!workspaceSlug || !projectId) return null;
@@ -45,14 +45,13 @@ export const ProjectFeatureUpdate = observer(function ProjectFeatureUpdate(props
           {t("created").toLowerCase()}.
         </div>
         <div className="flex gap-2">
-          <Button variant="secondary" size="lg" onClick={onClose} tabIndex={1}>
+          <Button variant="secondary" size="lg" onClick={onClose}>
             {t("close")}
           </Button>
           <Link
             href={`/${workspaceSlug}/projects/${projectId}/issues`}
             onClick={onClose}
             className={getButtonStyling("primary", "lg")}
-            tabIndex={2}
           >
             {t("open_project")}
           </Link>

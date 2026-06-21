@@ -5,10 +5,14 @@
  */
 
 import { observer } from "mobx-react";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import type { TQuickAddIssueForm } from "../root";
 
 export const CalendarQuickAddIssueForm = observer(function CalendarQuickAddIssueForm(props: TQuickAddIssueForm) {
   const { ref, isOpen, projectDetail, register, onSubmit, isEpic } = props;
+  const { t } = useTerminologyT();
+  const titleLabelKey = isEpic ? "epic.title.label" : "issue.title.label";
+  const titleRequiredKey = isEpic ? "epic.title.required" : "issue.title.required";
 
   return (
     <div
@@ -25,9 +29,9 @@ export const CalendarQuickAddIssueForm = observer(function CalendarQuickAddIssue
         <input
           type="text"
           autoComplete="off"
-          placeholder={isEpic ? "Epic Title" : "Work item Title"}
+          placeholder={t(titleLabelKey)}
           {...register("name", {
-            required: `${isEpic ? "Epic" : "Work item"} title is required.`,
+            required: t(titleRequiredKey),
           })}
           className="w-full rounded-md bg-transparent py-1.5 pr-2 text-13 leading-5 font-medium text-secondary outline-none md:text-11"
         />

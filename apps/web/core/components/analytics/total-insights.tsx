@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import type { IInsightField } from "@plane/constants";
 import { ANALYTICS_INSIGHTS_FIELDS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import type { IAnalyticsResponse, TAnalyticsTabsBase } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
@@ -59,7 +59,7 @@ const TotalInsights = observer(function TotalInsights({
 }) {
   const params = useParams();
   const workspaceSlug = params.workspaceSlug.toString();
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   const {
     selectedDuration,
     selectedProjects,

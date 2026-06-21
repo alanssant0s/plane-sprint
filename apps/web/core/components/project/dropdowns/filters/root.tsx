@@ -9,10 +9,9 @@ import { observer } from "mobx-react";
 import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 // plane imports
 import type { TProjectDisplayFilters, TProjectFilters } from "@plane/types";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 // components
 import { FilterOption } from "@/components/issues/issue-layouts/filters";
-// hooks
-import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { FilterAccess } from "./access";
 import { FilterCreatedDate } from "./created-at";
@@ -29,10 +28,9 @@ type Props = {
 
 export const ProjectFiltersSelection = observer(function ProjectFiltersSelection(props: Props) {
   const { displayFilters, filters, handleFiltersUpdate, handleDisplayFiltersUpdate, memberIds } = props;
+  const { t } = useTerminologyT();
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
-  // store
-  const { isMobile } = usePlatformOS();
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
@@ -42,10 +40,9 @@ export const ProjectFiltersSelection = observer(function ProjectFiltersSelection
           <input
             type="text"
             className="w-full bg-surface-2 outline-none placeholder:text-placeholder"
-            placeholder="Search"
+            placeholder={t("search")}
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
-            autoFocus={!isMobile}
           />
           {filtersSearchQuery !== "" && (
             <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>
@@ -63,7 +60,7 @@ export const ProjectFiltersSelection = observer(function ProjectFiltersSelection
                 my_projects: !displayFilters.my_projects,
               })
             }
-            title="My projects"
+            title={t("workspace_projects.scope.my_projects")}
           />
         </div>
 

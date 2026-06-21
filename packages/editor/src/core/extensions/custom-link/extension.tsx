@@ -177,11 +177,34 @@ export const CustomLinkExtension = Mark.create<LinkOptions, CustomLinkStorage>({
           if (typeof node === "string") {
             return null;
           }
-          const href = node.getAttribute("href")?.toLowerCase() || "";
-          if (href.startsWith("javascript:") || href.startsWith("data:") || href.startsWith("vbscript:")) {
+          const href = node.getAttribute("href") ?? "";
+          const normalizedHref = href.toLowerCase();
+          if (
+            normalizedHref.startsWith("javascript:") ||
+            normalizedHref.startsWith("data:") ||
+            normalizedHref.startsWith("vbscript:")
+          ) {
             return false;
           }
-          return {};
+
+          if (!this.options.isInternalPageLink?.(href)) {
+            return {};
+          }
+
+          const attrs: {
+            target: null;
+            rel: null;
+            dataLinkId?: string;
+          } = {
+            target: null,
+            rel: null,
+          };
+
+          if (!node.getAttribute("data-link-id")) {
+            attrs.dataLinkId = crypto.randomUUID();
+          }
+
+          return attrs;
         },
       },
     ];
@@ -192,7 +215,23 @@ export const CustomLinkExtension = Mark.create<LinkOptions, CustomLinkStorage>({
     if (href.startsWith("javascript:") || href.startsWith("data:") || href.startsWith("vbscript:")) {
       return ["a", mergeAttributes(this.options.HTMLAttributes, { ...HTMLAttributes, href: "" }), 0];
     }
-    return ["a", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), 0];
+
+    const isInternal = this.options.isInternalPageLink?.(HTMLAttributes.href ?? "") ?? false;
+    const defaultAttributes = { ...this.options.HTMLAttributes };
+
+    if (isInternal) {
+      delete defaultAttributes.target;
+      delete defaultAttributes.rel;
+    }
+
+    const mergedAttributes = mergeAttributes(defaultAttributes, HTMLAttributes);
+
+    if (isInternal) {
+      delete mergedAttributes.target;
+      delete mergedAttributes.rel;
+    }
+
+    return ["a", mergedAttributes, 0];
   },
 
   addCommands() {

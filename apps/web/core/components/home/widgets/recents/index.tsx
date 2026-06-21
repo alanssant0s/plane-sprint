@@ -7,7 +7,7 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 // plane types
 import { PageIcon, ProjectIcon, WorkItemsIcon } from "@plane/propel/icons";
 import type { TActivityEntityData, THomeWidgetProps, TRecentActivityFilterKeys } from "@plane/types";
@@ -41,7 +41,7 @@ export const RecentActivityWidget = observer(function RecentActivityWidget(props
   const { presetFilter, showFilterSelect = true, workspaceSlug } = props;
   // states
   const [filter, setFilter] = useState<TRecentActivityFilterKeys>(presetFilter ?? filters[0].name);
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // ref
   const ref = useRef<HTMLDivElement>(null);
 

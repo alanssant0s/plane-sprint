@@ -17,6 +17,7 @@ import { IssueDetailQuickActions } from "@/components/issues/issue-detail/issue-
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
+import { useEntityListLabel, useTerminologyT } from "@/hooks/use-workspace-type";
 // plane web
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs/project";
 // services
@@ -29,6 +30,8 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
   const { workspaceSlug, projectId, archivedIssueId } = useParams();
   // store hooks
   const { currentProjectDetails, loader } = useProject();
+  const { t } = useTerminologyT();
+  const workItemsLabel = useEntityListLabel("work_item");
 
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId.toString()) : null,
@@ -46,7 +49,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
             component={
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
-                label="Archives"
+                label={t("workspace_archives.page_title")}
                 icon={<ArchiveIcon className="h-4 w-4 text-tertiary" />}
               />
             }
@@ -55,7 +58,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
             component={
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
-                label="Work items"
+                label={workItemsLabel}
                 icon={<WorkItemsIcon className="h-4 w-4 text-tertiary" />}
               />
             }

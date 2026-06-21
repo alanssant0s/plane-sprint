@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // components
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 // assets
 import AllFiltersImage from "@/app/assets/empty-state/cycle/all-filters.svg?url";
 import NameFilterImage from "@/app/assets/empty-state/cycle/name-filter.svg?url";
@@ -27,7 +27,7 @@ export const CyclesView = observer(function CyclesView(props: ICyclesView) {
   // store hooks
   const { getFilteredCycleIds, getFilteredCompletedCycleIds, loader, currentProjectActiveCycleId } = useCycle();
   const { searchQuery } = useCycleFilter();
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // derived values
   const filteredCycleIds = getFilteredCycleIds(projectId, false);
   const filteredCompletedCycleIds = getFilteredCompletedCycleIds(projectId);

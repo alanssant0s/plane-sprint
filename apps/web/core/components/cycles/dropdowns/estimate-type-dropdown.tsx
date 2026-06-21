@@ -12,7 +12,7 @@ import { CustomSelect } from "@plane/ui";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useCycle } from "@/hooks/store/use-cycle";
 // local imports
-import { cycleEstimateOptions } from "../analytics-sidebar/issue-progress";
+import { useCycleEstimateOptions } from "../analytics-sidebar/issue-progress";
 
 type TProps = {
   value: TCycleEstimateType;
@@ -24,9 +24,10 @@ type TProps = {
 
 export const EstimateTypeDropdown = observer(function EstimateTypeDropdown(props: TProps) {
   const { value, onChange, projectId, cycleId, showDefault = false } = props;
+  const cycleEstimateOptions = useCycleEstimateOptions();
   const { getIsPointsDataAvailable } = useCycle();
   const { areEstimateEnabledByProjectId, currentProjectEstimateType } = useProjectEstimates();
-  const isCurrentProjectEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId) ? true : false;
+  const isCurrentProjectEstimateEnabled = !!(projectId && areEstimateEnabledByProjectId(projectId));
   return (getIsPointsDataAvailable(cycleId) || isCurrentProjectEstimateEnabled) &&
     currentProjectEstimateType !== EEstimateSystem.CATEGORIES ? (
     <div className="relative flex items-center gap-2">

@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { TModuleFilters } from "@plane/types";
 // components
@@ -25,7 +25,7 @@ export const ArchivedModuleLayoutRoot = observer(function ArchivedModuleLayoutRo
   // router
   const { workspaceSlug, projectId } = useParams();
   // plane hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // hooks
   const { fetchArchivedModules, projectArchivedModuleIds, loader } = useModule();
   const { clearAllFilters, currentProjectArchivedFilters, updateFilters } = useModuleFilter();

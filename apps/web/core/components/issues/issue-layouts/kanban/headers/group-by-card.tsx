@@ -19,6 +19,7 @@ import { ExistingIssuesListModal } from "@/components/core/modals/existing-issue
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // constants
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 // types
 // Plane-web
@@ -60,6 +61,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = React.useState(false);
   // hooks
   const storeType = useIssueStoreType();
+  const { t } = useTerminologyT();
   // router
   const { workspaceSlug, projectId, moduleId, cycleId } = useParams();
 
@@ -76,14 +78,14 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
 
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "Work items added to the cycle successfully.",
+        title: t("common.success"),
+        message: t("issue.add.cycle.success", { count: issues.length }),
       });
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Selected work items could not be added to the cycle. Please try again.",
+        title: t("common.error"),
+        message: t("issue.add.cycle.failed"),
       });
     }
   };
@@ -169,14 +171,14 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
                   setIsOpen(true);
                 }}
               >
-                <span className="flex items-center justify-start gap-2">Create work item</span>
+                <span className="flex items-center justify-start gap-2">{t("issue.new")}</span>
               </CustomMenu.MenuItem>
               <CustomMenu.MenuItem
                 onClick={() => {
                   setOpenExistingIssueListModal(true);
                 }}
               >
-                <span className="flex items-center justify-start gap-2">Add an existing work item</span>
+                <span className="flex items-center justify-start gap-2">{t("issue.add.existing")}</span>
               </CustomMenu.MenuItem>
             </CustomMenu>
           ) : (

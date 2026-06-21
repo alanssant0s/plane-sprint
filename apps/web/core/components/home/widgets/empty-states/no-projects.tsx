@@ -13,7 +13,7 @@ import { Hotel } from "lucide-react";
 // plane ui
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { MembersPropertyIcon, CheckIcon, ProjectIcon, CloseIcon } from "@plane/propel/icons";
 import { cn, getFileURL } from "@plane/utils";
 // hooks
@@ -39,7 +39,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
     visited_workspace: false,
     visited_profile: false,
   });
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // derived values
   const canCreateProject = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],

@@ -10,16 +10,15 @@ import { PageHead } from "@/components/core/page-title";
 import { ArchivedModuleLayoutRoot, ArchivedModulesHeader } from "@/components/modules";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
+import { useArchivedSectionTitle } from "@/hooks/use-workspace-type";
 import type { Route } from "./+types/page";
 
 function ProjectArchivedModulesPage({ params }: Route.ComponentProps) {
-  // router
   const { projectId } = params;
-  // store hooks
   const { getProjectById } = useProject();
-  // derived values
+  const archivedModulesTitle = useArchivedSectionTitle("module", { plural: true });
   const project = getProjectById(projectId);
-  const pageTitle = project?.name && `${project?.name} - Archived modules`;
+  const pageTitle = project?.name && `${project?.name} - ${archivedModulesTitle}`;
 
   return (
     <>

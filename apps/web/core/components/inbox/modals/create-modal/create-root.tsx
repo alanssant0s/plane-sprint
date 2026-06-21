@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
@@ -73,7 +73,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
   const { isMobile } = usePlatformOS();
   const { getProjectById } = useProject();
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // states
   const [createMore, setCreateMore] = useState<boolean>(false);
   const [formSubmitting, setFormSubmitting] = useState(false);
@@ -179,6 +179,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
           title: `Success!`,
           message: "Work item created successfully.",
         });
+        return undefined;
       })
       .catch((error) => {
         console.error(error);
@@ -233,15 +234,15 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
             </div>
           </div>
           <div className="flex items-center justify-between gap-2 rounded-b-lg border-t-[0.5px] border-subtle bg-surface-1 px-5 py-4">
-            <div
+            <button
+              type="button"
               className="inline-flex cursor-pointer items-center gap-1.5"
               onClick={() => setCreateMore((prevData) => !prevData)}
-              role="button"
               tabIndex={getIndex("create_more")}
             >
               <ToggleSwitch value={createMore} onChange={() => {}} size="sm" />
               <span className="text-11">{t("create_more")}</span>
-            </div>
+            </button>
             <div className="flex items-center gap-3">
               <Button
                 variant="secondary"

@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // i18n
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 // ui icons
 import {
   CycleIcon,
@@ -56,7 +56,7 @@ interface IPeekOverviewProperties {
 
 export const PeekOverviewProperties = observer(function PeekOverviewProperties(props: IPeekOverviewProperties) {
   const { workspaceSlug, projectId, issueId, issueOperations, disabled } = props;
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // store hooks
   const { getProjectById } = useProject();
   const {

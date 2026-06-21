@@ -10,6 +10,7 @@ import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 import { useLayoutMenuItems } from "@/components/common/quick-actions-helper";
+import { useEntityTerm, useTerminologyT } from "@/hooks/use-workspace-type";
 import { Ellipsis } from "lucide-react";
 import { IconButton } from "@plane/propel/icon-button";
 
@@ -21,6 +22,8 @@ type Props = {
 
 export const LayoutQuickActions = observer(function LayoutQuickActions(props: Props) {
   const { workspaceSlug, projectId, storeType } = props;
+  const { t, tBase } = useTerminologyT();
+  const entityTerm = useEntityTerm(storeType === "EPIC" ? "epic" : "work_item", { plural: true });
 
   const layoutLink = `${workspaceSlug}/projects/${projectId}/${storeType === "EPIC" ? "epics" : "issues"}`;
 
@@ -28,9 +31,10 @@ export const LayoutQuickActions = observer(function LayoutQuickActions(props: Pr
     copyUrlToClipboard(layoutLink).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Link copied",
-        message: `${storeType === "EPIC" ? "Epics" : "Work items"} link copied to clipboard.`,
+        title: t("common.link_copied"),
+        message: tBase("terminology.link_copied_to_clipboard", { entity: entityTerm }),
       });
+      return undefined;
     });
 
   const handleOpenInNewTab = () => window.open(`/${layoutLink}`, "_blank");

@@ -11,7 +11,7 @@ import { useParams } from "next/navigation";
 import type { UseFormRegister } from "react-hook-form";
 import { useForm } from "react-hook-form";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { PlusIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import type { IProject, TIssue, EIssueLayoutTypes } from "@plane/types";
@@ -65,7 +65,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
     isEpic = false,
   } = props;
   // i18n
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // router
   const { workspaceSlug, projectId } = useParams();
   // states
@@ -89,11 +89,11 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
     if (!isOpen) reset({ ...defaultValues });
   }, [isOpen, reset]);
 
-  const handleIsOpen = (isOpen: boolean) => {
+  const handleIsOpen = (open: boolean) => {
     if (isQuickAddOpen !== undefined && setIsQuickAddOpen) {
-      setIsQuickAddOpen(isOpen);
+      setIsQuickAddOpen(open);
     } else {
-      setIsOpen(isOpen);
+      setIsOpen(open);
     }
   };
 
@@ -103,7 +103,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
     reset({ ...defaultValues });
 
     const payload = createIssuePayload(projectId.toString(), {
-      ...(prePopulatedData ?? {}),
+      ...prePopulatedData,
       ...formData,
     });
 
@@ -149,7 +149,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
           layout={layout}
           prePopulatedData={prePopulatedData}
           projectId={projectId?.toString()}
-          hasError={errors && errors?.name && errors?.name?.message ? true : false}
+          hasError={!!(errors && errors?.name && errors?.name?.message)}
           setFocus={setFocus}
           register={register}
           onSubmit={handleSubmit(onSubmitHandler)}

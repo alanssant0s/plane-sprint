@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse } from "@plane/types";
@@ -31,7 +31,7 @@ export const ModuleEmptyState = observer(function ModuleEmptyState() {
   // states
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
   // plane hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // store hooks
   const { issues } = useIssues(EIssuesStoreType.MODULE);
   const { toggleCreateIssueModal } = useCommandPalette();

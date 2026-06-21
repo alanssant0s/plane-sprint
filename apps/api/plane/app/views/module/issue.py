@@ -27,6 +27,7 @@ from plane.db.models import (
     ModuleIssue,
     Project,
     CycleIssue,
+    WorkspaceSprintIssue,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -55,6 +56,20 @@ class ModuleIssueViewSet(BaseViewSet):
             issues.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
+                )
+            )
+            .annotate(
+                global_sprint_id=Subquery(
+                    WorkspaceSprintIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values(
+                        "sprint_id"
+                    )[:1]
+                )
+            )
+            .annotate(
+                global_sprint_name=Subquery(
+                    WorkspaceSprintIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values(
+                        "sprint__name"
+                    )[:1]
                 )
             )
             .annotate(

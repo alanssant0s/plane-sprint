@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 
 type TProps = {
@@ -19,7 +19,7 @@ type TProps = {
 export const ProjectAccessRestriction = observer(function ProjectAccessRestriction(props: TProps) {
   const { isWorkspaceAdmin, handleJoinProject, isJoinButtonDisabled, errorStatusCode } = props;
   // plane hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   // Show join project screen if:
   // - User lacks project membership (409 Conflict)

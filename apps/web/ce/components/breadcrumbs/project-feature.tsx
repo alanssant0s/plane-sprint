@@ -6,15 +6,12 @@
 
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
-// plane imports
 import type { EProjectFeatureKey } from "@plane/constants";
 import { Breadcrumbs } from "@plane/ui";
-// components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import type { TNavigationItem } from "@/components/workspace/sidebar/project-navigation";
-// hooks
 import { useProject } from "@/hooks/store/use-project";
-// local imports
+import { useEntityTerm, useFeatureEntityTerm } from "@/hooks/use-workspace-type";
 import { getProjectFeatureNavigation } from "../projects/navigation/helper";
 
 type TProjectFeatureBreadcrumbProps = {
@@ -29,38 +26,46 @@ export const ProjectFeatureBreadcrumb = observer(function ProjectFeatureBreadcru
   props: TProjectFeatureBreadcrumbProps
 ) {
   const { workspaceSlug, projectId, featureKey, isLast = false, additionalNavigationItems } = props;
-  // store hooks
   const { getPartialProjectById } = useProject();
-  // derived values
+  const entityLabel = useFeatureEntityTerm(featureKey, { plural: true });
+  const workItemTerm = useEntityTerm("work_item", { plural: true });
+  const cycleTerm = useEntityTerm("cycle", { plural: true });
+  const moduleTerm = useEntityTerm("module", { plural: true });
+  const pageTerm = useEntityTerm("page", { plural: true });
   const project = getPartialProjectById(projectId);
 
   if (!project) return null;
 
-  const navigationItems = getProjectFeatureNavigation(workspaceSlug, projectId, project);
-
-  // if additional navigation items are provided, add them to the navigation items
+  const navigationItems = getProjectFeatureNavigation(workspaceSlug, projectId, project, (entity) => {
+    const terms = {
+      work_item: workItemTerm,
+      cycle: cycleTerm,
+      module: moduleTerm,
+      page: pageTerm,
+      project: workItemTerm,
+      epic: workItemTerm,
+    };
+    return terms[entity];
+  });
   const allNavigationItems = [...(additionalNavigationItems || []), ...navigationItems];
-
   const currentNavigationItem = allNavigationItems.find((item) => item.key === featureKey);
   const icon = currentNavigationItem?.icon as ReactNode;
-  const name = currentNavigationItem?.name;
+  const name = entityLabel ?? currentNavigationItem?.name;
   const href = currentNavigationItem?.href;
 
   return (
-    <>
-      <Breadcrumbs.Item
-        component={
-          <BreadcrumbLink
-            key={featureKey}
-            label={name}
-            isLast={isLast}
-            href={href}
-            icon={<Breadcrumbs.Icon>{icon}</Breadcrumbs.Icon>}
-          />
-        }
-        showSeparator={false}
-        isLast={isLast}
-      />
-    </>
+    <Breadcrumbs.Item
+      component={
+        <BreadcrumbLink
+          key={featureKey}
+          label={name}
+          isLast={isLast}
+          href={href}
+          icon={<Breadcrumbs.Icon>{icon}</Breadcrumbs.Icon>}
+        />
+      }
+      showSeparator={false}
+      isLast={isLast}
+    />
   );
 });

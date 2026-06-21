@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { MoreHorizontal } from "lucide-react";
 // ui
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
@@ -44,7 +44,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { getCycleById, restoreCycle } = useCycle();
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // derived values
   const cycleDetails = getCycleById(cycleId);
   // auth
@@ -63,6 +63,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
         title: t("common.link_copied"),
         message: t("common.link_copied_to_clipboard"),
       });
+      return undefined;
     });
   const handleOpenInNewTab = () => window.open(`/${cycleLink}`, "_blank");
 
@@ -74,7 +75,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
           title: t("project_cycles.action.restore.success.title"),
           message: t("project_cycles.action.restore.success.description"),
         });
-        router.push(`/${workspaceSlug}/projects/${projectId}/archives/cycles`);
+        return router.push(`/${workspaceSlug}/projects/${projectId}/archives/cycles`);
       })
       .catch(() => {
         setToast({

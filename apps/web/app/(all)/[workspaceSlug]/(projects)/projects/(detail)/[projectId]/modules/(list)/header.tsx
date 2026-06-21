@@ -8,8 +8,6 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, MODULE_TRACKER_ELEMENTS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-// ui
 import { Button } from "@plane/propel/button";
 import { ModuleIcon } from "@plane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
@@ -19,6 +17,7 @@ import { ModuleViewHeader } from "@/components/modules";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
+import { useEntityListLabel, useTerminologyT } from "@/hooks/use-workspace-type";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
@@ -34,7 +33,8 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
 
   const { loader } = useProject();
 
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
+  const modulesLabel = useEntityListLabel("module");
 
   // auth
   const canUserCreateModule = allowPermissions(
@@ -51,7 +51,7 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
-                  label="Modules"
+                  label={modulesLabel}
                   href={`/${workspaceSlug}/projects/${projectId}/modules/`}
                   icon={<ModuleIcon className="h-4 w-4 text-tertiary" />}
                   isLast

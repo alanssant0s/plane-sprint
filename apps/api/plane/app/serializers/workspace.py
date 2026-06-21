@@ -28,6 +28,7 @@ from plane.db.models import (
 )
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.utils.url import contains_url
+from plane.utils.workspace_type import is_valid_workspace_type
 from plane.utils.content_validator import (
     validate_html_content,
     validate_binary_data,
@@ -59,6 +60,11 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
             raise serializers.ValidationError(
                 "Slug can only contain letters, numbers, hyphens (-), and underscores (_)"
             )
+        return value
+
+    def validate_workspace_type(self, value):
+        if not is_valid_workspace_type(value):
+            raise serializers.ValidationError("Invalid workspace type")
         return value
 
     class Meta:

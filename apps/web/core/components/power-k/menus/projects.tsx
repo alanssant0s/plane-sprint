@@ -5,11 +5,10 @@
  */
 
 import React from "react";
-// components
+import { observer } from "mobx-react";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-// plane imports
 import type { TPartialProject } from "@plane/types";
-// local imports
+import { useEntityTerm } from "@/hooks/use-workspace-type";
 import { PowerKMenuBuilder } from "./builder";
 
 type Props = {
@@ -17,7 +16,9 @@ type Props = {
   onSelect: (project: TPartialProject) => void;
 };
 
-export function PowerKProjectsMenu({ projects, onSelect }: Props) {
+export const PowerKProjectsMenu = observer(function PowerKProjectsMenu({ projects, onSelect }: Props) {
+  const projectsTerm = useEntityTerm("project", { plural: true });
+
   return (
     <PowerKMenuBuilder
       items={projects}
@@ -30,7 +31,7 @@ export function PowerKProjectsMenu({ projects, onSelect }: Props) {
       getValue={(project) => project.name}
       getLabel={(project) => project.name}
       onSelect={onSelect}
-      emptyText="No projects found"
+      emptyText={`No ${projectsTerm.toLowerCase()} found`}
     />
   );
-}
+});

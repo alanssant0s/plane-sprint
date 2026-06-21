@@ -8,26 +8,22 @@ import { observer } from "mobx-react";
 // plane package imports
 import { Expand, Shrink } from "lucide-react";
 import { CloseIcon } from "@plane/propel/icons";
-import type { ICycle, IModule } from "@plane/types";
-// icons
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 
 type Props = {
   fullScreen: boolean;
   handleClose: () => void;
   setFullScreen: React.Dispatch<React.SetStateAction<boolean>>;
   title: string;
-  cycle?: ICycle;
-  module?: IModule;
 };
 
 export const WorkItemsModalHeader = observer(function WorkItemsModalHeader(props: Props) {
-  const { fullScreen, handleClose, setFullScreen, title, cycle, module } = props;
+  const { fullScreen, handleClose, setFullScreen, title } = props;
+  const { t } = useTerminologyT();
 
   return (
     <div className="flex items-center justify-between gap-4 bg-surface-1 px-5 py-4 text-13">
-      <h3 className="break-words">
-        Analytics for {title} {cycle && `in ${cycle.name}`} {module && `in ${module.name}`}
-      </h3>
+      <h3 className="break-words">{t("workspace_analytics.modal_title", { title })}</h3>
       <div className="flex items-center gap-2">
         <button
           type="button"

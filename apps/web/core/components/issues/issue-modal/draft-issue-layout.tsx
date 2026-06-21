@@ -9,7 +9,7 @@ import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // Plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
 import { isEmptyHtmlString } from "@plane/utils";
@@ -35,7 +35,7 @@ export const DraftIssueLayout = observer(function DraftIssueLayout(props: DraftI
   // store hooks
   const { handleCreateUpdatePropertyValues } = useIssueModal();
   const { createIssue } = useWorkspaceDraftIssues();
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   const sanitizeChanges = (): Partial<TIssue> => {
     const sanitizedChanges = { ...changesMade };

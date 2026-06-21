@@ -12,7 +12,7 @@ import { observer } from "mobx-react";
 // plane constants
 import { ISSUE_DISPLAY_PROPERTIES, SPREADSHEET_PROPERTY_LIST } from "@plane/constants";
 // plane i18n
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 // types
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssueLayoutTypes } from "@plane/types";
@@ -186,7 +186,7 @@ export const FilterDisplayProperties = observer(function FilterDisplayProperties
     isEpic = false,
   } = props;
   // hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // states
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
   const isSpreadsheetLayout = displayFilters?.layout === EIssueLayoutTypes.SPREADSHEET && !!handleDisplayFiltersUpdate;

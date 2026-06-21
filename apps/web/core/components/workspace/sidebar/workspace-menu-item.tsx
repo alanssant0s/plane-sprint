@@ -9,7 +9,7 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import type { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -35,7 +35,7 @@ export const SidebarWorkspaceMenuItem = observer(function SidebarWorkspaceMenuIt
 ) {
   const { item } = props;
 
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // nextjs hooks
   const pathname = usePathname();
   const { workspaceSlug } = useParams();

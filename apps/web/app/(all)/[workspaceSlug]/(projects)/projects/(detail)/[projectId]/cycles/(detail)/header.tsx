@@ -18,7 +18,6 @@ import {
   WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { usePlatformOS } from "@plane/hooks";
-import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { IconButton } from "@plane/propel/icon-button";
 import { CycleIcon } from "@plane/propel/icons";
@@ -47,6 +46,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useEntityListLabel, useEntityAddLabel, useTerminologyT } from "@/hooks/use-workspace-type";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
@@ -60,7 +60,9 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
   const router = useAppRouter();
   const { workspaceSlug, projectId, cycleId } = useParams();
   // i18n
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
+  const addWorkItemLabel = useEntityAddLabel("work_item");
+  const cyclesLabel = useEntityListLabel("cycle");
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -143,7 +145,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
               <Breadcrumbs.Item
                 component={
                   <BreadcrumbLink
-                    label="Cycles"
+                    label={cyclesLabel}
                     href={`/${workspaceSlug}/projects/${projectId}/cycles/`}
                     icon={<CycleIcon className="h-4 w-4 text-tertiary" />}
                   />
@@ -253,7 +255,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                     }}
                     data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.CYCLE}
                   >
-                    {t("issue.add.label")}
+                    {addWorkItemLabel}
                   </Button>
                 )}
               </>

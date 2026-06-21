@@ -78,6 +78,7 @@ type TGetGroupByColumns = {
   isWorkspaceLevel: boolean;
   isEpic?: boolean;
   projectId?: string;
+  allGroupLabel?: string;
 };
 
 // NOTE: Type of groupBy is different compared to what's being passed from the components.
@@ -89,13 +90,14 @@ export const getGroupByColumns = ({
   isWorkspaceLevel: isWorkspaceLevelScope,
   isEpic = false,
   projectId,
+  allGroupLabel,
 }: TGetGroupByColumns): IGroupByColumn[] | undefined => {
   // If no groupBy is specified and includeNone is true, return "All Issues" group
   if (!groupBy && includeNone) {
     return [
       {
         id: "All Issues",
-        name: `All ${isEpic ? "Epics" : "work items"}`,
+        name: allGroupLabel ?? `All ${isEpic ? "Epics" : "work items"}`,
         payload: {},
         icon: undefined,
       },

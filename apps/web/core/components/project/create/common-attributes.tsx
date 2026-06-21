@@ -10,7 +10,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import { InfoIcon } from "@plane/propel/icons";
 // plane imports
 import { ETabIndices } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
 import { Input, TextArea } from "@plane/ui";
@@ -36,7 +36,7 @@ function ProjectCommonAttributes(props: Props) {
   } = useFormContext<TProject>();
 
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   const handleNameChange =
     (onChange: (event: ChangeEvent<HTMLInputElement>) => void) => (e: ChangeEvent<HTMLInputElement>) => {

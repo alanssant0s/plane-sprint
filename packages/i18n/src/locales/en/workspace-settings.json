@@ -39,6 +39,16 @@
           }
         }
       },
+      "workspace_type": {
+        "title": "Workspace type",
+        "page_label": "{workspace} - Workspace type",
+        "description": "Choose a vertical preset to adapt terminology across the workspace for all members.",
+        "notice": "Changing the workspace type updates labels for everyone in this workspace. Routes and APIs are unchanged.",
+        "wave": "Wave {wave}",
+        "save": "Save workspace type",
+        "success_title": "Workspace type updated",
+        "success_message": "Terminology will reflect the new type across the workspace."
+      },
       "members": {
         "title": "Members",
         "add_member": "Add member",

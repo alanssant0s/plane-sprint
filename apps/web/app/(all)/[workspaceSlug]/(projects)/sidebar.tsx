@@ -19,10 +19,12 @@ import { SidebarSprintsList } from "@/components/workspace/sidebar/sprints-list"
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceNavigationPreferences } from "@/hooks/use-navigation-preferences";
+import { useEntityTerm } from "@/hooks/use-workspace-type";
 // plane web components
 import { SidebarTeamsList } from "@/plane-web/components/workspace/sidebar/teams-sidebar-list";
 
 export const AppSidebar = observer(function AppSidebar() {
+  const projectTerm = useEntityTerm("project", { plural: true });
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { groupedFavorites } = useFavorite();
@@ -37,7 +39,7 @@ export const AppSidebar = observer(function AppSidebar() {
   const isFavoriteEmpty = isEmpty(groupedFavorites);
 
   return (
-    <SidebarWrapper title="Projects" quickActions={<SidebarQuickActions />}>
+    <SidebarWrapper title={projectTerm} showCustomizeNavigation quickActions={<SidebarQuickActions />}>
       <SidebarMenuItems />
       {/* Favorites Menu */}
       {canPerformWorkspaceMemberActions && !isFavoriteEmpty && <SidebarFavoritesMenu />}

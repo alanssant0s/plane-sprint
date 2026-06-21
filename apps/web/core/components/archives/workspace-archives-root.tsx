@@ -23,13 +23,15 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectFilter } from "@/hooks/store/use-project-filter";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useWorkspaceSprint } from "@/hooks/store/use-workspace-sprint";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 
-const formatDate = (date: string | null) => {
-  if (!date) return "No date";
+const formatDate = (date: string | null, t: (key: string, options?: Record<string, unknown>) => string) => {
+  if (!date) return t("workspace_archives.sections.archived_squads.no_date");
   return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(new Date(date));
 };
 
 export const WorkspaceArchivesRoot = observer(function WorkspaceArchivesRoot() {
+  const { t } = useTerminologyT();
   const { workspaceSlug } = useParams();
   const workspaceSlugValue = workspaceSlug?.toString();
   const [isSprintsLoading, setIsSprintsLoading] = useState(false);
@@ -58,6 +60,9 @@ export const WorkspaceArchivesRoot = observer(function WorkspaceArchivesRoot() {
   const isProjectListLoading =
     !filteredProjectIds || !archivedProjectIds || loader === "init-loader" || fetchStatus !== "complete";
   const archivedSquadIds = currentWorkspaceArchivedSprintSquadIds ?? [];
+  const pageTitle = currentWorkspace?.name
+    ? `${currentWorkspace.name} - ${t("workspace_archives.page_title")}`
+    : t("workspace_archives.page_title");
 
   useSWR(
     workspaceSlugValue && currentWorkspace ? `WORKSPACE_PROJECTS_${workspaceSlugValue}` : null,
@@ -137,10 +142,13 @@ export const WorkspaceArchivesRoot = observer(function WorkspaceArchivesRoot() {
 
   return (
     <>
-      <PageHead title={currentWorkspace?.name ? `${currentWorkspace.name} - Archives` : "Archives"} />
+      <PageHead title={pageTitle} />
       <div className="flex h-full w-full flex-col gap-8 p-5">
         <section className="flex flex-col gap-4">
-          <ArchiveSectionHeader title="Archived projects" count={filteredProjectIds?.length ?? 0} />
+          <ArchiveSectionHeader
+            title={t("workspace_archives.sections.archived_projects.title")}
+            count={filteredProjectIds?.length ?? 0}
+          />
           {(projectFiltersCount !== 0 || allowedDisplayFilters.length > 0) && (
             <ProjectAppliedFiltersList
               appliedFilters={currentWorkspaceFilters ?? {}}
@@ -156,7 +164,7 @@ export const WorkspaceArchivesRoot = observer(function WorkspaceArchivesRoot() {
           {isProjectListLoading ? (
             <ProjectsLoader />
           ) : filteredProjectIds.length === 0 ? (
-            <ArchiveEmptyState message="No archived projects yet." />
+            <ArchiveEmptyState message={t("workspace_archives.sections.archived_projects.empty")} />
           ) : (
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
               {filteredProjectIds.map((projectId) => {
@@ -168,11 +176,14 @@ export const WorkspaceArchivesRoot = observer(function WorkspaceArchivesRoot() {
           )}
         </section>
         <section className="flex flex-col gap-4">
-          <ArchiveSectionHeader title="Archived squads" count={archivedSquadIds.length} />
+          <ArchiveSectionHeader
+            title={t("workspace_archives.sections.archived_squads.title")}
+            count={archivedSquadIds.length}
+          />
           {isSprintsLoading ? (
-            <ArchiveEmptyState message="Loading archived squads..." />
+            <ArchiveEmptyState message={t("workspace_archives.sections.archived_squads.loading")} />
           ) : archivedSquadIds.length === 0 ? (
-            <ArchiveEmptyState message="No archived squads yet." />
+            <ArchiveEmptyState message={t("workspace_archives.sections.archived_squads.empty")} />
           ) : (
             <div className="space-y-2">
               {archivedSquadIds.map((squadId) => {
@@ -198,13 +209,17 @@ export const WorkspaceArchivesRoot = observer(function WorkspaceArchivesRoot() {
                       <div className="min-w-0">
                         <h3 className="truncate text-14 font-medium text-primary">{squad.name}</h3>
                         <p className="mt-1 truncate text-12 text-tertiary">
-                          Archived {formatDate(squad.archived_at ?? null)}
+                          {t("workspace_archives.sections.archived_squads.archived_on", {
+                            date: formatDate(squad.archived_at ?? null, t),
+                          })}
                         </p>
                       </div>
                     </Link>
                     <div className="flex shrink-0 items-center gap-2">
                       <span className="rounded bg-surface-2 px-1.5 py-0.5 text-11 text-tertiary">
-                        {squad.sprint_duration_days} day sprints
+                        {t("workspace_archives.sections.archived_squads.sprint_duration", {
+                          days: squad.sprint_duration_days,
+                        })}
                       </span>
                       <Button
                         variant="secondary"
@@ -212,7 +227,7 @@ export const WorkspaceArchivesRoot = observer(function WorkspaceArchivesRoot() {
                         onClick={() => handleRestoreSquad(squad.id)}
                         loading={restoringSquadId === squad.id}
                       >
-                        Unarchive
+                        {t("workspace_archives.sections.archived_squads.unarchive")}
                       </Button>
                     </div>
                   </div>

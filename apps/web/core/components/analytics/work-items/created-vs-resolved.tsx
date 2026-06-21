@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane package imports
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { AreaChart } from "@plane/propel/charts/area-chart";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { IChartResponse, TChartData } from "@plane/types";
@@ -35,7 +35,7 @@ const CreatedVsResolved = observer(function CreatedVsResolved() {
     isEpic,
   } = useAnalytics();
   const params = useParams();
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   const workspaceSlug = params.workspaceSlug.toString();
   const { data: createdVsResolvedData, isLoading: isCreatedVsResolvedLoading } = useSWR(
     `created-vs-resolved-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${selectedWorkspaceSprint}-${isPeekView}-${isEpic}`,

@@ -35,6 +35,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useEntityAddLabel } from "@/hooks/use-workspace-type";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
@@ -54,6 +55,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
 
   const { currentProjectDetails, loader } = useProject();
   const { projectViewIds, getViewById } = useProjectView();
+  const addWorkItemLabel = useEntityAddLabel("work_item");
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
@@ -205,7 +207,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
             }}
             data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.PROJECT_VIEW}
           >
-            Add work item
+            {addWorkItemLabel}
           </Button>
         )}
         <div className="hidden md:block">

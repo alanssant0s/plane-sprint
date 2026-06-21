@@ -8,7 +8,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { NETWORK_CHOICES } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // local imports
@@ -24,7 +24,7 @@ export const FilterAccess = observer(function FilterAccess(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
   // states
   const [previewEnabled, setPreviewEnabled] = useState(true);
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
   const filteredOptions = NETWORK_CHOICES.filter((a) => a.i18n_label.includes(searchQuery.toLowerCase()));
@@ -32,7 +32,7 @@ export const FilterAccess = observer(function FilterAccess(props: Props) {
   return (
     <>
       <FilterHeader
-        title={`Access${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("workspace_projects.filters.access")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -42,7 +42,7 @@ export const FilterAccess = observer(function FilterAccess(props: Props) {
             filteredOptions.map((access) => (
               <FilterOption
                 key={access.key}
-                isChecked={appliedFilters?.includes(`${access.key}`) ? true : false}
+                isChecked={!!appliedFilters?.includes(`${access.key}`)}
                 onClick={() => handleUpdate(`${access.key}`)}
                 icon={<ProjectNetworkIcon iconKey={access.iconKey} />}
                 title={t(access.i18n_label)}

@@ -6,14 +6,14 @@
 
 import { observer } from "mobx-react";
 
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { PlusIcon } from "@plane/propel/icons";
 import { Row } from "@plane/ui";
 import type { TQuickAddIssueButton } from "../root";
 
 export const ListQuickAddIssueButton = observer(function ListQuickAddIssueButton(props: TQuickAddIssueButton) {
   const { onClick, isEpic = false } = props;
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   return (
     <Row
       className="flex w-full cursor-pointer items-center gap-2 bg-layer-transparent py-3 hover:bg-layer-transparent-hover"

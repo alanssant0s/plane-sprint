@@ -7,13 +7,13 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 
 // TODO: If projectViewId changes, everything breaks. Figure out a better way to handle this.
 export const ProfileViewEmptyState = observer(function ProfileViewEmptyState() {
   // plane hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // store hooks
   const { profileViewId } = useParams();
 

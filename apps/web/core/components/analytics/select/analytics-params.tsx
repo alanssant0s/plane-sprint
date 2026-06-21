@@ -15,6 +15,7 @@ import { CalendarLayoutIcon } from "@plane/propel/icons";
 import type { IAnalyticsParams } from "@plane/types";
 import { ChartYAxisMetric } from "@plane/types";
 import { cn } from "@plane/utils";
+import { useEntityTerm } from "@/hooks/use-workspace-type";
 // plane web components
 import { SelectXAxis } from "./select-x-axis";
 import { SelectYAxis } from "./select-y-axis";
@@ -30,6 +31,22 @@ type Props = {
 
 export const AnalyticsSelectParams = observer(function AnalyticsSelectParams(props: Props) {
   const { control, params, classNames, isEpic } = props;
+  const workItemTerm = useEntityTerm("work_item");
+  const epicTerm = useEntityTerm("epic");
+  const yAxisOptions = useMemo(
+    () =>
+      ANALYTICS_Y_AXIS_VALUES.map((option) =>
+        Object.assign({}, option, {
+          label:
+            option.value === ChartYAxisMetric.WORK_ITEM_COUNT
+              ? workItemTerm
+              : option.value === ChartYAxisMetric.EPIC_WORK_ITEM_COUNT
+                ? epicTerm
+                : option.label,
+        })
+      ),
+    [workItemTerm, epicTerm]
+  );
   const xAxisOptions = useMemo(
     () => ANALYTICS_X_AXIS_VALUES.filter((option) => option.value !== params.group_by),
     [params.group_by]
@@ -51,7 +68,7 @@ export const AnalyticsSelectParams = observer(function AnalyticsSelectParams(pro
               onChange={(val: ChartYAxisMetric | null) => {
                 onChange(val);
               }}
-              options={ANALYTICS_Y_AXIS_VALUES}
+              options={yAxisOptions}
               hiddenOptions={[
                 ChartYAxisMetric.ESTIMATE_POINT_COUNT,
                 isEpic ? ChartYAxisMetric.WORK_ITEM_COUNT : ChartYAxisMetric.EPIC_WORK_ITEM_COUNT,

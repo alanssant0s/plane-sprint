@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { PanelLeft } from "lucide-react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { IntakeIcon } from "@plane/propel/icons";
 import { EInboxIssueCurrentTab } from "@plane/types";
@@ -33,7 +33,7 @@ export const InboxIssueRoot = observer(function InboxIssueRoot(props: TInboxIssu
   // states
   const [isMobileSidebar, setIsMobileSidebar] = useState(true);
   // plane hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // hooks
   const { loader, error, currentTab, currentInboxProjectId, handleCurrentTab, fetchInboxIssues } = useProjectInbox();
 

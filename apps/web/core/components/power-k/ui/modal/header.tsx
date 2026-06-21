@@ -7,7 +7,7 @@
 import React from "react";
 import { Command } from "cmdk";
 import { X } from "lucide-react";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 // plane imports
 import { SearchIcon } from "@plane/propel/icons";
 // local imports
@@ -25,7 +25,7 @@ type Props = {
 export function PowerKModalHeader(props: Props) {
   const { context, searchTerm, onSearchChange, activePage } = props;
   // translation
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // derived values
   const placeholder = activePage
     ? t(POWER_K_MODAL_PAGE_DETAILS[activePage].i18n_placeholder)
@@ -49,7 +49,6 @@ export function PowerKModalHeader(props: Props) {
           onValueChange={onSearchChange}
           placeholder={placeholder}
           className="flex-1 bg-transparent text-13 text-primary placeholder-(--text-color-placeholder) outline-none"
-          autoFocus
         />
         {searchTerm && (
           <button

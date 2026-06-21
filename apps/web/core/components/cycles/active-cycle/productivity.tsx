@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import type { ICycle, TCycleEstimateType } from "@plane/types";
 import { Loader } from "@plane/ui";
 // assets
@@ -33,7 +33,7 @@ export const ActiveCycleProductivity = observer(function ActiveCycleProductivity
   // theme hook
   const { resolvedTheme } = useTheme();
   // plane hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // hooks
   const { getEstimateTypeByCycleId, setEstimateType } = useCycle();
   // derived values

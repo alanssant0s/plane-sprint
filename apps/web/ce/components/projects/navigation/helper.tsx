@@ -7,8 +7,11 @@
 // plane imports
 import { EUserPermissions, EProjectFeatureKey } from "@plane/constants";
 import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
+import type { TTerminologyEntity } from "@plane/types";
 // components
 import type { TNavigationItem } from "@/components/workspace/sidebar/project-navigation";
+
+type TGetEntityTerm = (entity: TTerminologyEntity, plural?: boolean) => string;
 
 export const getProjectFeatureNavigation = (
   workspaceSlug: string,
@@ -19,12 +22,13 @@ export const getProjectFeatureNavigation = (
     issue_views_view: boolean;
     page_view: boolean;
     inbox_view: boolean;
-  }
+  },
+  getTerm: TGetEntityTerm
 ): TNavigationItem[] => [
   {
     i18n_key: "sidebar.work_items",
     key: EProjectFeatureKey.WORK_ITEMS,
-    name: "Work items",
+    name: getTerm("work_item", true),
     href: `/${workspaceSlug}/projects/${projectId}/issues`,
     icon: WorkItemsIcon,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
@@ -34,7 +38,7 @@ export const getProjectFeatureNavigation = (
   {
     i18n_key: "sidebar.cycles",
     key: EProjectFeatureKey.CYCLES,
-    name: "Cycles",
+    name: getTerm("cycle", true),
     href: `/${workspaceSlug}/projects/${projectId}/cycles`,
     icon: CycleIcon,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -44,7 +48,7 @@ export const getProjectFeatureNavigation = (
   {
     i18n_key: "sidebar.modules",
     key: EProjectFeatureKey.MODULES,
-    name: "Modules",
+    name: getTerm("module", true),
     href: `/${workspaceSlug}/projects/${projectId}/modules`,
     icon: ModuleIcon,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -64,7 +68,7 @@ export const getProjectFeatureNavigation = (
   {
     i18n_key: "sidebar.pages",
     key: EProjectFeatureKey.PAGES,
-    name: "Pages",
+    name: getTerm("page", true),
     href: `/${workspaceSlug}/projects/${projectId}/pages`,
     icon: PageIcon,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],

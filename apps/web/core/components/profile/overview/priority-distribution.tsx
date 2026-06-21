@@ -5,7 +5,7 @@
  */
 
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { BarChart } from "@plane/propel/charts/bar-chart";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { IUserProfileData } from "@plane/types";
@@ -25,7 +25,7 @@ const priorityColors = {
 };
 
 export function ProfilePriorityDistribution({ userProfile }: Props) {
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   return (
     <div className="flex flex-col space-y-2">
       <h3 className="text-16 font-medium">{t("profile.stats.priority_distribution.title")}</h3>

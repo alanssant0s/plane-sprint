@@ -170,7 +170,9 @@
     "search_menu": {
       "no_results": "No results found",
       "clear_search": "Clear search",
-      "go_to_advanced_search": "Go to advanced search"
+      "go_to_advanced_search": "Go to advanced search",
+      "results_in_workspace": "Search results for \"{query}\" in workspace:",
+      "results_in_project": "Search results for \"{query}\" in project:"
     },
     "footer": {
       "workspace_level": "Workspace level"
@@ -186,6 +188,10 @@
       "miscellaneous": "Miscellaneous",
       "preferences": "Preferences",
       "help": "Help"
+    },
+    "shortcuts_modal": {
+      "search_placeholder": "Search for shortcuts",
+      "no_results": "No shortcuts found for \"{query}\""
     }
   }
 }

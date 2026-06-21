@@ -9,7 +9,7 @@ import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 // types
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { Button } from "@plane/propel/button";
 import type { ICycle } from "@plane/types";
 // ui
@@ -41,7 +41,7 @@ const defaultValues: Partial<ICycle> = {
 export function CycleForm(props: Props) {
   const { handleFormSubmit, handleClose, status, projectId, setActiveProject, data, isMobile = false } = props;
   // plane hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // store hooks
   const { projectsWithCreatePermissions } = useUser();
   // form data
@@ -89,7 +89,7 @@ export function CycleForm(props: Props) {
                     }}
                     multiple={false}
                     buttonVariant="border-with-text"
-                    renderCondition={(projectId) => !!projectsWithCreatePermissions?.[projectId]}
+                    renderCondition={(pid) => !!projectsWithCreatePermissions?.[pid]}
                     tabIndex={getIndex("cover_image")}
                   />
                 </div>
@@ -123,7 +123,6 @@ export function CycleForm(props: Props) {
                   onChange={onChange}
                   hasError={Boolean(errors?.name)}
                   tabIndex={getIndex("description")}
-                  autoFocus
                 />
               )}
             />

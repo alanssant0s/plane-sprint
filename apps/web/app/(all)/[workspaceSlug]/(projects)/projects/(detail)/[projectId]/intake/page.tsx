@@ -9,7 +9,7 @@ import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { EUserProjectRoles, EInboxIssueCurrentTab } from "@plane/types";
 // assets
 import darkIntakeAsset from "@/app/assets/empty-state/disabled-feature/intake-dark.webp?url";
@@ -34,7 +34,7 @@ function ProjectInboxPage({ params }: Route.ComponentProps) {
   // theme hook
   const { resolvedTheme } = useTheme();
   // plane hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // hooks
   const { currentProjectDetails } = useProject();
   const { allowPermissions } = useUserPermissions();

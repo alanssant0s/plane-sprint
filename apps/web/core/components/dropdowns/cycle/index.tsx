@@ -7,7 +7,7 @@
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 // ui
 import { CycleIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
@@ -59,7 +59,7 @@ export const CycleDropdown = observer(function CycleDropdown(props: Props) {
     currentCycleId,
   } = props;
   // i18n
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // states
 
   const [isOpen, setIsOpen] = useState(false);
@@ -135,6 +135,7 @@ export const CycleDropdown = observer(function CycleDropdown(props: Props) {
   );
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <ComboDropDown
       as="div"
       ref={dropdownRef}

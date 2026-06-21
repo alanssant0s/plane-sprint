@@ -11,16 +11,15 @@ import { ArchivedCycleLayoutRoot } from "@/components/cycles/archived-cycles";
 import { ArchivedCyclesHeader } from "@/components/cycles/archived-cycles/header";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
+import { useArchivedSectionTitle } from "@/hooks/use-workspace-type";
 import type { Route } from "./+types/page";
 
 function ProjectArchivedCyclesPage({ params }: Route.ComponentProps) {
-  // router
   const { projectId } = params;
-  // store hooks
   const { getProjectById } = useProject();
-  // derived values
+  const archivedCyclesTitle = useArchivedSectionTitle("cycle", { plural: true });
   const project = getProjectById(projectId);
-  const pageTitle = project?.name && `${project?.name} - Archived cycles`;
+  const pageTitle = project?.name && `${project?.name} - ${archivedCyclesTitle}`;
 
   return (
     <>

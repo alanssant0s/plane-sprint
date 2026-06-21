@@ -8,7 +8,7 @@ import { Fragment, useState } from "react";
 // components
 import { observer } from "mobx-react";
 import { EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EIssuesStoreType, EUserWorkspaceRoles } from "@plane/types";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
@@ -19,7 +19,7 @@ export const WorkspaceDraftEmptyState = observer(function WorkspaceDraftEmptySta
   // state
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
   // store hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   const { allowPermissions } = useUserPermissions();
   // derived values
   const canPerformEmptyStateActions = allowPermissions(

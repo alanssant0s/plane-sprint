@@ -13,7 +13,7 @@ import type { IWorkspaceSearchResults } from "@plane/types";
 import { useAppRouter } from "@/hooks/use-app-router";
 // helpers
 import { PowerKModalCommandItem } from "./command-item";
-import { POWER_K_SEARCH_RESULTS_GROUPS_MAP } from "./search-results-map";
+import { usePowerKSearchResultsGroupsMap } from "./search-results-map";
 
 type Props = {
   closePalette: () => void;
@@ -27,12 +27,13 @@ export const PowerKModalSearchResults = observer(function PowerKModalSearchResul
   const { projectId: routerProjectId } = useParams();
   // derived values
   const projectId = routerProjectId?.toString();
+  const searchResultsGroupsMap = usePowerKSearchResultsGroupsMap();
 
   return (
     <>
       {Object.keys(results.results).map((key) => {
         const section = results.results[key as keyof typeof results.results];
-        const currentSection = POWER_K_SEARCH_RESULTS_GROUPS_MAP[key as keyof typeof POWER_K_SEARCH_RESULTS_GROUPS_MAP];
+        const currentSection = searchResultsGroupsMap[key as keyof typeof searchResultsGroupsMap];
 
         if (!currentSection) return null;
         if (section.length <= 0) return null;

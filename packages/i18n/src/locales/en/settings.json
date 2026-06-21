@@ -112,6 +112,12 @@
       "subscribed": "Subscribed",
       "activity": "Activity"
     },
+    "project_breakdown": {
+      "created": "Created",
+      "assigned": "Assigned",
+      "due": "Due",
+      "completed": "Completed"
+    },
     "empty_state": {
       "activity": {
         "title": "No activities yet",

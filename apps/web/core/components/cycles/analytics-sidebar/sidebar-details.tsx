@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 import { SquareUser } from "lucide-react";
 // plane types
 import { EEstimateSystem } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { MembersPropertyIcon, WorkItemsIcon } from "@plane/propel/icons";
 import type { ICycle } from "@plane/types";
 // plane ui
@@ -32,7 +32,7 @@ export const CycleSidebarDetails = observer(function CycleSidebarDetails(props: 
   // hooks
   const { getUserDetails } = useMember();
   const { areEstimateEnabledByProjectId, currentActiveEstimateId, estimateById } = useProjectEstimates();
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   const areEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId.toString());
   const cycleStatus = cycleDetails?.status?.toLocaleLowerCase();
@@ -50,12 +50,8 @@ export const CycleSidebarDetails = observer(function CycleSidebarDetails(props: 
   const cycleOwnerDetails = cycleDetails ? getUserDetails(cycleDetails.owned_by_id) : undefined;
 
   const isEstimatePointValid = isEmpty(cycleDetails?.progress_snapshot || {})
-    ? estimateType && estimateType?.type == EEstimateSystem.POINTS
-      ? true
-      : false
-    : isEmpty(cycleDetails?.progress_snapshot?.estimate_distribution || {})
-      ? false
-      : true;
+    ? !!(estimateType && estimateType?.type == EEstimateSystem.POINTS)
+    : !isEmpty(cycleDetails?.progress_snapshot?.estimate_distribution || {});
 
   const issueEstimatePointCount =
     isCompleted && !isEmpty(cycleDetails?.progress_snapshot)

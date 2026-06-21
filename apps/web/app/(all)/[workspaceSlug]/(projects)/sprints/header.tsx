@@ -14,7 +14,7 @@ import {
   type TFiltersLayoutOptions,
   WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useEntityAddLabel, useTerminologyT } from "@/hooks/use-workspace-type";
 import { Button } from "@plane/propel/button";
 import { CycleIcon, WorkItemsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -129,7 +129,8 @@ export const WorkspaceSprintsHeaderActions = observer(function WorkspaceSprintsH
   const { workspaceSlug, workspaceSprintId } = useParams();
   const sprintId = workspaceSprintId?.toString();
   const workspaceSlugValue = workspaceSlug?.toString();
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
+  const addWorkItemLabel = useEntityAddLabel("work_item");
   const [analyticsModal, setAnalyticsModal] = useState(false);
   const { isMobile } = usePlatformOS();
 
@@ -279,7 +280,7 @@ export const WorkspaceSprintsHeaderActions = observer(function WorkspaceSprintsH
           toggleCreateIssueModal(true);
         }}
       >
-        {t("issue.add.label")}
+        {addWorkItemLabel}
       </Button>
     </>
   );

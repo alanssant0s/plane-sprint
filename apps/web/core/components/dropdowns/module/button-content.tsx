@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { observer } from "mobx-react";
 // plane imports
 import { CloseIcon, ModuleIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -11,6 +12,7 @@ import { cn } from "@plane/utils";
 // hooks
 import { useModule } from "@/hooks/store/use-module";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useEntityTerm } from "@/hooks/use-workspace-type";
 
 type ModuleButtonContentProps = {
   disabled: boolean;
@@ -26,7 +28,7 @@ type ModuleButtonContentProps = {
   className?: string;
 };
 
-export function ModuleButtonContent(props: ModuleButtonContentProps) {
+export const ModuleButtonContent = observer(function ModuleButtonContent(props: ModuleButtonContentProps) {
   const {
     disabled,
     dropdownArrow,
@@ -43,6 +45,8 @@ export function ModuleButtonContent(props: ModuleButtonContentProps) {
   // store hooks
   const { getModuleById } = useModule();
   const { isMobile } = usePlatformOS();
+  const moduleTerm = useEntityTerm("module");
+  const moduleTermPlural = useEntityTerm("module", { plural: true });
 
   if (Array.isArray(value))
     return (
@@ -54,8 +58,8 @@ export function ModuleButtonContent(props: ModuleButtonContentProps) {
               <div className="max-w-40 truncate">
                 {value.length > 0
                   ? value.length === 1
-                    ? `${getModuleById(value[0])?.name || "module"}`
-                    : `${value.length} Module${value.length === 1 ? "" : "s"}`
+                    ? `${getModuleById(value[0])?.name || moduleTerm.toLowerCase()}`
+                    : `${value.length} ${value.length === 1 ? moduleTerm : moduleTermPlural}`
                   : placeholder}
               </div>
             )}
@@ -130,4 +134,4 @@ export function ModuleButtonContent(props: ModuleButtonContentProps) {
         )}
       </>
     );
-}
+});

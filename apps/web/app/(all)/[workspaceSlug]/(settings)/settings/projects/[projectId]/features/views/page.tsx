@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
@@ -27,7 +27,7 @@ function FeaturesViewsSettingsPage({ params }: Route.ComponentProps) {
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentProjectDetails } = useProject();
   // translation
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // derived values
   const pageTitle = currentProjectDetails?.name
     ? `${currentProjectDetails?.name} settings - ${t("project_settings.features.views.short_title")}`

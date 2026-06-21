@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, SIDEBAR_TRACKER_ELEMENTS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { AddWorkItemIcon } from "@plane/propel/icons";
 import type { TIssue } from "@plane/types";
 // components
@@ -22,7 +22,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import useLocalStorage from "@/hooks/use-local-storage";
 
 export const SidebarQuickActions = observer(function SidebarQuickActions() {
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // states
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
   const [_isDraftButtonOpen, setIsDraftButtonOpen] = useState(false);

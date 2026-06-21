@@ -5,6 +5,7 @@
  */
 
 import React from "react";
+import { useEntityTerm } from "@/hooks/use-workspace-type";
 import AnalyticsWrapper from "../analytics-wrapper";
 import TotalInsights from "../total-insights";
 import CreatedVsResolved from "./created-vs-resolved";
@@ -12,8 +13,10 @@ import CustomizedInsights from "./customized-insights";
 import WorkItemsInsightTable from "./workitems-insight-table";
 
 function WorkItems() {
+  const workItemsLabel = useEntityTerm("work_item", { plural: true });
+
   return (
-    <AnalyticsWrapper i18nTitle="sidebar.work_items">
+    <AnalyticsWrapper title={workItemsLabel}>
       <div className="flex flex-col gap-14">
         <TotalInsights analyticsType="work-items" />
         <CreatedVsResolved />

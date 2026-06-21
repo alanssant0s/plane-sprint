@@ -12,11 +12,14 @@ import { EIssuesStoreType } from "@plane/types";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
+import { useEntityAddLabel, useTerminologyT } from "@/hooks/use-workspace-type";
 
 export const ProjectViewEmptyState = observer(function ProjectViewEmptyState() {
   // store hooks
   const { toggleCreateIssueModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
+  const { t } = useTerminologyT();
+  const addLabel = useEntityAddLabel("work_item");
 
   // auth
   const isCreatingIssueAllowed = allowPermissions(
@@ -28,11 +31,11 @@ export const ProjectViewEmptyState = observer(function ProjectViewEmptyState() {
     // TODO: Add translation
     <EmptyStateDetailed
       assetKey="work-item"
-      title="View work items will appear here"
-      description="Work items help you track individual pieces of work. With work items, keep track of what's going on, who is working on it, and what's done."
+      title={t("project_empty_state.no_issues.title")}
+      description={t("project_empty_state.no_issues.description")}
       actions={[
         {
-          label: "New work item",
+          label: addLabel,
           onClick: () => {
             toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
           },

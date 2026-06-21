@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { Avatar } from "@plane/propel/avatar";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { Loader, Card } from "@plane/ui";
@@ -29,7 +29,7 @@ export const ProfileActivity = observer(function ProfileActivity() {
   const { workspaceSlug, userId } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   const { data: userProfileActivity } = useSWR(
     workspaceSlug && userId ? USER_PROFILE_ACTIVITY(workspaceSlug.toString(), userId.toString(), {}) : null,

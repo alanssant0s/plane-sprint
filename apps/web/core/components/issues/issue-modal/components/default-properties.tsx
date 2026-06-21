@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { ETabIndices, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { ParentPropertyIcon } from "@plane/propel/icons";
 // types
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
@@ -66,7 +66,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
   // states
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
   // store hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const { getProjectById } = useProject();
   const { isMobile } = usePlatformOS();
@@ -234,7 +234,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
                   onChange(moduleIds);
                   handleFormChange();
                 }}
-                placeholder={t("modules")}
+                placeholder={t("common.modules")}
                 buttonVariant="border-with-text"
                 tabIndex={getIndex("module_ids")}
                 multiple

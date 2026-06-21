@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTheme } from "next-themes";
 import { EUserPermissionsLevel, CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { TCycleFilters } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
@@ -46,7 +46,7 @@ function ProjectCyclesPage({ params }: Route.ComponentProps) {
   // theme hook
   const { resolvedTheme } = useTheme();
   // plane hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // cycle filters hook
   const { clearAllFilters, currentProjectFilters, updateFilters } = useCycleFilter();
   const { allowPermissions } = useUserPermissions();

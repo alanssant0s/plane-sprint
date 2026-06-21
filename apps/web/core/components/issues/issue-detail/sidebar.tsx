@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // i18n
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 // ui
 import {
   CycleIcon,
@@ -57,7 +57,7 @@ type Props = {
 };
 
 export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: Props) {
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   const { workspaceSlug, projectId, issueId, issueOperations, isEditable } = props;
   // store hooks
   const { getProjectById } = useProject();

@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
 import { PROJECT_ERROR_MESSAGES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TDeDupeIssue, TIssue } from "@plane/types";
 // ui
@@ -40,7 +40,7 @@ export const DeleteIssueModal = observer(function DeleteIssueModal(props: Props)
   const { issueMap } = useIssues();
   const { getProjectById } = useProject();
   const { allowPermissions } = useUserPermissions();
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   const { data: currentUser } = useUser();
 
@@ -93,6 +93,7 @@ export const DeleteIssueModal = observer(function DeleteIssueModal(props: Props)
             }),
           });
           onClose();
+          return undefined;
         })
         .catch((errors) => {
           const isPermissionError =

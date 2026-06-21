@@ -7,7 +7,7 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { ISSUE_GROUP_BY_OPTIONS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import type { IIssueDisplayFilterOptions, TIssueGroupByOptions } from "@plane/types";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
@@ -22,7 +22,7 @@ type Props = {
 
 export const FilterSubGroupBy = observer(function FilterSubGroupBy(props: Props) {
   // hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   const { displayFilters, handleUpdate, subGroupByOptions, ignoreGroupedFilters } = props;
 
@@ -47,7 +47,7 @@ export const FilterSubGroupBy = observer(function FilterSubGroupBy(props: Props)
             return (
               <FilterOption
                 key={subGroupBy?.key}
-                isChecked={selectedSubGroupBy === subGroupBy?.key ? true : false}
+                isChecked={selectedSubGroupBy === subGroupBy?.key}
                 onClick={() => handleUpdate(subGroupBy.key)}
                 title={t(subGroupBy.titleTranslationKey)}
                 multiple={false}

@@ -11,6 +11,7 @@ import type { TProjectMembership } from "./project";
 import type { IUser, IUserLite } from "./users";
 import type { TLoginMediums } from "./instance";
 import type { IWorkspaceViewProps } from "./view-props";
+import type { EWorkspaceType } from "./workspace-type";
 
 export enum EUserWorkspaceRoles {
   ADMIN = 20,
@@ -31,6 +32,7 @@ export interface IWorkspace {
   readonly created_by: string;
   readonly updated_by: string;
   organization_size: string;
+  workspace_type: EWorkspaceType;
   total_projects?: number;
   role: number;
   timezone: string;

@@ -16,7 +16,7 @@ import {
   SPACE_BASE_URL,
   WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT, useEntityTerm, useEntityAddLabel } from "@/hooks/use-workspace-type";
 import { Button } from "@plane/propel/button";
 import { NewTabIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -47,7 +47,11 @@ export const IssuesHeader = observer(function IssuesHeader() {
     issues: { getGroupIssueCount },
   } = useIssues(EIssuesStoreType.PROJECT);
   // i18n
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
+  const workItemTerm = useEntityTerm("work_item");
+  const workItemTermPlural = useEntityTerm("work_item", { plural: true });
+  const projectTerm = useEntityTerm("project");
+  const addWorkItemLabel = useEntityAddLabel("work_item");
 
   const { currentProjectDetails } = useProject();
 
@@ -81,7 +85,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
         {issuesCount && issuesCount > 0 ? (
           <Tooltip
             isMobile={isMobile}
-            tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "work items" : "work item"} in this project`}
+            tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? workItemTermPlural.toLowerCase() : workItemTerm.toLowerCase()} in this ${projectTerm.toLowerCase()}`}
             position="bottom"
           >
             <CountChip count={issuesCount} />
@@ -122,8 +126,8 @@ export const IssuesHeader = observer(function IssuesHeader() {
             }}
             data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.WORK_ITEMS}
           >
-            <div className="block sm:hidden">{t("issue.label", { count: 1 })}</div>
-            <div className="hidden sm:block">{t("issue.add.label")}</div>
+            <div className="block sm:hidden">{workItemTerm}</div>
+            <div className="hidden sm:block">{addWorkItemLabel}</div>
           </Button>
         )}
       </Header.RightItem>

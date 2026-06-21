@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 // icons
 // types
 import { PROJECT_DISPLAY_FILTER_OPTIONS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { CloseIcon } from "@plane/propel/icons";
 import type { TProjectAppliedDisplayFilterKeys } from "@plane/types";
 // constants
@@ -21,7 +21,7 @@ type Props = {
 
 export const AppliedProjectDisplayFilters = observer(function AppliedProjectDisplayFilters(props: Props) {
   const { handleRemove, values, editable } = props;
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   return (
     <>

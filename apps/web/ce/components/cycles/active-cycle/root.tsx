@@ -9,7 +9,7 @@ import { useTheme } from "next-themes";
 import { Disclosure } from "@headlessui/react";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import type { ICycle } from "@plane/types";
 import { Row } from "@plane/ui";
 // assets
@@ -52,7 +52,7 @@ const ActiveCyclesComponent = observer(function ActiveCyclesComponent({
   handleFiltersUpdate,
   cycleIssueDetails,
 }: ActiveCyclesComponentProps) {
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   if (!cycleId || !activeCycle) {
     return (
@@ -102,7 +102,7 @@ export const ActiveCycleRoot = observer(function ActiveCycleRoot(props: IActiveC
   // theme hook
   const { resolvedTheme } = useTheme();
   // plane hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // store hooks
   const { currentProjectActiveCycleId } = useCycle();
   // derived values

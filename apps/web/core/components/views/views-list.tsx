@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EUserProjectRoles } from "@plane/types";
 // components
@@ -24,7 +24,7 @@ import { ProjectViewListItem } from "./view-list-item";
 export const ProjectViewsList = observer(function ProjectViewsList() {
   const { projectId } = useParams();
   // plane hooks
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // store hooks
   const { toggleCreateViewModal } = useCommandPalette();
   const { getProjectViews, getFilteredProjectViews, loader } = useProjectView();

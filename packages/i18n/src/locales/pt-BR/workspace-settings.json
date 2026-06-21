@@ -39,6 +39,16 @@
           }
         }
       },
+      "workspace_type": {
+        "title": "Tipo de workspace",
+        "page_label": "{workspace} - Tipo de workspace",
+        "description": "Escolha um preset vertical para adaptar a terminologia do workspace para todos os membros.",
+        "notice": "Alterar o tipo de workspace atualiza os rótulos para todos. Rotas e APIs permanecem iguais.",
+        "wave": "Onda {wave}",
+        "save": "Salvar tipo de workspace",
+        "success_title": "Tipo de workspace atualizado",
+        "success_message": "A terminologia passará a refletir o novo tipo em todo o workspace."
+      },
       "members": {
         "title": "Membros",
         "add_member": "Adicionar membro",

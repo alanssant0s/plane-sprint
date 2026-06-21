@@ -14,6 +14,19 @@ type ClickHandlerOptions = {
   isInternalPageLink?: (href: string) => boolean;
 };
 
+const findAnchorElement = (target: EventTarget | null): HTMLAnchorElement | null => {
+  let element = target as HTMLElement | null;
+
+  while (element && element.nodeName !== "DIV") {
+    if (element.nodeName === "A") {
+      return element as HTMLAnchorElement;
+    }
+    element = element.parentNode as HTMLElement | null;
+  }
+
+  return null;
+};
+
 export function clickHandler(options: ClickHandlerOptions): Plugin {
   const { onLinkClick, isInternalPageLink } = options;
 
@@ -25,36 +38,37 @@ export function clickHandler(options: ClickHandlerOptions): Plugin {
           return false;
         }
 
-        let a = event.target as HTMLElement;
-        const els: HTMLElement[] = [];
-
-        while (a?.nodeName !== "DIV") {
-          els.push(a);
-          a = a?.parentNode as HTMLElement;
-        }
-
-        if (!els.find((value) => value.nodeName === "A")) {
+        const anchor = findAnchorElement(event.target);
+        if (!anchor) {
           return false;
         }
 
         const attrs = getAttributes(view.state, options.type.name);
-        const link = event.target as HTMLLinkElement;
+        const href = anchor.getAttribute("href") ?? attrs.href;
 
-        const href = link?.getAttribute("href") ?? attrs.href;
-        const target = link?.target ?? attrs.target;
-
-        if (!link || !href) {
+        if (!href) {
           return false;
         }
 
-        if (onLinkClick && isInternalPageLink?.(href)) {
-          const handled = onLinkClick(href, event);
-          if (handled) {
-            return true;
+        event.preventDefault();
+
+        const isInternal = Boolean(isInternalPageLink?.(href));
+        const openInNewTab = event.metaKey || event.ctrlKey || event.shiftKey;
+
+        if (isInternal) {
+          if (onLinkClick) {
+            const handled = onLinkClick(href, event);
+            if (handled) {
+              return true;
+            }
           }
+
+          window.open(href, openInNewTab ? "_blank" : "_self");
+          return true;
         }
 
-        window.open(href, target ?? undefined);
+        const target = anchor.getAttribute("target") ?? attrs.target ?? undefined;
+        window.open(href, openInNewTab || target === "_blank" ? "_blank" : "_self");
 
         return true;
       },

@@ -11,6 +11,7 @@ import { WORKSPACE_DEFAULT_SEARCH_RESULT } from "@plane/constants";
 import type { IWorkspaceSearchResults } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { usePowerK } from "@/hooks/store/use-power-k";
 import useDebounce from "@/hooks/use-debounce";
 // plane web imports
@@ -38,6 +39,8 @@ export function PowerKModalSearchMenu(props: Props) {
   const [isSearching, setIsSearching] = useState(false);
   const [results, setResults] = useState<IWorkspaceSearchResults>(WORKSPACE_DEFAULT_SEARCH_RESULT);
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  // translation
+  const { t } = useTerminologyT();
   // navigation
   const { workspaceSlug, projectId } = useParams();
   // store hooks
@@ -54,13 +57,15 @@ export function PowerKModalSearchMenu(props: Props) {
           search: debouncedSearchTerm,
           workspace_search: !projectId ? true : isWorkspaceLevel,
         })
-        .then((results) => {
-          setResults(results);
-          const count = Object.keys(results.results).reduce(
-            (accumulator, key) => results.results[key as keyof typeof results.results]?.length + accumulator,
+        .then((searchResults) => {
+          setResults(searchResults);
+          const count = Object.keys(searchResults.results).reduce(
+            (accumulator, key) =>
+              searchResults.results[key as keyof typeof searchResults.results]?.length + accumulator,
             0
           );
           setResultsCount(count);
+          return undefined;
         })
         .catch(() => {
           setResults(WORKSPACE_DEFAULT_SEARCH_RESULT);
@@ -89,13 +94,10 @@ export function PowerKModalSearchMenu(props: Props) {
               "animate-pulse": isSearching,
             })}
           >
-            Search results for{" "}
-            <span className="font-medium">
-              {'"'}
-              {searchTerm}
-              {'"'}
-            </span>{" "}
-            in {isWorkspaceLevel ? "workspace" : "project"}:
+            {t(
+              isWorkspaceLevel ? "power_k.search_menu.results_in_workspace" : "power_k.search_menu.results_in_project",
+              { query: searchTerm }
+            )}
           </h5>
         </div>
       )}

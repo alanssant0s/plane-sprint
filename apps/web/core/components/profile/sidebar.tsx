@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-import { useTranslation } from "@plane/i18n";
+import { useEntityTerm, useTerminologyT } from "@/hooks/use-workspace-type";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { IconButton } from "@plane/propel/icon-button";
 import { EditIcon, ChevronDownIcon } from "@plane/propel/icons";
@@ -46,7 +46,8 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
   const { getProjectById } = useProject();
   const { toggleProfileSettingsModal } = useCommandPalette();
   const { isMobile } = usePlatformOS();
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
+  const workItemsTerm = useEntityTerm("work_item", { plural: true });
   // derived values
   const userData = userProjectsData?.user_data;
 
@@ -82,7 +83,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
     window.addEventListener("resize", handleToggleProfileSidebar);
     handleToggleProfileSidebar();
     return () => window.removeEventListener("resize", handleToggleProfileSidebar);
-  }, []);
+  }, [profileSidebarCollapsed, toggleProfileSidebar]);
 
   return (
     <div
@@ -234,37 +235,37 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
                                   <div className="h-2.5 w-2.5 rounded-xs bg-[#203b80]" />
-                                  Created
+                                  {t("profile.project_breakdown.created")}
                                 </div>
                                 <div className="font-medium">
-                                  {project.created_issues} {t("issues")}
+                                  {project.created_issues} {workItemsTerm}
                                 </div>
                               </div>
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
                                   <div className="h-2.5 w-2.5 rounded-xs bg-[#3f76ff]" />
-                                  Assigned
+                                  {t("profile.project_breakdown.assigned")}
                                 </div>
                                 <div className="font-medium">
-                                  {project.assigned_issues} {t("issues")}
+                                  {project.assigned_issues} {workItemsTerm}
                                 </div>
                               </div>
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
                                   <div className="h-2.5 w-2.5 rounded-xs bg-[#f59e0b]" />
-                                  Due
+                                  {t("profile.project_breakdown.due")}
                                 </div>
                                 <div className="font-medium">
-                                  {project.pending_issues} {t("issues")}
+                                  {project.pending_issues} {workItemsTerm}
                                 </div>
                               </div>
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
                                   <div className="h-2.5 w-2.5 rounded-xs bg-[#16a34a]" />
-                                  Completed
+                                  {t("profile.project_breakdown.completed")}
                                 </div>
                                 <div className="font-medium">
-                                  {project.completed_issues} {t("issues")}
+                                  {project.completed_issues} {workItemsTerm}
                                 </div>
                               </div>
                             </div>

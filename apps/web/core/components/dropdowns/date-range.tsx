@@ -12,7 +12,7 @@ import { usePopper } from "react-popper";
 import { ArrowRight, CalendarDays } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 // ui
 import type { DateRange, Matcher } from "@plane/propel/calendar";
 import { Calendar } from "@plane/propel/calendar";
@@ -71,7 +71,7 @@ type Props = {
 };
 
 export const DateRangeDropdown = observer(function DateRangeDropdown(props: Props) {
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   const {
     buttonClassName,
     buttonContainerClassName,
@@ -289,6 +289,7 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
   const Options = renderInPortal ? createPortal(comboOptions, document.body) : comboOptions;
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <ComboDropDown
       as="div"
       ref={dropdownRef}

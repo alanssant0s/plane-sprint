@@ -4,14 +4,17 @@
  * See the LICENSE file for details.
  */
 
-import { forwardRef } from "react";
+import { forwardRef, useMemo } from "react";
 // plane imports
 import { DocumentEditorWithRef } from "@plane/editor";
 import type { IEditorPropsExtended, EditorRefApi, IDocumentEditorProps, TFileHandler } from "@plane/editor";
 import type { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 import { cn } from "@plane/utils";
+// helpers
+import { createInternalPageLinkHandlers } from "@/helpers/page-links";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { useMember } from "@/hooks/store/use-member";
 import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 // plane web hooks
@@ -55,6 +58,18 @@ export const DocumentEditor = forwardRef(function DocumentEditor(
   } = props;
   // store hooks
   const { getUserDetails } = useMember();
+  const router = useAppRouter();
+  const internalPageLinkHandlers = useMemo(
+    () => (workspaceSlug ? createInternalPageLinkHandlers((href) => router.push(href)) : {}),
+    [router, workspaceSlug]
+  );
+  const mergedExtendedEditorProps = useMemo(
+    () => ({
+      ...internalPageLinkHandlers,
+      ...extendedEditorProps,
+    }),
+    [extendedEditorProps, internalPageLinkHandlers]
+  );
   // parse content
   const { getEditorMetaData } = useParseEditorContent({
     projectId,
@@ -96,7 +111,7 @@ export const DocumentEditor = forwardRef(function DocumentEditor(
         renderComponent: EditorMentionsRoot,
         getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
       }}
-      extendedEditorProps={extendedEditorProps ?? {}}
+      extendedEditorProps={mergedExtendedEditorProps}
       {...rest}
       containerClassName={cn("relative pb-3 pl-3", containerClassName)}
     />

@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane package imports
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { TChartData } from "@plane/types";
 // hooks
@@ -30,7 +30,7 @@ const analyticsService = new AnalyticsService();
 
 const ProjectInsights = observer(function ProjectInsights() {
   const params = useParams();
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   const workspaceSlug = params.workspaceSlug.toString();
   const { selectedDuration, selectedDurationLabel, selectedProjects, selectedCycle, selectedModule, isPeekView } =
     useAnalytics();

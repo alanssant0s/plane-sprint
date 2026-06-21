@@ -7,7 +7,7 @@
 import { useFormContext } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { Button } from "@plane/propel/button";
 import type { IProject } from "@plane/types";
 // ui
@@ -20,7 +20,7 @@ type Props = {
 };
 
 function ProjectCreateButtons(props: Props) {
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   const { handleClose, isMobile = false } = props;
   const {
     formState: { isSubmitting },

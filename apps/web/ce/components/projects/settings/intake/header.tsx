@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 import { RefreshCcw } from "lucide-react";
 // ui
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { Button } from "@plane/propel/button";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
@@ -31,7 +31,7 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { allowPermissions } = useUserPermissions();
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   const { currentProjectDetails, loader: currentProjectDetailsLoader } = useProject();
   const { loader } = useProjectInbox();

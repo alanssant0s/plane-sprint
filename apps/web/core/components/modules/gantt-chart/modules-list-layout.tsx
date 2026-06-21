@@ -17,6 +17,7 @@ import { ModuleGanttBlock } from "@/components/modules";
 import { useModule } from "@/hooks/store/use-module";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { useProject } from "@/hooks/store/use-project";
+import { useEntityTerm } from "@/hooks/use-workspace-type";
 
 export const ModulesListGanttChartView = observer(function ModulesListGanttChartView() {
   // router
@@ -25,6 +26,7 @@ export const ModulesListGanttChartView = observer(function ModulesListGanttChart
   const { currentProjectDetails } = useProject();
   const { getFilteredModuleIds, updateModuleDetails } = useModule();
   const { currentProjectDisplayFilters: displayFilters } = useModuleFilter();
+  const modulesTerm = useEntityTerm("module", { plural: true });
 
   // derived values
   const filteredModuleIds = projectId ? getFilteredModuleIds(projectId.toString()) : undefined;
@@ -58,8 +60,8 @@ export const ModulesListGanttChartView = observer(function ModulesListGanttChart
   return (
     <TimeLineTypeContext.Provider value={GANTT_TIMELINE_TYPE.MODULE}>
       <GanttChartRoot
-        title="Modules"
-        loaderTitle="Modules"
+        title={modulesTerm}
+        loaderTitle={modulesTerm}
         blockIds={filteredModuleIds}
         sidebarToRender={(props) => <ModuleGanttSidebar {...props} />}
         blockUpdateHandler={(block, payload) => handleModuleUpdate(block, payload)}

@@ -10,7 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 import { ArrowRight } from "lucide-react";
 // Plane Imports
 import { CYCLE_STATUS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { ChevronRightIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ICycle } from "@plane/types";
@@ -44,7 +44,7 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
   // hooks
   const { allowPermissions } = useUserPermissions();
   const { updateCycleDetails } = useCycle();
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   const { renderFormattedDateInUserTimezone, getProjectUTCOffset } = useTimeZoneConverter(projectId);
 
   // derived values

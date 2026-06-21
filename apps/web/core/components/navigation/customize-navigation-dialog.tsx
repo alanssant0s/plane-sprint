@@ -11,7 +11,7 @@ import { useParams } from "next/navigation";
 import { GripVertical, X } from "lucide-react";
 // plane imports
 import { WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS, EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { Checkbox, EModalPosition, EModalWidth, ModalCore, Sortable } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
@@ -55,7 +55,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
   props: TCustomizeNavigationDialogProps
 ) {
   const { isOpen, onClose } = props;
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   // router
   const { workspaceSlug } = useParams();

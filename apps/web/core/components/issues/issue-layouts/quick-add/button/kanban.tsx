@@ -6,20 +6,21 @@
 
 import { observer } from "mobx-react";
 
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { PlusIcon } from "@plane/propel/icons";
 import type { TQuickAddIssueButton } from "../root";
 
 export const KanbanQuickAddIssueButton = observer(function KanbanQuickAddIssueButton(props: TQuickAddIssueButton) {
   const { onClick, isEpic = false } = props;
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   return (
-    <div
+    <button
+      type="button"
       className="flex w-full cursor-pointer items-center gap-2 rounded-lg bg-layer-transparent px-2 py-1 py-1.5 hover:bg-layer-transparent-hover"
       onClick={onClick}
     >
       <PlusIcon className="h-3.5 w-3.5 stroke-2" />
       <span className="text-13 font-medium">{isEpic ? t("epic.new") : t("issue.new")}</span>
-    </div>
+    </button>
   );
 });

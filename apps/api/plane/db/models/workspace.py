@@ -15,6 +15,7 @@ from django.db import models
 from .base import BaseModel
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.utils.color import get_random_color
+from plane.utils.workspace_type import WorkspaceType
 
 ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
 
@@ -137,6 +138,11 @@ class Workspace(BaseModel):
     )
     slug = models.SlugField(max_length=48, db_index=True, unique=True, validators=[slug_validator])
     organization_size = models.CharField(max_length=20, blank=True, null=True)
+    workspace_type = models.CharField(
+        max_length=50,
+        choices=WorkspaceType.choices,
+        default=WorkspaceType.DEFAULT,
+    )
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
     background_color = models.CharField(max_length=255, default=get_random_color)
 

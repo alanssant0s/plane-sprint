@@ -22,7 +22,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 // plane package imports
@@ -42,7 +42,7 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [sorting, _setSorting] = React.useState<SortingState>([]);
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [isSearchOpen, setIsSearchOpen] = React.useState(false);
 

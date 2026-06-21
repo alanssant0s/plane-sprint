@@ -5,22 +5,25 @@
  */
 
 import React from "react";
-// plane package imports
 import { useTranslation } from "@plane/i18n";
+import { useEntityTerm } from "@/hooks/use-workspace-type";
 import { cn } from "@plane/utils";
 
 type Props = {
-  i18nTitle: string;
+  i18nTitle?: string;
+  title?: string;
   children: React.ReactNode;
   className?: string;
 };
 
 function AnalyticsWrapper(props: Props) {
-  const { i18nTitle, children, className } = props;
+  const { i18nTitle, title, children, className } = props;
   const { t } = useTranslation();
+  const workItemsLabel = useEntityTerm("work_item", { plural: true });
+  const resolvedTitle = title ?? (i18nTitle ? t(i18nTitle) : workItemsLabel);
   return (
     <div className={cn("px-6 py-4", className)}>
-      <h1 className={"mb-4 text-20 font-bold md:mb-6"}>{t(i18nTitle)}</h1>
+      <h1 className={"mb-4 text-20 font-bold md:mb-6"}>{resolvedTitle}</h1>
       {children}
     </div>
   );

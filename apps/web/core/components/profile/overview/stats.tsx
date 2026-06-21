@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 
 // ui
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { UserCirclePropertyIcon, CreateIcon, LayerStackIcon } from "@plane/propel/icons";
 import type { IUserProfileData } from "@plane/types";
 import { Loader, Card, ECardSpacing, ECardDirection } from "@plane/ui";
@@ -21,7 +21,7 @@ type Props = {
 export function ProfileStats({ userProfile }: Props) {
   const { workspaceSlug, userId } = useParams();
 
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   const overviewCards = [
     {

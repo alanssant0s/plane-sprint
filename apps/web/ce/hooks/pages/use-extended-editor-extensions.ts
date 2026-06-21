@@ -7,7 +7,7 @@
 import { useCallback, useMemo } from "react";
 import type { IEditorPropsExtended } from "@plane/editor";
 import type { TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
-import { buildInternalPageHref, parseInternalPageHref } from "@/helpers/page-links";
+import { buildInternalPageHref, createInternalPageLinkHandlers } from "@/helpers/page-links";
 import { useAppRouter } from "@/hooks/use-app-router";
 import type { TPageInstance } from "@/store/pages/base-page";
 import type { EPageStoreType } from "../store";
@@ -69,32 +69,14 @@ export const useExtendedEditorProps = (
     [fetchEntity, projectId]
   );
 
-  const onLinkClick = useCallback(
-    (href: string, event: MouseEvent) => {
-      const internalLink = parseInternalPageHref(href);
-      if (!internalLink) {
-        return false;
-      }
-
-      if (event.metaKey || event.ctrlKey) {
-        return false;
-      }
-
-      router.push(buildInternalPageHref(workspaceSlug, internalLink.projectId, internalLink.pageId));
-      return true;
-    },
-    [router, workspaceSlug]
-  );
-
-  const isInternalPageLink = useCallback((href: string) => Boolean(parseInternalPageHref(href)), []);
+  const internalPageLinkHandlers = useMemo(() => createInternalPageLinkHandlers((href) => router.push(href)), [router]);
 
   return useMemo(
     () => ({
-      onLinkClick,
-      isInternalPageLink,
+      ...internalPageLinkHandlers,
       searchPages,
       buildPageLink,
     }),
-    [buildPageLink, isInternalPageLink, onLinkClick, searchPages]
+    [buildPageLink, internalPageLinkHandlers, searchPages]
   );
 };

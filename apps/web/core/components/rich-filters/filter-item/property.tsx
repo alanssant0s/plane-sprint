@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/propel/utils";
 import type { IFilterInstance } from "@plane/shared-state";
+import { useRichFilterLabel } from "@/hooks/use-workspace-type";
 import type { TExternalFilter, TFilterProperty, TSupportedOperators } from "@plane/types";
 // local imports
 import { AddFilterDropdown } from "../add-filters/dropdown";
@@ -52,6 +53,7 @@ type TPropertyButtonProps<P extends TFilterProperty, E extends TExternalFilter> 
 
 function PropertyButton<P extends TFilterProperty, E extends TExternalFilter>(props: TPropertyButtonProps<P, E>) {
   const { icon: Icon, label, tooltipContent, className } = props;
+  const resolvedLabel = useRichFilterLabel(label);
 
   return (
     <Tooltip tooltipContent={tooltipContent} position="bottom-start" disabled={!tooltipContent}>
@@ -67,7 +69,7 @@ function PropertyButton<P extends TFilterProperty, E extends TExternalFilter>(pr
             <Icon className="size-3.5" />
           </div>
         )}
-        <span className="truncate">{label}</span>
+        <span className="truncate">{resolvedLabel}</span>
       </div>
     </Tooltip>
   );

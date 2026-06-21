@@ -5,13 +5,13 @@
  */
 
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { cn } from "@plane/utils";
 import type { TQuickAddIssueForm } from "../root";
 
 export const GanttQuickAddIssueForm = observer(function GanttQuickAddIssueForm(props: TQuickAddIssueForm) {
   const { ref, projectDetail, hasError, register, onSubmit, isEpic } = props;
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   return (
     <div className={cn("shadow-raised-200", hasError && "border border-danger-strong/20 bg-danger-subtle")}>
       <form

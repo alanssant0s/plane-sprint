@@ -112,6 +112,12 @@
       "subscribed": "Inscrito",
       "activity": "Atividade"
     },
+    "project_breakdown": {
+      "created": "Criados",
+      "assigned": "Atribuídos",
+      "due": "Pendentes",
+      "completed": "Concluídos"
+    },
     "empty_state": {
       "activity": {
         "title": "Nenhuma atividade ainda",

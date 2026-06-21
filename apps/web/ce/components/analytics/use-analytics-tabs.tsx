@@ -6,12 +6,14 @@
 
 import { useMemo } from "react";
 import { useTranslation } from "@plane/i18n";
+import { useEntityTerm } from "@/hooks/use-workspace-type";
 import { getAnalyticsTabs } from "./tabs";
 
 export const useAnalyticsTabs = (_workspaceSlug: string) => {
   const { t } = useTranslation();
+  const workItemsLabel = useEntityTerm("work_item", { plural: true });
 
-  const analyticsTabs = useMemo(() => getAnalyticsTabs(t), [t]);
+  const analyticsTabs = useMemo(() => getAnalyticsTabs(t, workItemsLabel), [t, workItemsLabel]);
 
   return analyticsTabs;
 };

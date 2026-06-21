@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EIssuesStoreType, EUserWorkspaceRoles } from "@plane/types";
 // hooks
@@ -17,7 +17,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 
 export const GlobalViewEmptyState = observer(function GlobalViewEmptyState() {
   // plane imports
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // store hooks
   const { workspaceProjectIds } = useProject();
   const { toggleCreateIssueModal, toggleCreateProjectModal } = useCommandPalette();

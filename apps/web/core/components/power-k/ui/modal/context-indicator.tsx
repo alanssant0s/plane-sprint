@@ -6,7 +6,7 @@
 
 import { X } from "lucide-react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 // local imports
 import type { TPowerKContextType } from "../../core/types";
 import { useContextIndicator } from "../../hooks/use-context-indicator";
@@ -22,7 +22,7 @@ export function PowerKModalContextIndicator(props: Props) {
   // context indicator
   const contextIndicator = useContextIndicator({ activeContext });
   // translation
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   // derived values
   const contextEntity = activeContext ? CONTEXT_ENTITY_MAP[activeContext] : null;
 

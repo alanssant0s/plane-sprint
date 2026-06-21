@@ -5,7 +5,7 @@
  */
 
 import { Command } from "cmdk";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { SearchIcon } from "@plane/propel/icons";
 // plane imports
 // components
@@ -22,7 +22,7 @@ export type TPowerKModalNoSearchResultsCommandProps = {
 export function PowerKModalNoSearchResultsCommand(props: TPowerKModalNoSearchResultsCommandProps) {
   const { updateSearchTerm } = props;
   // translation
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   return (
     <Command.Group>

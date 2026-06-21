@@ -13,7 +13,7 @@ import { Eye, ArrowRight, CalendarDays } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { TransferIcon, WorkItemsIcon, MembersPropertyIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -59,7 +59,7 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
   // hooks
   const { isMobile } = usePlatformOS();
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   const { isProjectTimeZoneDifferent, getProjectUTCOffset, renderFormattedDateInUserTimezone } =
     useTimeZoneConverter(projectId);
   // router
@@ -111,6 +111,7 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
     const addToFavoritePromise = addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).then(
       () => {
         if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
+        return undefined;
       }
     );
 
@@ -194,7 +195,8 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
       )}
       <CycleAdditionalActions cycleId={cycleId} projectId={projectId} />
       {showTransferIssues && (
-        <div
+        <button
+          type="button"
           className="flex h-6 cursor-pointer items-center gap-1 px-2 text-accent-secondary"
           onClick={() => {
             setTransferIssuesModal(true);
@@ -202,7 +204,7 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
         >
           <TransferIcon className="w-4 fill-accent-primary" />
           <span>{t("project_cycles.transfer_work_items", { count: transferableIssuesCount })}</span>
-        </div>
+        </button>
       )}
       {isActive ? (
         <>

@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // plane package imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { Tabs } from "@plane/propel/tabs";
 // components
@@ -31,7 +31,7 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
   const router = useRouter();
 
   // plane imports
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
 
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
