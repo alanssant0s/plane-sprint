@@ -41,6 +41,10 @@ interface ILocalStoreIssueFilters {
   filters: IIssueFilters;
 }
 
+type TSpreadsheetDisplayFilters = IIssueDisplayFilterOptions & {
+  spreadsheet_columns?: (keyof IIssueDisplayProperties)[];
+};
+
 export interface IBaseIssueFilterStore {
   // observables
   filters: Record<string, IIssueFilters>;
@@ -214,8 +218,16 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     displayFilters: IIssueDisplayFilterOptions,
     defaultValues?: IIssueDisplayFilterOptions
   ): IIssueDisplayFilterOptions => {
+    const spreadsheetColumns =
+      (displayFilters as TSpreadsheetDisplayFilters | undefined)?.spreadsheet_columns ??
+      (defaultValues as TSpreadsheetDisplayFilters | undefined)?.spreadsheet_columns;
     const computedFilters = getComputedDisplayFilters(displayFilters, defaultValues);
-    return getEnabledDisplayFilters(computedFilters);
+    const enabledDisplayFilters = getEnabledDisplayFilters(computedFilters);
+
+    return {
+      ...enabledDisplayFilters,
+      spreadsheet_columns: spreadsheetColumns,
+    } as TSpreadsheetDisplayFilters;
   };
 
   /**

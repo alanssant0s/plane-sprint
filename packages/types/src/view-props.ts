@@ -160,6 +160,7 @@ export interface IIssueDisplayFilterOptions {
   show_empty_groups?: boolean;
   sub_issue?: boolean;
   assigned_to_me?: boolean;
+  spreadsheet_columns?: (keyof IIssueDisplayProperties)[];
 }
 export interface IIssueDisplayProperties {
   project?: boolean;

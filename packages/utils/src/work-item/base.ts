@@ -29,6 +29,10 @@ import { orderArrayBy } from "../array";
 import { getDate } from "../datetime";
 import { isEditorEmpty } from "../editor";
 
+type TSpreadsheetDisplayFilters = IIssueDisplayFilterOptions & {
+  spreadsheet_columns?: (keyof IIssueDisplayProperties)[];
+};
+
 type THandleIssuesMutation = (
   formData: Partial<TIssue>,
   oldGroupTitle: string,
@@ -273,8 +277,8 @@ export const getComputedDisplayFilters = (
   displayFilters: IIssueDisplayFilterOptions = {},
   defaultValues?: IIssueDisplayFilterOptions
 ): IIssueDisplayFilterOptions => {
-  const filters = !isEmpty(displayFilters) ? displayFilters : defaultValues;
-  return {
+  const filters = (!isEmpty(displayFilters) ? displayFilters : defaultValues) as TSpreadsheetDisplayFilters | undefined;
+  const computedDisplayFilters: TSpreadsheetDisplayFilters = {
     calendar: {
       show_weekends: filters?.calendar?.show_weekends || false,
       layout: filters?.calendar?.layout || "month",
@@ -286,7 +290,9 @@ export const getComputedDisplayFilters = (
     sub_issue: filters?.sub_issue || false,
     show_empty_groups: filters?.show_empty_groups || false,
     assigned_to_me: filters?.assigned_to_me ?? false,
+    spreadsheet_columns: filters?.spreadsheet_columns,
   };
+  return computedDisplayFilters;
 };
 
 /**

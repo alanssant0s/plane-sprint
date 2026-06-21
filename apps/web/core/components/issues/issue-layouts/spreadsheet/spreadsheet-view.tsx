@@ -43,6 +43,23 @@ type Props = {
   isEpic?: boolean;
 };
 
+type TSpreadsheetDisplayFilters = IIssueDisplayFilterOptions & {
+  spreadsheet_columns?: (keyof IIssueDisplayProperties)[];
+};
+
+const getOrderedSpreadsheetColumns = (
+  columns: (keyof IIssueDisplayProperties)[],
+  savedOrder: (keyof IIssueDisplayProperties)[] | undefined
+) => {
+  if (!savedOrder || savedOrder.length === 0) return columns;
+
+  const availableColumns = new Set(columns);
+  const orderedColumns = savedOrder.filter((property) => availableColumns.has(property));
+  const unorderedColumns = columns.filter((property) => !savedOrder.includes(property));
+
+  return [...orderedColumns, ...unorderedColumns];
+};
+
 export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
   const {
     displayProperties,
@@ -78,9 +95,13 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
         if (property === "modules" && !currentProjectDetails?.module_view) return false;
         return true;
       });
-  const spreadsheetColumnsList = showProjectInWorkItemColumn
+  const availableSpreadsheetColumnsList = showProjectInWorkItemColumn
     ? spreadsheetColumnsListBase.filter((property) => property !== "project")
     : spreadsheetColumnsListBase;
+  const spreadsheetColumnsList = getOrderedSpreadsheetColumns(
+    availableSpreadsheetColumnsList,
+    (displayFilters as TSpreadsheetDisplayFilters | undefined)?.spreadsheet_columns
+  );
 
   if (!issueIds || issueIds.length === 0) return <></>;
   return (
