@@ -20,17 +20,18 @@ type Props = {
   onChange: (sprintId: string | null) => void;
   disabled?: boolean;
   className?: string;
+  fallbackName?: string | null;
 };
 
 export const WorkspaceSprintDropdown = observer(function WorkspaceSprintDropdown(props: Props) {
-  const { value, onChange, disabled = false, className } = props;
+  const { value, onChange, disabled = false, className, fallbackName } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const { getSprintAutomationById, getSprintById } = useWorkspaceSprint();
   const selectedSprint = value ? getSprintById(value) : null;
   const selectedAutomation = getSprintAutomationById(selectedSprint?.automation_id);
-  const selectedName = selectedSprint?.name ?? null;
+  const selectedName = selectedSprint?.name ?? fallbackName ?? null;
   const { handleClose, handleKeyDown, handleOnClick } = useDropdown({
     dropdownRef,
     isOpen,

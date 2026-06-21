@@ -408,6 +408,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
                   onChange={handleSprint}
                   disabled={isReadOnly}
                   className="max-w-40"
+                  fallbackName={issue.global_sprint_name}
                 />
               </div>
             </WithDisplayPropertiesHOC>
