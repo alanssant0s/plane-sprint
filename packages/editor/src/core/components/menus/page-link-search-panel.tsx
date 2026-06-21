@@ -4,26 +4,27 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { TPageLinkSearchResult } from "@/types";
 
 type Props = {
   searchPages: (query: string) => Promise<TPageLinkSearchResult[]>;
   onPageSelect: (page: TPageLinkSearchResult) => void;
-  focusOnMount?: boolean;
+  registerSearchInput?: (input: HTMLInputElement | null) => void;
 };
 
 export function PageLinkSearchPanel(props: Props) {
-  const { searchPages, onPageSelect, focusOnMount = false } = props;
+  const { searchPages, onPageSelect, registerSearchInput } = props;
   const [pageQuery, setPageQuery] = useState("");
   const [pageResults, setPageResults] = useState<TPageLinkSearchResult[]>([]);
   const [isSearchingPages, setIsSearchingPages] = useState(false);
-  const pageSearchRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (!focusOnMount) return;
-    pageSearchRef.current?.focus();
-  }, [focusOnMount]);
+  const setSearchInputRef = useCallback(
+    (node: HTMLInputElement | null) => {
+      registerSearchInput?.(node);
+    },
+    [registerSearchInput]
+  );
 
   useEffect(() => {
     let isCancelled = false;
@@ -52,11 +53,16 @@ export function PageLinkSearchPanel(props: Props) {
   return (
     <div className="p-2">
       <input
-        ref={pageSearchRef}
+        ref={setSearchInputRef}
         type="text"
         value={pageQuery}
         placeholder="Search pages"
-        onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => {
+          e.stopPropagation();
+        }}
+        onKeyDown={(e) => {
+          e.stopPropagation();
+        }}
         className="mb-2 w-full rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2 text-11 outline-none placeholder:text-placeholder"
         onChange={(e) => setPageQuery(e.target.value)}
       />

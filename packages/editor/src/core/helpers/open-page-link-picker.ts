@@ -22,19 +22,86 @@ type OpenPageLinkPickerArgs = {
 
 const noopCleanup = () => {};
 
+const appendCharacterToInput = (input: HTMLInputElement, character: string) => {
+  const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
+  const nextValue = input.value + character;
+  nativeInputValueSetter?.call(input, nextValue);
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+};
+
+const getSearchInputFromElement = (element: HTMLElement | null) =>
+  element?.querySelector("input") as HTMLInputElement | null;
+
 export const openPageLinkPicker = ({ editor, range, searchPages, buildPageLink }: OpenPageLinkPickerArgs) => {
   if (range) {
-    editor.chain().focus().deleteRange(range).run();
+    editor.chain().deleteRange(range).run();
   }
 
   let component: ReactRenderer<void, PageLinkPickerOverlayProps> | null = null;
   let cleanup: () => void = noopCleanup;
+  let searchInput: HTMLInputElement | null = null;
+
+  const previousEditable = editor.isEditable;
+  const previousHandleKeyDown = editor.options.editorProps?.handleKeyDown;
+
+  const restoreEditorState = () => {
+    editor.setOptions({
+      editorProps: {
+        ...editor.options.editorProps,
+        handleKeyDown: previousHandleKeyDown,
+      },
+    });
+    editor.setEditable(previousEditable);
+  };
+
+  const getActiveSearchInput = () => searchInput ?? getSearchInputFromElement(component?.element as HTMLElement | null);
+
+  const focusSearchInput = () => {
+    getActiveSearchInput()?.focus({ preventScroll: true });
+  };
 
   const handleClose = () => {
     component?.destroy();
     component = null;
+    searchInput = null;
+    restoreEditorState();
     cleanup();
   };
+
+  editor.setEditable(false);
+  editor.commands.blur();
+
+  editor.setOptions({
+    editorProps: {
+      ...editor.options.editorProps,
+      handleKeyDown: (view, event) => {
+        if (event.key === "Escape") {
+          handleClose();
+          return true;
+        }
+
+        const input = getActiveSearchInput();
+
+        if (input && document.activeElement !== input) {
+          const isPrintableCharacter =
+            event.key.length === 1 && !event.metaKey && !event.ctrlKey && !event.altKey && !event.repeat;
+
+          if (isPrintableCharacter) {
+            appendCharacterToInput(input, event.key);
+          }
+
+          focusSearchInput();
+          return true;
+        }
+
+        if (previousHandleKeyDown?.(view, event)) {
+          return true;
+        }
+
+        return true;
+      },
+    },
+  });
 
   component = new ReactRenderer<void, PageLinkPickerOverlayProps>(PageLinkPickerOverlay, {
     props: {
@@ -42,11 +109,22 @@ export const openPageLinkPicker = ({ editor, range, searchPages, buildPageLink }
       searchPages,
       buildPageLink,
       onClose: handleClose,
+      registerSearchInput: (input: HTMLInputElement | null) => {
+        searchInput = input;
+        if (input) {
+          focusSearchInput();
+        }
+      },
     },
     editor,
-    className: "fixed z-[100]",
+    className: "pointer-events-none fixed z-[100]",
   });
 
   const element = component.element as HTMLElement;
   cleanup = updateFloatingUIFloaterPosition(editor, element).cleanup;
+
+  requestAnimationFrame(() => {
+    focusSearchInput();
+    window.setTimeout(focusSearchInput, 0);
+  });
 };

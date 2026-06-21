@@ -37,9 +37,33 @@ export function BubbleMenuLinkSelector(props: Props) {
   const { context } = options;
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const pageSearchContainerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    if (!context.open || activeTab !== "url") return;
-    inputRef.current?.focus();
+    if (!context.open) return;
+
+    let timeoutId: number | undefined;
+
+    const focusActiveInput = () => {
+      if (activeTab === "url") {
+        inputRef.current?.focus();
+        return;
+      }
+
+      (pageSearchContainerRef.current?.querySelector("input") as HTMLInputElement | null)?.focus();
+    };
+
+    const frameId = requestAnimationFrame(() => {
+      focusActiveInput();
+      timeoutId = window.setTimeout(focusActiveInput, 0);
+    });
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      if (timeoutId !== undefined) {
+        window.clearTimeout(timeoutId);
+      }
+    };
   }, [activeTab, context.open]);
 
   const handleLinkSubmit = useCallback(() => {
@@ -172,7 +196,11 @@ export function BubbleMenuLinkSelector(props: Props) {
             )}
           </div>
         ) : (
-          searchPages && <PageLinkSearchPanel searchPages={searchPages} onPageSelect={handlePageSelect} focusOnMount />
+          searchPages && (
+            <div ref={pageSearchContainerRef}>
+              <PageLinkSearchPanel searchPages={searchPages} onPageSelect={handlePageSelect} />
+            </div>
+          )
         )}
       </div>
     </FloatingMenuRoot>

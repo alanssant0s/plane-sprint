@@ -5,8 +5,7 @@
  */
 
 import type { Editor } from "@tiptap/core";
-import { useCallback, useEffect, useRef } from "react";
-import { FloatingOverlay } from "@floating-ui/react";
+import { useCallback, useRef } from "react";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { setLinkEditor } from "@/helpers/editor-commands";
 import type { TPageLinkSearchResult } from "@/types";
@@ -17,31 +16,18 @@ export type PageLinkPickerOverlayProps = {
   searchPages: (query: string) => Promise<TPageLinkSearchResult[]>;
   buildPageLink: (pageId: string, projectId?: string) => string;
   onClose: () => void;
+  registerSearchInput?: (input: HTMLInputElement | null) => void;
 };
 
 export function PageLinkPickerOverlay(props: PageLinkPickerOverlayProps) {
-  const { editor, searchPages, buildPageLink, onClose } = props;
+  const { editor, searchPages, buildPageLink, onClose, registerSearchInput } = props;
   const containerRef = useRef<HTMLDivElement>(null);
 
   useOutsideClickDetector(containerRef, onClose);
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        event.stopPropagation();
-        onClose();
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown, true);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown, true);
-    };
-  }, [onClose]);
-
   const handlePageSelect = useCallback(
     (page: TPageLinkSearchResult) => {
+      editor.setEditable(true);
       const href = buildPageLink(page.id, page.project_id);
       setLinkEditor(editor, href, page.name, { isInternal: true });
       onClose();
@@ -51,28 +37,35 @@ export function PageLinkPickerOverlay(props: PageLinkPickerOverlayProps) {
 
   return (
     <>
-      <FloatingOverlay
+      <div
+        aria-hidden="true"
+        className="pointer-events-auto fixed inset-0"
         style={{
           zIndex: 99,
         }}
-        lockScroll
+        onMouseDown={(event) => {
+          event.preventDefault();
+          onClose();
+        }}
       />
       <div
         ref={containerRef}
         role="dialog"
         aria-label="Search pages"
-        className="relative w-72 rounded-md border-[0.5px] border-strong bg-surface-1 shadow-raised-200"
+        data-prevent-outside-click
+        className="pointer-events-auto relative w-72 rounded-md border-[0.5px] border-strong bg-surface-1 shadow-raised-200"
         style={{
           zIndex: 100,
         }}
-        onKeyDown={(e) => {
-          e.stopPropagation();
-        }}
-        onMouseDown={(e) => {
-          e.stopPropagation();
+        onMouseDown={(event) => {
+          event.stopPropagation();
         }}
       >
-        <PageLinkSearchPanel searchPages={searchPages} onPageSelect={handlePageSelect} focusOnMount />
+        <PageLinkSearchPanel
+          searchPages={searchPages}
+          onPageSelect={handlePageSelect}
+          registerSearchInput={registerSearchInput}
+        />
       </div>
     </>
   );
