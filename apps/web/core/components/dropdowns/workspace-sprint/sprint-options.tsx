@@ -7,11 +7,12 @@
 import { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { Combobox } from "@headlessui/react";
+import { FastForward } from "lucide-react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { CheckIcon, CycleIcon, SearchIcon } from "@plane/propel/icons";
+import { CheckIcon, SearchIcon } from "@plane/propel/icons";
 import type { TLogoProps } from "@plane/types";
 import { useWorkspaceSprint } from "@/hooks/store/use-workspace-sprint";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -58,7 +59,7 @@ export const WorkspaceSprintOptions = observer(function WorkspaceSprintOptions(p
       query: "No sprint",
       content: (
         <div className="flex items-center gap-2">
-          <CycleIcon className="h-3 w-3 flex-shrink-0" />
+          <FastForward className="h-3 w-3 flex-shrink-0 stroke-[1.5] text-placeholder" />
           <span className="flex-grow truncate">No sprint</span>
         </div>
       ),
@@ -139,6 +140,6 @@ function WorkspaceSprintOptionIcon({ logoProps }: { logoProps: TLogoProps | unde
   return logoProps?.in_use ? (
     <Logo logo={logoProps} size={12} type="material" />
   ) : (
-    <CycleIcon className="h-3 w-3 flex-shrink-0" />
+    <FastForward className="h-3 w-3 flex-shrink-0 stroke-[1.5] text-placeholder" />
   );
 }

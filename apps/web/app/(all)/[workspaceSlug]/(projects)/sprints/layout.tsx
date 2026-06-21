@@ -126,7 +126,7 @@ const WorkspaceSprintsGroupNavigation = observer(function WorkspaceSprintsGroupN
 
   return (
     <div className="z-20">
-      <Row className="flex h-header w-full items-center gap-2 border-b border-subtle bg-surface-1">
+      <Row className="flex h-11 w-full items-center gap-2 border-b border-subtle bg-surface-1">
         <div className="flex h-full w-full items-center gap-2 divide-x divide-subtle">
           <div className="flex size-full flex-1 items-center gap-2 overflow-hidden">
             {sidebarCollapsed && (
@@ -135,7 +135,7 @@ const WorkspaceSprintsGroupNavigation = observer(function WorkspaceSprintsGroupN
               </div>
             )}
             <Header className="h-full overflow-hidden">
-              <Header.LeftItem className="flex h-full max-w-full items-center gap-3 overflow-hidden">
+              <Header.LeftItem className="flex h-full max-w-full flex-nowrap items-center gap-3 overflow-hidden">
                 <SprintAutomationSwitcher
                   automationName={squad?.name ?? "Squads"}
                   automationLogoProps={squad?.logo_props}
@@ -166,7 +166,7 @@ const WorkspaceSprintsGroupNavigation = observer(function WorkspaceSprintsGroupN
                   </>
                 )}
               </Header.LeftItem>
-              <Header.RightItem className="items-center">
+              <Header.RightItem className="shrink-0 items-center">
                 <WorkspaceSprintsHeaderActions />
               </Header.RightItem>
             </Header>
