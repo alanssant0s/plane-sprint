@@ -129,6 +129,11 @@ export const coreRoutes: RouteConfigEntry[] = [
           route(":workspaceSlug/squads", "./(all)/[workspaceSlug]/(projects)/squads/page.tsx"),
         ]),
 
+        // Workspace Project Templates
+        layout("./(all)/[workspaceSlug]/(projects)/templates/layout.tsx", [
+          route(":workspaceSlug/templates", "./(all)/[workspaceSlug]/(projects)/templates/page.tsx"),
+        ]),
+
         // Archived Projects
         layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/archives/layout.tsx", [
           route(

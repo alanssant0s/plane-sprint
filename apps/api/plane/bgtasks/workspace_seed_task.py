@@ -564,6 +564,10 @@ def workspace_seed(workspace_id: uuid.UUID) -> None:
         # create project pages
         create_pages(workspace, project_map, bot_user)
 
+        from plane.utils.project_template_service import install_workspace_project_templates
+
+        install_workspace_project_templates(workspace, workspace.owner_id)
+
         logger.info(f"Task: workspace_seed_task -> Workspace {workspace_id} seeded successfully")
         return
     except Exception as e:

@@ -11,10 +11,14 @@ import { useParams } from "react-router";
 import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { Button } from "@plane/propel/button";
+import { cn } from "@plane/utils";
 // components
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
+import { useWorkspaceProjectTemplates } from "@/hooks/store/use-project-template";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { useRouter } from "next/navigation";
 // local imports
 import { ArchiveRestoreProjectModal } from "../archive-restore-modal";
 import { DeleteProjectModal } from "../delete-project-modal";
@@ -34,10 +38,31 @@ export const GeneralProjectSettingsControlSection = observer(function GeneralPro
   const { workspaceSlug } = useParams();
   // store hooks
   const { currentProjectDetails } = useProject();
+  const { promoteProjectToTemplate } = useWorkspaceProjectTemplates();
+  const router = useRouter();
   // translation
   const { t } = useTerminologyT();
 
   if (!currentProjectDetails) return null;
+
+  const handlePromote = async () => {
+    if (!workspaceSlug || currentProjectDetails.is_template) return;
+    try {
+      const template = await promoteProjectToTemplate(workspaceSlug, projectId);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("success"),
+        message: t("templates.promote.success"),
+      });
+      router.push(`/${workspaceSlug}/projects/${template.project_id}/issues`);
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("toast.error"),
+        message: t("something_went_wrong"),
+      });
+    }
+  };
 
   return (
     <div className="mt-10">
@@ -56,9 +81,21 @@ export const GeneralProjectSettingsControlSection = observer(function GeneralPro
         onClose={() => setSelectedProject(null)}
       />
       <div className="rounded-lg border border-subtle bg-layer-2">
+        {!currentProjectDetails.is_template && (
+          <SettingsBoxedControlItem
+            className="rounded-b-none border-0 border-b"
+            title={t("templates.promote.title")}
+            description={t("templates.promote.description")}
+            control={
+              <Button variant="secondary" onClick={handlePromote}>
+                {t("templates.promote.button")}
+              </Button>
+            }
+          />
+        )}
         {/* Project Selector */}
         <SettingsBoxedControlItem
-          className="rounded-b-none border-0 border-b"
+          className={cn("border-0 border-b", currentProjectDetails.is_template ? "rounded-lg" : "rounded-b-none")}
           title={t("project_settings.general.archive_project.title")}
           description={t("project_settings.general.archive_project.description")}
           control={

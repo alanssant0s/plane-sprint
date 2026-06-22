@@ -53,6 +53,8 @@ import type { IMultipleSelectStore } from "./multiple_select.store";
 import { MultipleSelectStore } from "./multiple_select.store";
 import type { IWorkspaceNotificationStore } from "./notifications/workspace-notifications.store";
 import { WorkspaceNotificationStore } from "./notifications/workspace-notifications.store";
+import type { IWorkspaceProjectTemplateStore } from "./project-template.store";
+import { WorkspaceProjectTemplateStore } from "./project-template.store";
 import type { IWorkspaceSprintStore } from "./workspace-sprint.store";
 import { WorkspaceSprintStore } from "./workspace-sprint.store";
 import type { IProjectPageStore } from "./pages/project-page.store";
@@ -99,6 +101,7 @@ export class CoreRootStore {
   multipleSelect: IMultipleSelectStore;
   workspaceNotification: IWorkspaceNotificationStore;
   workspaceSprint: IWorkspaceSprintStore;
+  workspaceProjectTemplate: IWorkspaceProjectTemplateStore;
   favorite: IFavoriteStore;
   stickyStore: IStickyStore;
   editorAssetStore: IEditorAssetStore;
@@ -130,6 +133,7 @@ export class CoreRootStore {
     this.projectEstimate = new ProjectEstimateStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     this.workspaceSprint = new WorkspaceSprintStore(this);
+    this.workspaceProjectTemplate = new WorkspaceProjectTemplateStore(this);
     this.favorite = new FavoriteStore(this);
     this.stickyStore = new StickyStore();
     this.editorAssetStore = new EditorAssetStore();
@@ -165,6 +169,7 @@ export class CoreRootStore {
     this.projectEstimate = new ProjectEstimateStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     this.workspaceSprint = new WorkspaceSprintStore(this);
+    this.workspaceProjectTemplate = new WorkspaceProjectTemplateStore(this);
     this.favorite = new FavoriteStore(this);
     this.stickyStore = new StickyStore();
     this.editorAssetStore = new EditorAssetStore();

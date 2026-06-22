@@ -1,0 +1,182 @@
+{
+  "seedId": "launch_meteoric",
+  "workspaceTypes": ["digital_launches"],
+  "defaultIssueState": "Rascunho",
+  "states": [
+    {
+      "name": "Pré-disparo",
+      "group": "started",
+      "color": "#6366F1"
+    },
+    {
+      "name": "Carrinho aberto",
+      "group": "started",
+      "color": "#F97316"
+    },
+    {
+      "name": "Carrinho fechado",
+      "group": "started",
+      "color": "#E11D48"
+    },
+    {
+      "name": "Pós-venda express",
+      "group": "started",
+      "color": "#22C55E"
+    },
+    {
+      "name": "Rascunho",
+      "group": "unstarted",
+      "color": "#A3A3A3"
+    },
+    {
+      "name": "Planejado",
+      "group": "unstarted",
+      "color": "#3F76FF"
+    },
+    {
+      "name": "Em andamento",
+      "group": "started",
+      "color": "#F59E0B"
+    },
+    {
+      "name": "Encerrado",
+      "group": "completed",
+      "color": "#16A34A"
+    },
+    {
+      "name": "Cancelado",
+      "group": "cancelled",
+      "color": "#EF4444"
+    }
+  ],
+  "labels": [
+    {
+      "name": "conteúdo",
+      "color": "#858585"
+    },
+    {
+      "name": "tráfego",
+      "color": "#858585"
+    },
+    {
+      "name": "copy",
+      "color": "#858585"
+    },
+    {
+      "name": "design",
+      "color": "#858585"
+    },
+    {
+      "name": "automação",
+      "color": "#858585"
+    },
+    {
+      "name": "métricas",
+      "color": "#858585"
+    },
+    {
+      "name": "pós-venda",
+      "color": "#858585"
+    },
+    {
+      "name": "meteórico",
+      "color": "#858585"
+    },
+    {
+      "name": "urgência",
+      "color": "#858585"
+    },
+    {
+      "name": "disparo",
+      "color": "#858585"
+    },
+    {
+      "name": "countdown",
+      "color": "#858585"
+    }
+  ],
+  "modules": [
+    {
+      "name": "Pré-disparo",
+      "sort_order": 1000
+    },
+    {
+      "name": "Disparo e carrinho",
+      "sort_order": 2000
+    },
+    {
+      "name": "Urgência e remarketing",
+      "sort_order": 3000
+    },
+    {
+      "name": "Fechamento",
+      "sort_order": 4000
+    },
+    {
+      "name": "Pós-venda express",
+      "sort_order": 5000
+    }
+  ],
+  "issues": [
+    {
+      "name": "Oferta e deadline",
+      "module": "Pré-disparo"
+    },
+    {
+      "name": "Teasers",
+      "module": "Pré-disparo"
+    },
+    {
+      "name": "Criativos urgência",
+      "module": "Pré-disparo"
+    },
+    {
+      "name": "E-mail/WhatsApp abertura",
+      "module": "Disparo e carrinho"
+    },
+    {
+      "name": "Sales page",
+      "module": "Disparo e carrinho"
+    },
+    {
+      "name": "Checkout",
+      "module": "Disparo e carrinho"
+    },
+    {
+      "name": "Countdown",
+      "module": "Urgência e remarketing"
+    },
+    {
+      "name": "Remarketing 24h",
+      "module": "Urgência e remarketing"
+    },
+    {
+      "name": "Prova social",
+      "module": "Urgência e remarketing"
+    },
+    {
+      "name": "Última chance",
+      "module": "Fechamento"
+    },
+    {
+      "name": "Encerramento",
+      "module": "Fechamento"
+    },
+    {
+      "name": "Entrega",
+      "module": "Fechamento"
+    },
+    {
+      "name": "Onboarding",
+      "module": "Pós-venda express"
+    },
+    {
+      "name": "Suporte",
+      "module": "Pós-venda express"
+    },
+    {
+      "name": "Debrief ROAS",
+      "module": "Pós-venda express"
+    }
+  ]
+}

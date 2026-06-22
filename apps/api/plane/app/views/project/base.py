@@ -49,13 +49,13 @@ class ProjectViewSet(BaseViewSet):
     webhook_event = "project"
     use_read_replica = True
 
-    def get_queryset(self):
+    def _workspace_projects_queryset(self, *, include_templates: bool = False):
         sort_order = ProjectUserProperty.objects.filter(
             user=self.request.user,
             project_id=OuterRef("pk"),
             workspace__slug=self.kwargs.get("slug"),
         ).values("sort_order")
-        return self.filter_queryset(
+        queryset = (
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
@@ -96,6 +96,12 @@ class ProjectViewSet(BaseViewSet):
             )
             .distinct()
         )
+        if not include_templates:
+            queryset = queryset.filter(is_template=False)
+        return self.filter_queryset(queryset)
+
+    def get_queryset(self):
+        return self._workspace_projects_queryset(include_templates=False)
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list_detail(self, request, slug):
@@ -146,7 +152,7 @@ class ProjectViewSet(BaseViewSet):
         ).values("sort_order")
 
         projects = (
-            Project.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            Project.objects.filter(workspace__slug=self.kwargs.get("slug"), is_template=False)
             .select_related("workspace", "workspace__owner", "default_assignee", "project_lead")
             .annotate(
                 member_role=ProjectMember.objects.filter(
@@ -219,7 +225,12 @@ class ProjectViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def retrieve(self, request, slug, pk):
-        project = self.get_queryset().filter(archived_at__isnull=True).filter(pk=pk).first()
+        project = (
+            self._workspace_projects_queryset(include_templates=True)
+            .filter(archived_at__isnull=True)
+            .filter(pk=pk)
+            .first()
+        )
 
         if project is None:
             return Response({"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND)
@@ -498,6 +509,7 @@ class ProjectFavoritesViewSet(BaseViewSet):
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(is_template=False)
             .filter(user=self.request.user)
             .select_related("project", "project__project_lead", "project__default_assignee")
             .select_related("workspace", "workspace__owner")

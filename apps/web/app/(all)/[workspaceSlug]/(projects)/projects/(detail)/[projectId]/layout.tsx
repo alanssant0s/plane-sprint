@@ -11,6 +11,7 @@ import { Header, Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { TabNavigationRoot } from "@/components/navigation/tab-navigation-root";
+import { ProjectTemplateDefinitionBanner } from "@/components/project-templates/definition-mode-banner";
 import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
@@ -55,6 +56,7 @@ function ProjectLayout({ params }: Route.ComponentProps) {
         </div>
       )}
       <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
+        <ProjectTemplateDefinitionBanner projectId={projectId} />
         <Outlet />
       </ProjectAuthWrapper>
     </>

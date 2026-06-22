@@ -1,0 +1,203 @@
+{
+  "seedId": "launch_seed",
+  "workspaceTypes": ["digital_launches"],
+  "defaultIssueState": "Rascunho",
+  "states": [
+    {
+      "name": "Pré-lançamento",
+      "group": "started",
+      "color": "#6366F1"
+    },
+    {
+      "name": "Captação ativa",
+      "group": "started",
+      "color": "#0EA5E9"
+    },
+    {
+      "name": "CPL em andamento",
+      "group": "started",
+      "color": "#14B8A6"
+    },
+    {
+      "name": "Carrinho aberto",
+      "group": "started",
+      "color": "#F97316"
+    },
+    {
+      "name": "Pós-venda",
+      "group": "started",
+      "color": "#22C55E"
+    },
+    {
+      "name": "Rascunho",
+      "group": "unstarted",
+      "color": "#A3A3A3"
+    },
+    {
+      "name": "Planejado",
+      "group": "unstarted",
+      "color": "#3F76FF"
+    },
+    {
+      "name": "Em andamento",
+      "group": "started",
+      "color": "#F59E0B"
+    },
+    {
+      "name": "Encerrado",
+      "group": "completed",
+      "color": "#16A34A"
+    },
+    {
+      "name": "Cancelado",
+      "group": "cancelled",
+      "color": "#EF4444"
+    }
+  ],
+  "labels": [
+    {
+      "name": "conteúdo",
+      "color": "#858585"
+    },
+    {
+      "name": "tráfego",
+      "color": "#858585"
+    },
+    {
+      "name": "copy",
+      "color": "#858585"
+    },
+    {
+      "name": "design",
+      "color": "#858585"
+    },
+    {
+      "name": "automação",
+      "color": "#858585"
+    },
+    {
+      "name": "métricas",
+      "color": "#858585"
+    },
+    {
+      "name": "pós-venda",
+      "color": "#858585"
+    },
+    {
+      "name": "semente",
+      "color": "#858585"
+    },
+    {
+      "name": "CPL",
+      "color": "#858585"
+    },
+    {
+      "name": "captação",
+      "color": "#858585"
+    },
+    {
+      "name": "validação",
+      "color": "#858585"
+    }
+  ],
+  "modules": [
+    {
+      "name": "Validação da oferta",
+      "sort_order": 1000
+    },
+    {
+      "name": "Pré-lançamento",
+      "sort_order": 2000
+    },
+    {
+      "name": "Captação",
+      "sort_order": 3000
+    },
+    {
+      "name": "Evento CPL",
+      "sort_order": 4000
+    },
+    {
+      "name": "Carrinho e vendas",
+      "sort_order": 5000
+    },
+    {
+      "name": "Pós-venda e métricas",
+      "sort_order": 6000
+    }
+  ],
+  "issues": [
+    {
+      "name": "Promessa e ICP",
+      "module": "Validação da oferta"
+    },
+    {
+      "name": "Precificação",
+      "module": "Validação da oferta"
+    },
+    {
+      "name": "Checklist viabilidade",
+      "module": "Validação da oferta"
+    },
+    {
+      "name": "Calendário aquecimento",
+      "module": "Pré-lançamento"
+    },
+    {
+      "name": "Teasers",
+      "module": "Pré-lançamento"
+    },
+    {
+      "name": "Página captura",
+      "module": "Pré-lançamento"
+    },
+    {
+      "name": "LP inscrição",
+      "module": "Captação"
+    },
+    {
+      "name": "CRM",
+      "module": "Captação"
+    },
+    {
+      "name": "Anúncios budget enxuto",
+      "module": "Captação"
+    },
+    {
+      "name": "Roteiro",
+      "module": "Evento CPL"
+    },
+    {
+      "name": "Live",
+      "module": "Evento CPL"
+    },
+    {
+      "name": "Replay",
+      "module": "Evento CPL"
+    },
+    {
+      "name": "Sales page",
+      "module": "Carrinho e vendas"
+    },
+    {
+      "name": "Checkout",
+      "module": "Carrinho e vendas"
+    },
+    {
+      "name": "Remarketing",
+      "module": "Carrinho e vendas"
+    },
+    {
+      "name": "Onboarding",
+      "module": "Pós-venda e métricas"
+    },
+    {
+      "name": "Entrega",
+      "module": "Pós-venda e métricas"
+    },
+    {
+      "name": "Debrief CPL/CPA",
+      "module": "Pós-venda e métricas"
+    }
+  ]
+}

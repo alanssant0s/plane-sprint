@@ -45,6 +45,12 @@ from plane.app.views import (
     WorkspaceHomePreferenceViewSet,
     WorkspaceStickyViewSet,
     WorkspaceUserPreferenceViewSet,
+    WorkspaceProjectTemplateViewSet,
+    WorkspaceProjectTemplateInstallEndpoint,
+    WorkspaceProjectTemplateDuplicateEndpoint,
+    WorkspaceProjectTemplateInstantiateEndpoint,
+    WorkspaceProjectTemplatePreviewEndpoint,
+    WorkspaceProjectPromoteTemplateEndpoint,
 )
 
 
@@ -207,6 +213,43 @@ urlpatterns = [
         "workspaces/<str:slug>/sprint-squads/",
         WorkspaceSprintSquadViewSet.as_view({"get": "list", "post": "create"}),
         name="workspace-sprint-squads",
+    ),
+    path(
+        "workspaces/<str:slug>/project-templates/",
+        WorkspaceProjectTemplateViewSet.as_view({"get": "list", "post": "create"}),
+        name="workspace-project-templates",
+    ),
+    path(
+        "workspaces/<str:slug>/project-templates/install-seeds/",
+        WorkspaceProjectTemplateInstallEndpoint.as_view(),
+        name="workspace-project-templates-install",
+    ),
+    path(
+        "workspaces/<str:slug>/project-templates/<uuid:pk>/",
+        WorkspaceProjectTemplateViewSet.as_view(
+            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
+        ),
+        name="workspace-project-templates-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/project-templates/<uuid:template_id>/duplicate/",
+        WorkspaceProjectTemplateDuplicateEndpoint.as_view(),
+        name="workspace-project-templates-duplicate",
+    ),
+    path(
+        "workspaces/<str:slug>/project-templates/<uuid:template_id>/instantiate/",
+        WorkspaceProjectTemplateInstantiateEndpoint.as_view(),
+        name="workspace-project-templates-instantiate",
+    ),
+    path(
+        "workspaces/<str:slug>/project-templates/<uuid:template_id>/preview/",
+        WorkspaceProjectTemplatePreviewEndpoint.as_view(),
+        name="workspace-project-templates-preview",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/promote-template/",
+        WorkspaceProjectPromoteTemplateEndpoint.as_view(),
+        name="workspace-project-promote-template",
     ),
     path(
         "workspaces/<str:slug>/sprint-automations/<uuid:pk>/",

@@ -80,15 +80,19 @@ class WorkspaceUserPreferenceViewSet(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def patch(self, request, slug):
+        workspace = Workspace.objects.get(slug=slug)
+
         for data in request.data:
             key = data.pop("key", None)
             if not key:
                 continue
 
-            preference = WorkspaceUserPreference.objects.filter(key=key, workspace__slug=slug).first()
-
-            if not preference:
-                continue
+            preference, _ = WorkspaceUserPreference.objects.get_or_create(
+                workspace=workspace,
+                user=request.user,
+                key=key,
+                defaults={"sort_order": 65535, "is_pinned": False},
+            )
 
             if "is_pinned" in data:
                 preference.is_pinned = data["is_pinned"]

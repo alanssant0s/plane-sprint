@@ -5,6 +5,7 @@
  */
 
 import type { TPartialProject } from "@plane/types";
+import { LayoutTemplate } from "lucide-react";
 // plane propel imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ChevronDownIcon } from "@plane/propel/icons";
@@ -12,14 +13,19 @@ import { Tooltip } from "@plane/propel/tooltip";
 
 type TProjectHeaderButtonProps = {
   project: TPartialProject;
+  isTemplate?: boolean;
 };
 
-export function ProjectHeaderButton({ project }: TProjectHeaderButtonProps) {
+export function ProjectHeaderButton({ project, isTemplate = false }: TProjectHeaderButtonProps) {
   return (
     <Tooltip tooltipContent={project.name} position="bottom">
       <div className="relative flex w-full max-w-48 items-center pr-1 text-left select-none">
         <div className="flex size-7 flex-shrink-0 items-center justify-center rounded-md bg-layer-1">
-          <Logo logo={project.logo_props} size={16} />
+          {isTemplate ? (
+            <LayoutTemplate className="size-4 text-tertiary" />
+          ) : (
+            <Logo logo={project.logo_props} size={16} />
+          )}
         </div>
         <div className="relative min-w-0 flex-1 hover:rounded">
           <p className="truncate px-2 text-14 font-medium text-secondary">{project.name}</p>

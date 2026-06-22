@@ -15,6 +15,7 @@ import { SidebarProjectsList } from "@/components/workspace/sidebar/projects-lis
 import { SidebarQuickActions } from "@/components/workspace/sidebar/quick-actions";
 import { SidebarMenuItems } from "@/components/workspace/sidebar/sidebar-menu-items";
 import { SidebarSprintsList } from "@/components/workspace/sidebar/sprints-list";
+import { SidebarProjectTemplatesList } from "@/components/workspace/sidebar/project-templates-list";
 // hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -49,6 +50,8 @@ export const AppSidebar = observer(function AppSidebar() {
       <SidebarProjectsList />
       {/* Squads List */}
       {isWorkspaceItemPinned("squads") && <SidebarSprintsList />}
+      {/* Project Templates */}
+      {isWorkspaceItemPinned("project_templates") && <SidebarProjectTemplatesList />}
     </SidebarWrapper>
   );
 });

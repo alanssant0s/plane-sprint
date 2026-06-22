@@ -1,0 +1,142 @@
+{
+  "seedId": "agency_marketing_campaign",
+  "workspaceTypes": ["marketing_agency"],
+  "defaultIssueState": "Rascunho",
+  "states": [
+    {
+      "name": "Rascunho",
+      "group": "unstarted",
+      "color": "#A3A3A3"
+    },
+    {
+      "name": "Planejado",
+      "group": "unstarted",
+      "color": "#3F76FF"
+    },
+    {
+      "name": "Em andamento",
+      "group": "started",
+      "color": "#F59E0B"
+    },
+    {
+      "name": "Encerrado",
+      "group": "completed",
+      "color": "#16A34A"
+    },
+    {
+      "name": "Cancelado",
+      "group": "cancelled",
+      "color": "#EF4444"
+    }
+  ],
+  "labels": [
+    {
+      "name": "criativo",
+      "color": "#858585"
+    },
+    {
+      "name": "mídia",
+      "color": "#858585"
+    },
+    {
+      "name": "cliente",
+      "color": "#858585"
+    },
+    {
+      "name": "prazo",
+      "color": "#858585"
+    },
+    {
+      "name": "aprovação",
+      "color": "#858585"
+    },
+    {
+      "name": "report",
+      "color": "#858585"
+    }
+  ],
+  "modules": [
+    {
+      "name": "Briefing e estratégia",
+      "sort_order": 1000
+    },
+    {
+      "name": "Criação",
+      "sort_order": 2000
+    },
+    {
+      "name": "Mídia",
+      "sort_order": 3000
+    },
+    {
+      "name": "Aprovação",
+      "sort_order": 4000
+    },
+    {
+      "name": "Entrega e report",
+      "sort_order": 5000
+    }
+  ],
+  "issues": [
+    {
+      "name": "Kickoff",
+      "module": "Briefing e estratégia"
+    },
+    {
+      "name": "KPIs",
+      "module": "Briefing e estratégia"
+    },
+    {
+      "name": "Plano mídia",
+      "module": "Briefing e estratégia"
+    },
+    {
+      "name": "Conceito",
+      "module": "Criação"
+    },
+    {
+      "name": "Peças",
+      "module": "Criação"
+    },
+    {
+      "name": "Copy",
+      "module": "Criação"
+    },
+    {
+      "name": "Setup campanhas",
+      "module": "Mídia"
+    },
+    {
+      "name": "Budgets",
+      "module": "Mídia"
+    },
+    {
+      "name": "Monitoramento",
+      "module": "Mídia"
+    },
+    {
+      "name": "Feedback",
+      "module": "Aprovação"
+    },
+    {
+      "name": "Ajustes",
+      "module": "Aprovação"
+    },
+    {
+      "name": "Aprovação formal",
+      "module": "Aprovação"
+    },
+    {
+      "name": "Performance",
+      "module": "Entrega e report"
+    },
+    {
+      "name": "Debrief",
+      "module": "Entrega e report"
+    },
+    {
+      "name": "Financeiro",
+      "module": "Entrega e report"
+    }
+  ]
+}

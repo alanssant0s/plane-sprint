@@ -1,0 +1,158 @@
+{
+  "seedId": "legal_advisory_case",
+  "workspaceTypes": ["legal"],
+  "defaultIssueState": "Aberto",
+  "states": [
+    {
+      "name": "Aberto",
+      "group": "unstarted",
+      "color": "#3F76FF"
+    },
+    {
+      "name": "Em análise",
+      "group": "started",
+      "color": "#F59E0B"
+    },
+    {
+      "name": "Em peticionamento",
+      "group": "started",
+      "color": "#8B5CF6"
+    },
+    {
+      "name": "Concluído",
+      "group": "completed",
+      "color": "#16A34A"
+    },
+    {
+      "name": "Cancelado",
+      "group": "cancelled",
+      "color": "#EF4444"
+    }
+  ],
+  "labels": [
+    {
+      "name": "prazo",
+      "color": "#858585"
+    },
+    {
+      "name": "documento",
+      "color": "#858585"
+    },
+    {
+      "name": "cliente",
+      "color": "#858585"
+    },
+    {
+      "name": "audiência",
+      "color": "#858585"
+    },
+    {
+      "name": "petição",
+      "color": "#858585"
+    },
+    {
+      "name": "urgente",
+      "color": "#858585"
+    }
+  ],
+  "modules": [
+    {
+      "name": "Abertura",
+      "sort_order": 1000
+    },
+    {
+      "name": "Documentação",
+      "sort_order": 2000
+    },
+    {
+      "name": "Análise",
+      "sort_order": 3000
+    },
+    {
+      "name": "Peticionamento",
+      "sort_order": 4000
+    },
+    {
+      "name": "Acompanhamento",
+      "sort_order": 5000
+    },
+    {
+      "name": "Encerramento",
+      "sort_order": 6000
+    }
+  ],
+  "issues": [
+    {
+      "name": "Cadastro",
+      "module": "Abertura"
+    },
+    {
+      "name": "Mérito",
+      "module": "Abertura"
+    },
+    {
+      "name": "Estratégia",
+      "module": "Abertura"
+    },
+    {
+      "name": "Docs cliente",
+      "module": "Documentação"
+    },
+    {
+      "name": "Dossiê",
+      "module": "Documentação"
+    },
+    {
+      "name": "Compliance",
+      "module": "Documentação"
+    },
+    {
+      "name": "Jurisprudência",
+      "module": "Análise"
+    },
+    {
+      "name": "Parecer",
+      "module": "Análise"
+    },
+    {
+      "name": "Reunião",
+      "module": "Análise"
+    },
+    {
+      "name": "Minuta",
+      "module": "Peticionamento"
+    },
+    {
+      "name": "Revisão",
+      "module": "Peticionamento"
+    },
+    {
+      "name": "Protocolo",
+      "module": "Peticionamento"
+    },
+    {
+      "name": "Andamentos",
+      "module": "Acompanhamento"
+    },
+    {
+      "name": "Audiência",
+      "module": "Acompanhamento"
+    },
+    {
+      "name": "Prazos",
+      "module": "Acompanhamento"
+    },
+    {
+      "name": "Sentença",
+      "module": "Encerramento"
+    },
+    {
+      "name": "Cliente",
+      "module": "Encerramento"
+    },
+    {
+      "name": "Arquivo",
+      "module": "Encerramento"
+    }
+  ]
+}

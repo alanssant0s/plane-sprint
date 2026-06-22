@@ -1,0 +1,147 @@
+{
+  "seedId": "edu_course_term",
+  "workspaceTypes": ["education"],
+  "defaultIssueState": "Rascunho",
+  "states": [
+    {
+      "name": "Publicado",
+      "group": "completed",
+      "color": "#16A34A"
+    },
+    {
+      "name": "Rascunho",
+      "group": "unstarted",
+      "color": "#A3A3A3"
+    },
+    {
+      "name": "Planejado",
+      "group": "unstarted",
+      "color": "#3F76FF"
+    },
+    {
+      "name": "Em andamento",
+      "group": "started",
+      "color": "#F59E0B"
+    },
+    {
+      "name": "Encerrado",
+      "group": "completed",
+      "color": "#16A34A"
+    },
+    {
+      "name": "Cancelado",
+      "group": "cancelled",
+      "color": "#EF4444"
+    }
+  ],
+  "labels": [
+    {
+      "name": "conteúdo",
+      "color": "#858585"
+    },
+    {
+      "name": "avaliação",
+      "color": "#858585"
+    },
+    {
+      "name": "LMS",
+      "color": "#858585"
+    },
+    {
+      "name": "professor",
+      "color": "#858585"
+    },
+    {
+      "name": "aluno",
+      "color": "#858585"
+    },
+    {
+      "name": "revisão",
+      "color": "#858585"
+    }
+  ],
+  "modules": [
+    {
+      "name": "Desenho curricular",
+      "sort_order": 1000
+    },
+    {
+      "name": "Produção",
+      "sort_order": 2000
+    },
+    {
+      "name": "Avaliações",
+      "sort_order": 3000
+    },
+    {
+      "name": "Publicação LMS",
+      "sort_order": 4000
+    },
+    {
+      "name": "Turma",
+      "sort_order": 5000
+    }
+  ],
+  "issues": [
+    {
+      "name": "Objetivos",
+      "module": "Desenho curricular"
+    },
+    {
+      "name": "Ementa",
+      "module": "Desenho curricular"
+    },
+    {
+      "name": "Competências",
+      "module": "Desenho curricular"
+    },
+    {
+      "name": "Roteiros",
+      "module": "Produção"
+    },
+    {
+      "name": "Gravações",
+      "module": "Produção"
+    },
+    {
+      "name": "Material",
+      "module": "Produção"
+    },
+    {
+      "name": "Quizzes",
+      "module": "Avaliações"
+    },
+    {
+      "name": "Rubricas",
+      "module": "Avaliações"
+    },
+    {
+      "name": "Banco questões",
+      "module": "Avaliações"
+    },
+    {
+      "name": "Upload",
+      "module": "Publicação LMS"
+    },
+    {
+      "name": "Turma",
+      "module": "Publicação LMS"
+    },
+    {
+      "name": "Piloto",
+      "module": "Publicação LMS"
+    },
+    {
+      "name": "Engajamento",
+      "module": "Turma"
+    },
+    {
+      "name": "Fórum",
+      "module": "Turma"
+    },
+    {
+      "name": "Certificados",
+      "module": "Turma"
+    }
+  ]
+}

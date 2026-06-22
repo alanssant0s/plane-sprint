@@ -328,6 +328,58 @@
         "work_item": "Nenhum modelo encontrado.",
         "project": "Nenhum modelo encontrado."
       }
+    },
+    "sidebar": {
+      "title": "Modelos de Projeto",
+      "create": "Ver biblioteca de modelos",
+      "add": "Criar modelo",
+      "empty": "Instalar modelos",
+      "view_all": "Ver todos"
+    },
+    "page": {
+      "title": "Modelos de Projeto",
+      "description": "Esqueletos reutilizáveis filtrados pelo tipo de workspace.",
+      "all": "Todos os modelos",
+      "install_seeds": "Instalar modelos padrão",
+      "empty": "Nenhum modelo instalado neste workspace.",
+      "badge_system": "Pré-definido",
+      "badge_default": "Padrão",
+      "stats": "{{modules}} etapas · {{issues}} tarefas",
+      "open": "Abrir modelo",
+      "preview": "Pré-visualizar",
+      "duplicate": "Duplicar",
+      "duplicate_success": "Modelo duplicado. Você pode personalizá-lo agora.",
+      "delete": "Excluir",
+      "delete_success": "Modelo excluído.",
+      "hide_from_creation": "Ocultar ao criar projeto",
+      "show_in_creation": "Mostrar ao criar projeto",
+      "hide_success": "Modelo oculto na lista de criação de projetos.",
+      "show_success": "Modelo visível ao criar projetos.",
+      "badge_hidden": "Oculto na criação",
+      "create": "Novo modelo",
+      "create_success": "Seu modelo está pronto para editar.",
+      "system_readonly": "Modelo pré-definido — somente leitura. Duplique para personalizar."
+    },
+    "preview": {
+      "title": "Pré-visualização do modelo",
+      "states": "Estados",
+      "modules": "Etapas",
+      "total_issues": "{{count}} tarefas de referência"
+    },
+    "definition_mode": {
+      "banner": "Modo modelo — estrutura de referência, sem execução operacional.",
+      "instantiate": "Instanciar projeto"
+    },
+    "create_project": {
+      "blank": "Projeto em branco",
+      "field_label": "Ponto de partida",
+      "template_selected": "A estrutura de {{name}} será aplicada ao criar."
+    },
+    "promote": {
+      "title": "Salvar como modelo",
+      "description": "Capture a estrutura deste projeto como modelo reutilizável no workspace.",
+      "button": "Salvar como modelo",
+      "success": "Modelo criado a partir do projeto."
     }
   }
 }

@@ -23,7 +23,10 @@ import {
   useWorkspaceNavigationPreferences,
 } from "@/hooks/use-navigation-preferences";
 // helpers
-import { getSidebarNavigationItemIcon } from "@/plane-web/components/workspace/sidebar/helper";
+import {
+  getSidebarNavigationItemIcon,
+  getWorkspaceNavigationItemLabel,
+} from "@/plane-web/components/workspace/sidebar/helper";
 // types
 import type { TPersonalNavigationItemKey } from "@plane/types";
 
@@ -92,7 +95,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
   // Filter personal items by feature flags
   const filteredPersonalItems = PERSONAL_ITEMS;
   const getNavigationLabel = useCallback(
-    (key: string, labelTranslationKey: string) => (key === "squads" ? "Squads" : t(labelTranslationKey)),
+    (key: string, labelTranslationKey: string) => getWorkspaceNavigationItemLabel(key, labelTranslationKey, t),
     [t]
   );
 

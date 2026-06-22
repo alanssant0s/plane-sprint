@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { FastForward } from "lucide-react";
+import { FastForward, LayoutTemplate } from "lucide-react";
 import {
   AnalyticsIcon,
   ArchiveIcon,
@@ -31,6 +31,8 @@ export const getSidebarNavigationItemIcon = (key: string, className: string = ""
     case "squad":
     case "squads":
       return <TeamsIcon className={cn("size-4 flex-shrink-0", className)} />;
+    case "project_templates":
+      return <LayoutTemplate className={cn("size-4 flex-shrink-0", className)} />;
     case "sprint":
     case "sprints":
       return <FastForward className={cn("size-4 flex-shrink-0", className)} />;
@@ -48,5 +50,23 @@ export const getSidebarNavigationItemIcon = (key: string, className: string = ""
       return <ArchiveIcon className={cn("size-4 flex-shrink-0", className)} />;
     case "stickies":
       return <MultipleStickyIcon className={cn("size-4 flex-shrink-0", className)} />;
+  }
+};
+
+export const getWorkspaceNavigationItemLabel = (
+  key: string,
+  labelTranslationKey: string,
+  t: (key: string) => string,
+  projectTerm?: string
+) => {
+  switch (key) {
+    case "squads":
+      return "Squads";
+    case "project_templates":
+      return t("templates.page.title");
+    case "projects":
+      return projectTerm ?? t(labelTranslationKey);
+    default:
+      return t(labelTranslationKey);
   }
 };

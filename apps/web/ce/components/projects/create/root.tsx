@@ -15,9 +15,11 @@ import { EFileAssetType } from "@plane/types";
 import ProjectCommonAttributes from "@/components/project/create/common-attributes";
 import ProjectCreateHeader from "@/components/project/create/header";
 import ProjectCreateButtons from "@/components/project/create/project-create-buttons";
+import { ProjectTemplateSelect } from "@/plane-web/components/projects/create/template-select";
 // hooks
 import { getCoverImageType, uploadCoverImage } from "@/helpers/cover-image.helper";
 import { useProject } from "@/hooks/store/use-project";
+import { useWorkspaceProjectTemplates } from "@/hooks/store/use-project-template";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web types
 import type { TProject } from "@plane/types";
@@ -38,9 +40,10 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
   const { setToFavorite, workspaceSlug, data, onClose, handleNextStep, updateCoverImageStatus } = props;
   // store
   const { t } = useTranslation();
-  const { addProjectToFavorites, createProject, updateProject } = useProject();
-  // states
+  const { addProjectToFavorites, createProject, updateProject, fetchProjectDetails } = useProject();
+  const { instantiateTemplate } = useWorkspaceProjectTemplates();
   const [shouldAutoSyncIdentifier, setShouldAutoSyncIdentifier] = useState(true);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(props.templateId ?? null);
   // form info
   const methods = useForm<TProject>({
     defaultValues: { ...getProjectFormValues(), ...data },
@@ -92,7 +95,18 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
       }
     }
 
-    return createProject(workspaceSlug.toString(), formData)
+    const createPromise = selectedTemplateId
+      ? instantiateTemplate(workspaceSlug.toString(), selectedTemplateId, {
+          name: formData.name ?? "",
+          identifier: formData.identifier ?? "",
+          description: formData.description ?? "",
+        }).then(async (res) => {
+          await fetchProjectDetails(workspaceSlug.toString(), res.id);
+          return res;
+        })
+      : createProject(workspaceSlug.toString(), formData);
+
+    return createPromise
       .then(async (res) => {
         if (uploadedAssetUrl) {
           await updateCoverImageStatus(res.id, uploadedAssetUrl);
@@ -178,6 +192,7 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
 
       <form onSubmit={handleSubmit(onSubmit)} className="px-3">
         <div className="mt-9 space-y-6 pb-5">
+          <ProjectTemplateSelect selectedTemplateId={selectedTemplateId} onSelect={setSelectedTemplateId} />
           <ProjectCommonAttributes
             setValue={setValue}
             isMobile={isMobile}
