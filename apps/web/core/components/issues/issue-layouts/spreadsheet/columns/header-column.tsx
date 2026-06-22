@@ -16,12 +16,11 @@ import {
 } from "lucide-react";
 // constants
 import { SPREADSHEET_PROPERTY_DETAILS } from "@plane/constants";
-// i18n
-import { useTranslation } from "@plane/i18n";
 // types
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueOrderByOptions } from "@plane/types";
 import { CustomMenu, Row } from "@plane/ui";
 import useLocalStorage from "@/hooks/use-local-storage";
+import { useTerminologyT } from "@/hooks/use-workspace-type";
 import { SpreadSheetPropertyIcon } from "../../utils";
 
 interface Props {
@@ -34,8 +33,7 @@ interface Props {
 
 export function HeaderColumn(props: Props) {
   const { displayFilters, handleDisplayFilterUpdate, property, onClose, isEpic = false } = props;
-  // i18n
-  const { t } = useTranslation();
+  const { t } = useTerminologyT();
   const { storedValue: selectedMenuItem, setValue: setSelectedMenuItem } = useLocalStorage(
     "spreadsheetViewSorting",
     ""

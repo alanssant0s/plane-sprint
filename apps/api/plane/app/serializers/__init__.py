@@ -28,6 +28,12 @@ from .workspace import (
     WorkspaceHomePreferenceSerializer,
     StickySerializer,
 )
+from .project_template import (
+    ProjectTemplateInstantiateSerializer,
+    ProjectTemplatePreviewSerializer,
+    WorkspaceProjectTemplateSerializer,
+    WorkspaceProjectTemplateWriteSerializer,
+)
 from .project import (
     ProjectSerializer,
     ProjectListSerializer,

@@ -73,6 +73,7 @@ from plane.utils.host import base_host
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
+from plane.utils.project_template_service import is_system_template_project, is_template_state_change_blocked
 from plane.utils.timezone_converter import user_timezone_converter
 
 from .. import BaseAPIView, BaseViewSet
@@ -423,6 +424,11 @@ class IssueViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
+        if is_system_template_project(project):
+            return Response(
+                {"error": "System templates are read-only. Duplicate the template to customize."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         serializer = IssueCreateSerializer(
             data=request.data,
@@ -693,6 +699,19 @@ class IssueViewSet(BaseViewSet):
         if not issue:
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
 
+        project = Project.objects.get(pk=project_id)
+        if is_system_template_project(project):
+            return Response(
+                {"error": "System templates are read-only. Duplicate the template to customize."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if is_template_state_change_blocked(project, request.data, issue):
+            return Response(
+                {"error": "Template definition tasks cannot change state."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         current_instance = json.dumps(IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder)
 
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
@@ -735,6 +754,12 @@ class IssueViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN], creator=True, model=Issue)
     def destroy(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+        project = Project.objects.get(pk=project_id)
+        if is_system_template_project(project):
+            return Response(
+                {"error": "System templates are read-only. Duplicate the template to customize."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         issue.delete()
         # delete the issue from recent visits

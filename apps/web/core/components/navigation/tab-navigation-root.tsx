@@ -14,7 +14,9 @@ import type { EUserProjectRoles } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
+import { useWorkspaceProjectTemplates } from "@/hooks/store/use-project-template";
 import { useUserPermissions } from "@/hooks/store/user";
+import { buildPartialProjectFromTemplate, useTemplateNavigationOptions } from "@/hooks/use-template-navigation-options";
 // plane web imports
 import { useNavigationItems } from "@/plane-web/components/navigations";
 // local imports
@@ -54,9 +56,11 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
   const pathname = location.pathname;
   const navigate = useNavigate();
   const { t } = useTerminologyT();
+  useTemplateNavigationOptions(workspaceSlug);
 
   // Store hooks
   const { getPartialProjectById } = useProject();
+  const { getTemplateByProjectId } = useWorkspaceProjectTemplates();
   const { allowPermissions } = useUserPermissions();
   const {
     issue: { getIssueIdByIdentifier, getIssueById },
@@ -73,7 +77,10 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
     ? getIssueIdByIdentifier(workItemIdentifierFromRoute?.toString())
     : undefined;
   const workItem = workItemId ? getIssueById(workItemId) : undefined;
-  const project = getPartialProjectById(projectId);
+  const projectDetails = getPartialProjectById(projectId);
+  const templateForProject = getTemplateByProjectId(projectId);
+  const project =
+    projectDetails ?? (templateForProject ? buildPartialProjectFromTemplate(templateForProject) : undefined);
 
   // Navigation items hook
   const navigationItems = useNavigationItems({

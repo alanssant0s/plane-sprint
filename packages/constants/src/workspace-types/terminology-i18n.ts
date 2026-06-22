@@ -217,6 +217,7 @@ export const TERMINOLOGY_I18N_PREFIX_OVERRIDES: { prefix: string; override: TTer
   { prefix: "power_k.search_menu.", override: { kind: "multi_replace", entities: STANDARD_ENTITY_REPLACEMENTS } },
   { prefix: "epic.", override: { kind: "multi_replace", entities: STANDARD_ENTITY_REPLACEMENTS } },
   { prefix: "entity.", override: { kind: "multi_replace", entities: STANDARD_ENTITY_REPLACEMENTS } },
+  { prefix: "templates.", override: { kind: "multi_replace", entities: STANDARD_ENTITY_REPLACEMENTS } },
 ];
 
 function getTerminologyOverride(key: string): TTerminologyI18nOverride | undefined {

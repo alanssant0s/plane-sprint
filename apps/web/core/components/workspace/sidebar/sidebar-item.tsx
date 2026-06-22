@@ -21,7 +21,10 @@ import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceNavigationPreferences } from "@/hooks/use-navigation-preferences";
 import { useEntityTerm } from "@/hooks/use-workspace-type";
 // plane web imports
-import { getSidebarNavigationItemIcon } from "@/plane-web/components/workspace/sidebar/helper";
+import {
+  getSidebarNavigationItemIcon,
+  getWorkspaceNavigationItemLabel,
+} from "@/plane-web/components/workspace/sidebar/helper";
 
 type Props = {
   item: IWorkspaceSidebarNavigationItem;
@@ -68,7 +71,7 @@ export const SidebarItemBase = observer(function SidebarItemBase({
   const itemHref =
     item.key === "your_work" && data?.id ? joinUrlPath(slug, item.href, data?.id) : joinUrlPath(slug, item.href);
   const icon = getSidebarNavigationItemIcon(item.key);
-  const label = item.key === "squads" ? "Squads" : item.key === "projects" ? projectTerm : t(item.labelTranslationKey);
+  const label = getWorkspaceNavigationItemLabel(item.key, item.labelTranslationKey, t, projectTerm);
 
   return (
     <Link href={itemHref} onClick={handleLinkClick}>

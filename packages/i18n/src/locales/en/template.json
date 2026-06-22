@@ -328,6 +328,58 @@
         "work_item": "No templates found.",
         "project": "No templates found."
       }
+    },
+    "sidebar": {
+      "title": "Project Templates",
+      "create": "Open template library",
+      "add": "Create template",
+      "empty": "Install templates",
+      "view_all": "View all"
+    },
+    "page": {
+      "title": "Project Templates",
+      "description": "Reusable skeletons filtered by workspace type.",
+      "all": "All templates",
+      "install_seeds": "Install default templates",
+      "empty": "No templates installed in this workspace.",
+      "badge_system": "Pre-defined",
+      "badge_default": "Default",
+      "stats": "{{modules}} stages · {{issues}} tasks",
+      "open": "Open template",
+      "preview": "Preview",
+      "duplicate": "Duplicate",
+      "duplicate_success": "Template duplicated. You can customize it now.",
+      "delete": "Delete",
+      "delete_success": "Template deleted.",
+      "hide_from_creation": "Hide from new project",
+      "show_in_creation": "Show in new project",
+      "hide_success": "Template hidden from the new project list.",
+      "show_success": "Template visible when creating projects.",
+      "badge_hidden": "Hidden from creation",
+      "create": "New template",
+      "create_success": "Your template is ready to edit.",
+      "system_readonly": "Pre-defined template — read only. Duplicate to customize."
+    },
+    "preview": {
+      "title": "Template preview",
+      "states": "States",
+      "modules": "Stages",
+      "total_issues": "{{count}} reference tasks"
+    },
+    "definition_mode": {
+      "banner": "Template mode — reference structure only, no operational execution.",
+      "instantiate": "Create project from template"
+    },
+    "create_project": {
+      "blank": "Blank project",
+      "field_label": "Starting point",
+      "template_selected": "Structure from {{name}} will be applied when you create."
+    },
+    "promote": {
+      "title": "Save as template",
+      "description": "Capture this project's structure as a reusable workspace template.",
+      "button": "Save as template",
+      "success": "Template created from project."
     }
   }
 }

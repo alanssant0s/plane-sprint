@@ -6,14 +6,17 @@
 
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
+import { LayoutTemplate } from "lucide-react";
 // plane imports
 import { ProjectIcon } from "@plane/propel/icons";
 import type { ICustomSearchSelectOption } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
+import { useWorkspaceProjectTemplates } from "@/hooks/store/use-project-template";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { buildPartialProjectFromTemplate, useTemplateNavigationOptions } from "@/hooks/use-template-navigation-options";
 // plane web imports
 import { useNavigationItems } from "@/plane-web/components/navigations";
 // local imports
@@ -29,30 +32,33 @@ type TProjectHeaderProps = {
 
 export const ProjectHeader = observer(function ProjectHeader(props: TProjectHeaderProps) {
   const { workspaceSlug, projectId } = props;
-  // router
   const router = useAppRouter();
-  // store hooks
   const { joinedProjectIds, getPartialProjectById } = useProject();
+  const { getTemplateByProjectId } = useWorkspaceProjectTemplates();
   const { allowPermissions } = useUserPermissions();
+  const {
+    switcherOptions: templateSwitcherOptions,
+    navigateToTemplate,
+    getSelectedValueForProject,
+  } = useTemplateNavigationOptions(workspaceSlug);
 
-  // Get current project details
   const currentProjectDetails = getPartialProjectById(projectId);
+  const templateForProject = getTemplateByProjectId(projectId);
+  const isTemplateProject = Boolean(currentProjectDetails?.is_template ?? templateForProject);
+  const headerProject =
+    currentProjectDetails ?? (templateForProject ? buildPartialProjectFromTemplate(templateForProject) : undefined);
 
-  // Get available navigation items for this project
   const navigationItems = useNavigationItems({
-    workspaceSlug: workspaceSlug,
+    workspaceSlug,
     projectId,
-    project: currentProjectDetails,
+    project: headerProject,
     allowPermissions,
   });
 
-  // Get preferences from hook
   const { tabPreferences } = useTabPreferences(workspaceSlug, projectId);
 
-  // Memoize available tab keys
   const availableTabKeys = useMemo(() => navigationItems.map((item) => item.key), [navigationItems]);
 
-  // Memoize validated default tab key
   const validatedDefaultTabKey = useMemo(
     () =>
       availableTabKeys.includes(tabPreferences.defaultTab)
@@ -61,13 +67,12 @@ export const ProjectHeader = observer(function ProjectHeader(props: TProjectHead
     [availableTabKeys, tabPreferences.defaultTab]
   );
 
-  // Memoize switcher options to prevent recalculation on every render
-  const switcherOptions = useMemo<ICustomSearchSelectOption[]>(
+  const projectSwitcherOptions = useMemo<ICustomSearchSelectOption[]>(
     () =>
       joinedProjectIds
         .map((id): ICustomSearchSelectOption | null => {
           const project = getPartialProjectById(id);
-          if (!project) return null;
+          if (!project || project.is_template) return null;
 
           return {
             value: id,
@@ -86,25 +91,48 @@ export const ProjectHeader = observer(function ProjectHeader(props: TProjectHead
     [joinedProjectIds, getPartialProjectById]
   );
 
-  // Memoize onChange handler
+  const switcherOptions = useMemo(() => {
+    if (!isTemplateProject) return projectSwitcherOptions;
+
+    if (!templateForProject) return templateSwitcherOptions;
+
+    const selectedValue = templateForProject.is_system ? templateForProject.id : templateForProject.project_id;
+    if (templateSwitcherOptions.some((option) => option.value === selectedValue)) {
+      return templateSwitcherOptions;
+    }
+
+    return [
+      ...templateSwitcherOptions,
+      {
+        value: selectedValue,
+        query: templateForProject.name,
+        content: <SwitcherLabel name={templateForProject.name} LabelIcon={LayoutTemplate} />,
+      },
+    ];
+  }, [isTemplateProject, projectSwitcherOptions, templateForProject, templateSwitcherOptions]);
+
   const handleProjectChange = useCallback(
     (value: string) => {
-      if (value !== currentProjectDetails?.id) {
+      if (isTemplateProject) {
+        navigateToTemplate(value);
+        return;
+      }
+
+      if (value !== headerProject?.id) {
         router.push(getTabUrl(workspaceSlug, value, validatedDefaultTabKey));
       }
     },
-    [currentProjectDetails?.id, router, workspaceSlug, validatedDefaultTabKey]
+    [headerProject?.id, isTemplateProject, navigateToTemplate, router, validatedDefaultTabKey, workspaceSlug]
   );
 
-  // Early return if no project details
-  if (!currentProjectDetails) return null;
+  if (!headerProject) return null;
 
   return (
     <CustomSearchSelect
       options={switcherOptions}
-      value={currentProjectDetails.id}
+      value={isTemplateProject ? getSelectedValueForProject(headerProject.id) : headerProject.id}
       onChange={handleProjectChange}
-      customButton={currentProjectDetails ? <ProjectHeaderButton project={currentProjectDetails} /> : null}
+      customButton={<ProjectHeaderButton project={headerProject} isTemplate={isTemplateProject} />}
       className="h-full rounded"
       customButtonClassName="group flex items-center gap-0.5 rounded-sm hover:bg-surface-2 outline-none cursor-pointer h-full"
     />

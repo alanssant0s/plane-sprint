@@ -1,0 +1,142 @@
+{
+  "seedId": "design_brand_job",
+  "workspaceTypes": ["design_creative"],
+  "defaultIssueState": "Brief",
+  "states": [
+    {
+      "name": "Brief",
+      "group": "unstarted",
+      "color": "#A3A3A3"
+    },
+    {
+      "name": "Em criação",
+      "group": "started",
+      "color": "#F59E0B"
+    },
+    {
+      "name": "Aprovado",
+      "group": "started",
+      "color": "#8B5CF6"
+    },
+    {
+      "name": "Entregue",
+      "group": "completed",
+      "color": "#16A34A"
+    },
+    {
+      "name": "Cancelado",
+      "group": "cancelled",
+      "color": "#EF4444"
+    }
+  ],
+  "labels": [
+    {
+      "name": "brand",
+      "color": "#858585"
+    },
+    {
+      "name": "UI",
+      "color": "#858585"
+    },
+    {
+      "name": "print",
+      "color": "#858585"
+    },
+    {
+      "name": "motion",
+      "color": "#858585"
+    },
+    {
+      "name": "referência",
+      "color": "#858585"
+    },
+    {
+      "name": "aprovação",
+      "color": "#858585"
+    }
+  ],
+  "modules": [
+    {
+      "name": "Brief",
+      "sort_order": 1000
+    },
+    {
+      "name": "Conceito",
+      "sort_order": 2000
+    },
+    {
+      "name": "Desenvolvimento",
+      "sort_order": 3000
+    },
+    {
+      "name": "Feedback",
+      "sort_order": 4000
+    },
+    {
+      "name": "Entrega",
+      "sort_order": 5000
+    }
+  ],
+  "issues": [
+    {
+      "name": "Coletar brief",
+      "module": "Brief"
+    },
+    {
+      "name": "Moodboard",
+      "module": "Brief"
+    },
+    {
+      "name": "Escopo",
+      "module": "Brief"
+    },
+    {
+      "name": "Sketches",
+      "module": "Conceito"
+    },
+    {
+      "name": "Apresentação",
+      "module": "Conceito"
+    },
+    {
+      "name": "Direção",
+      "module": "Conceito"
+    },
+    {
+      "name": "Logo",
+      "module": "Desenvolvimento"
+    },
+    {
+      "name": "Aplicações",
+      "module": "Desenvolvimento"
+    },
+    {
+      "name": "Style guide",
+      "module": "Desenvolvimento"
+    },
+    {
+      "name": "Ronda 1",
+      "module": "Feedback"
+    },
+    {
+      "name": "Ajustes",
+      "module": "Feedback"
+    },
+    {
+      "name": "Ronda 2",
+      "module": "Feedback"
+    },
+    {
+      "name": "Assets",
+      "module": "Entrega"
+    },
+    {
+      "name": "Manual",
+      "module": "Entrega"
+    },
+    {
+      "name": "Handoff",
+      "module": "Entrega"
+    }
+  ]
+}

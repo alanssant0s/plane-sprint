@@ -27,7 +27,7 @@ import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceNavigationPreferences } from "@/hooks/use-navigation-preferences";
 // local imports
 import { UpgradeBadge } from "../upgrade-badge";
-import { getSidebarNavigationItemIcon } from "./helper";
+import { getSidebarNavigationItemIcon, getWorkspaceNavigationItemLabel } from "./helper";
 
 type TExtendedSidebarItemProps = {
   item: IWorkspaceSidebarNavigationItem;
@@ -149,7 +149,7 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
   };
 
   const icon = getSidebarNavigationItemIcon(item.key);
-  const label = item.key === "squads" ? "Squads" : t(item.labelTranslationKey);
+  const label = getWorkspaceNavigationItemLabel(item.key, item.labelTranslationKey, t);
 
   if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())) {
     return null;

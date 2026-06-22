@@ -91,6 +91,14 @@ from .workspace.sprint import (
     WorkspaceSprintIssueViewSet,
     WorkspaceSprintViewSet,
 )
+from .workspace.project_template import (
+    WorkspaceProjectTemplateDuplicateEndpoint,
+    WorkspaceProjectTemplateInstantiateEndpoint,
+    WorkspaceProjectTemplateInstallEndpoint,
+    WorkspaceProjectTemplatePreviewEndpoint,
+    WorkspaceProjectTemplateViewSet,
+    WorkspaceProjectPromoteTemplateEndpoint,
+)
 from .workspace.quick_link import QuickLinkViewSet
 from .workspace.sticky import WorkspaceStickyViewSet
 

@@ -171,7 +171,15 @@ class WorkSpaceViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def partial_update(self, request, *args, **kwargs):
-        return super().partial_update(request, *args, **kwargs)
+        workspace = self.get_object()
+        old_type = workspace.workspace_type
+        response = super().partial_update(request, *args, **kwargs)
+        workspace.refresh_from_db()
+        if "workspace_type" in request.data and workspace.workspace_type != old_type:
+            from plane.utils.project_template_service import install_workspace_project_templates
+
+            install_workspace_project_templates(workspace, request.user.id)
+        return response
 
     def remove_last_workspace_ids_from_user_settings(self, id: uuid.UUID) -> None:
         """

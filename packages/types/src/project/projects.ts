@@ -40,6 +40,7 @@ export interface IPartialProject {
   created_by?: string;
   updated_by?: string;
   intake_count?: number;
+  is_template?: boolean;
 }
 
 export interface IProject extends IPartialProject {

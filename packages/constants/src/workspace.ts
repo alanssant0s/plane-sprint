@@ -227,6 +227,13 @@ export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspa
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
+  project_templates: {
+    key: "project_templates",
+    labelTranslationKey: "templates.page.title",
+    href: `/templates/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
+  },
 };
 
 export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
@@ -234,6 +241,7 @@ export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebar
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["analytics"],
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["archives"],
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["squads"],
+  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["project_templates"],
 ];
 
 export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {

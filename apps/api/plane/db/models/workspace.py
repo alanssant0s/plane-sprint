@@ -439,6 +439,8 @@ class WorkspaceUserPreference(BaseModel):
         YOUR_WORK = "your_work", "Your Work"
         ARCHIVES = "archives", "Archives"
         STICKIES = "stickies", "Stickies"
+        SQUADS = "squads", "Squads"
+        PROJECT_TEMPLATES = "project_templates", "Project Templates"
 
     workspace = models.ForeignKey(
         "db.Workspace",

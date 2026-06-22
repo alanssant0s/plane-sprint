@@ -1,0 +1,196 @@
+{
+  "seedId": "civil_residential",
+  "workspaceTypes": ["civil_engineering"],
+  "defaultIssueState": "Não iniciado",
+  "states": [
+    {
+      "name": "Não iniciado",
+      "group": "unstarted",
+      "color": "#A3A3A3"
+    },
+    {
+      "name": "Programado",
+      "group": "unstarted",
+      "color": "#3F76FF"
+    },
+    {
+      "name": "Em execução",
+      "group": "started",
+      "color": "#F59E0B"
+    },
+    {
+      "name": "Aguardando terceiro",
+      "group": "started",
+      "color": "#EAB308"
+    },
+    {
+      "name": "Inspeção / Aprovação",
+      "group": "started",
+      "color": "#8B5CF6"
+    },
+    {
+      "name": "Concluído",
+      "group": "completed",
+      "color": "#16A34A"
+    },
+    {
+      "name": "Cancelado",
+      "group": "cancelled",
+      "color": "#EF4444"
+    }
+  ],
+  "labels": [
+    {
+      "name": "legal",
+      "color": "#858585"
+    },
+    {
+      "name": "projeto",
+      "color": "#858585"
+    },
+    {
+      "name": "estrutura",
+      "color": "#858585"
+    },
+    {
+      "name": "fundação",
+      "color": "#858585"
+    },
+    {
+      "name": "vedação",
+      "color": "#858585"
+    },
+    {
+      "name": "MEP",
+      "color": "#858585"
+    },
+    {
+      "name": "acabamento",
+      "color": "#858585"
+    },
+    {
+      "name": "entrega",
+      "color": "#858585"
+    }
+  ],
+  "modules": [
+    {
+      "name": "Pré-obra",
+      "sort_order": 1000
+    },
+    {
+      "name": "Fundação",
+      "sort_order": 2000
+    },
+    {
+      "name": "Estrutura",
+      "sort_order": 3000
+    },
+    {
+      "name": "Alvenaria e cobertura",
+      "sort_order": 4000
+    },
+    {
+      "name": "Instalações",
+      "sort_order": 5000
+    },
+    {
+      "name": "Acabamento",
+      "sort_order": 6000
+    },
+    {
+      "name": "Entrega",
+      "sort_order": 7000
+    }
+  ],
+  "issues": [
+    {
+      "name": "Levantamento topográfico",
+      "module": "Pré-obra"
+    },
+    {
+      "name": "Aprovação projeto",
+      "module": "Pré-obra"
+    },
+    {
+      "name": "Licença/alvará",
+      "module": "Pré-obra"
+    },
+    {
+      "name": "Contratação fornecedores",
+      "module": "Pré-obra"
+    },
+    {
+      "name": "Escavação",
+      "module": "Fundação"
+    },
+    {
+      "name": "Sapatas e baldrames",
+      "module": "Fundação"
+    },
+    {
+      "name": "Impermeabilização",
+      "module": "Fundação"
+    },
+    {
+      "name": "Formas e armação",
+      "module": "Estrutura"
+    },
+    {
+      "name": "Concretagem",
+      "module": "Estrutura"
+    },
+    {
+      "name": "Laje superior",
+      "module": "Estrutura"
+    },
+    {
+      "name": "Alvenaria",
+      "module": "Alvenaria e cobertura"
+    },
+    {
+      "name": "Telhado",
+      "module": "Alvenaria e cobertura"
+    },
+    {
+      "name": "Calhas",
+      "module": "Alvenaria e cobertura"
+    },
+    {
+      "name": "Elétrica",
+      "module": "Instalações"
+    },
+    {
+      "name": "Hidráulica",
+      "module": "Instalações"
+    },
+    {
+      "name": "Ar-condicionado",
+      "module": "Instalações"
+    },
+    {
+      "name": "Revestimentos",
+      "module": "Acabamento"
+    },
+    {
+      "name": "Pintura",
+      "module": "Acabamento"
+    },
+    {
+      "name": "Esquadrias",
+      "module": "Acabamento"
+    },
+    {
+      "name": "Vistoria interna",
+      "module": "Entrega"
+    },
+    {
+      "name": "Habite-se",
+      "module": "Entrega"
+    },
+    {
+      "name": "Entrega ao cliente",
+      "module": "Entrega"
+    }
+  ]
+}

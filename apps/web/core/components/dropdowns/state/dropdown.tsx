@@ -9,9 +9,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useIsTemplateProject } from "@/hooks/use-project-template-mode";
 // local imports
 import type { TWorkItemStateDropdownBaseProps } from "./base";
 import { WorkItemStateDropdownBase } from "./base";
+import { TemplateWorkItemStateDisplay } from "./template-state-display";
 
 type TWorkItemStateDropdownProps = Omit<
   TWorkItemStateDropdownBaseProps,
@@ -22,6 +24,7 @@ type TWorkItemStateDropdownProps = Omit<
 
 export const StateDropdown = observer(function StateDropdown(props: TWorkItemStateDropdownProps) {
   const { projectId, stateIds: propsStateIds } = props;
+  const isTemplateProject = useIsTemplateProject(projectId);
   // router params
   const { workspaceSlug } = useParams();
   // states
@@ -39,6 +42,10 @@ export const StateDropdown = observer(function StateDropdown(props: TWorkItemSta
       setStateLoader(false);
     }
   };
+
+  if (isTemplateProject) {
+    return <TemplateWorkItemStateDisplay {...props} getStateById={getStateById} />;
+  }
 
   return (
     <WorkItemStateDropdownBase

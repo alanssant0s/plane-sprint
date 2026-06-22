@@ -20,6 +20,12 @@ import type { CoreRootStore } from "../root.store";
 
 type ProjectOverviewCollapsible = "links" | "attachments" | "milestones";
 
+function isOperationalProject(project: TPartialProject, rootStore: CoreRootStore): boolean {
+  if (project.is_template) return false;
+  if (rootStore.workspaceProjectTemplate.getTemplateByProjectId(project.id)) return false;
+  return true;
+}
+
 export interface IProjectStore {
   // observables
   isUpdatingProject: boolean;
@@ -166,6 +172,7 @@ export class ProjectStore implements IProjectStore {
     let workspaceProjects = Object.values(this.projectMap).filter(
       (p) =>
         p.workspace === workspaceDetails.id &&
+        isOperationalProject(p, this.rootStore) &&
         (p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           p.identifier.toLowerCase().includes(searchQuery.toLowerCase())) &&
         shouldFilterProject(p, displayFilters, filters)
@@ -181,7 +188,7 @@ export class ProjectStore implements IProjectStore {
     const workspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
     if (!workspaceDetails) return;
     const workspaceProjects = Object.values(this.projectMap).filter(
-      (p) => p.workspace === workspaceDetails.id && !p.archived_at
+      (p) => p.workspace === workspaceDetails.id && !p.archived_at && isOperationalProject(p, this.rootStore)
     );
     const projectIds = workspaceProjects.map((p) => p.id);
     return projectIds ?? null;
@@ -198,7 +205,12 @@ export class ProjectStore implements IProjectStore {
     projects = sortBy(projects, "archived_at");
 
     const projectIds = projects
-      .filter((project) => project.workspace === currentWorkspace.id && !!project.archived_at)
+      .filter(
+        (project) =>
+          project.workspace === currentWorkspace.id &&
+          !!project.archived_at &&
+          isOperationalProject(project, this.rootStore)
+      )
       .map((project) => project.id);
     return projectIds;
   }
@@ -244,7 +256,13 @@ export class ProjectStore implements IProjectStore {
     projects = sortBy(projects, "sort_order");
 
     const projectIds = projects
-      .filter((project) => project.workspace === currentWorkspace.id && !!project.member_role && !project.archived_at)
+      .filter(
+        (project) =>
+          project.workspace === currentWorkspace.id &&
+          isOperationalProject(project, this.rootStore) &&
+          !!project.member_role &&
+          !project.archived_at
+      )
       .map((project) => project.id);
     return projectIds;
   }
@@ -263,6 +281,7 @@ export class ProjectStore implements IProjectStore {
       .filter(
         (project) =>
           project.workspace === currentWorkspace.id &&
+          isOperationalProject(project, this.rootStore) &&
           !!project.member_role &&
           project.is_favorite &&
           !project.archived_at
@@ -607,6 +626,7 @@ export class ProjectStore implements IProjectStore {
           set(this.projectMap, [projectId, "archived_at"], response.archived_at);
           this.rootStore.favorite.removeFavoriteFromStore(projectId);
         });
+        return response;
       })
       .catch((error) => {
         console.log("Failed to archive project from project store");
@@ -627,6 +647,7 @@ export class ProjectStore implements IProjectStore {
         runInAction(() => {
           set(this.projectMap, [projectId, "archived_at"], null);
         });
+        return undefined;
       })
       .catch((error) => {
         console.log("Failed to restore project from project store");

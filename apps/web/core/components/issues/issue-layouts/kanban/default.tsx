@@ -6,6 +6,7 @@
 
 import type { MutableRefObject } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import type {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -26,6 +27,7 @@ import { KanbanColumnLoader } from "@/components/ui/loader/layouts/kanban-layout
 // hooks
 import { useKanbanView } from "@/hooks/store/use-kanban-view";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
+import { useIsTemplateProject } from "@/hooks/use-project-template-mode";
 import { useAllIssuesGroupLabel } from "@/hooks/use-workspace-type";
 // types
 // parent components
@@ -102,9 +104,13 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
   // store hooks
   const storeType = useIssueStoreType();
   const issueKanBanView = useKanbanView();
+  const { projectId } = useParams();
+  const isTemplateProject = useIsTemplateProject(projectId?.toString());
   const allGroupLabel = useAllIssuesGroupLabel(isEpic);
+  const isStateDragGroup = group_by === "state" || sub_group_by === "state";
   // derived values
-  const isDragDisabled = !issueKanBanView?.getCanUserDragDrop(group_by, sub_group_by);
+  const isDragDisabled =
+    !issueKanBanView?.getCanUserDragDrop(group_by, sub_group_by) || (isTemplateProject && isStateDragGroup);
 
   const { getIsWorkflowWorkItemCreationDisabled } = useWorkFlowFDragNDrop(group_by, sub_group_by);
 
